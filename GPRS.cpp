@@ -53,6 +53,7 @@ int GPRS::close(){
 	if(currentState == open){
 		if(pSimHandler->writeCommandAndCheckAnwser("AT+SAPBR=0,1")){
 			currentState = closed;
+			startHandler.close();
 		}
 	}
 	return currentState;
@@ -82,4 +83,5 @@ GPRS_state GPRS::parseQueryString(){
 		case 2: case 3:
 			return closed;
 	}
+	return closed;
 }

@@ -4,7 +4,7 @@ Device::Device(){
 }
 
 bool Device::init(){
-	setDelay(10000);
+	setDelay(5000);
 	bool readyState = false;
 	if(!sensor.begin()){
 		readyState = false;

@@ -18,6 +18,8 @@ class StartHandler : public AbstractAction
 		virtual int doActions(unsigned long deltaTime) override;
 		
 		bool isReady() const;
+		
+		void close();
 	
 	private:
 		bool parseNetworkRegistration();

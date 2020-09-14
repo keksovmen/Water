@@ -5,7 +5,6 @@
 
 Device dev;
 SoftwareSerial sim (2, 3);
-// GPRS gprs;
 HTTP http;
 SimHandler simHandler;
 
@@ -29,12 +28,12 @@ void setup(){
 	// while(sim.available() > 0){
 		// Serial.write(sim.read());
 	// }
-	// if(!dev.init()){
-		// Serial.println("ERROR WITH VALIDITY");
-		// while(1){}
-	// }
+	if(!dev.init()){
+		Serial.println("ERROR WITH VALIDITY");
+		while(1){}
+	}
 	Serial.println("CONNECTED");
-	// dev.doActions(10000);
+	dev.doActions(10000);
 }
 
 void loop(){
@@ -42,7 +41,14 @@ void loop(){
 	unsigned long deltaTime = timeAfter - timeBefore;
 	timeBefore = timeAfter;
 	timePassed += deltaTime;
-	if(timePassed > 15000){
+	if(dev.doActions(deltaTime)){
+		timeAfter = millis();
+		deltaTime = timeAfter - timeBefore;
+		timePassed += deltaTime;
+		timeBefore = timeAfter;
+	}
+	
+	if(timePassed > 30000){
 		if(sended){
 			int state = http.doActions(deltaTime);
 			// Serial.println(state);
@@ -51,7 +57,11 @@ void loop(){
 				timePassed = 0;
 			}
 		}else{
-			http.setDataToSend("temperature=69&pressure=420");
+			
+			http.setDataToSend("temperature=" + 
+			String(dev.getTemperature(), 2) + 
+			"&pressure=" + 
+			String(dev.getPressure(), 3));
 			sended = true;
 		}
 	}

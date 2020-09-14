@@ -40,6 +40,10 @@ bool StartHandler::isReady() const{
 	return currentState == ready;
 }
 
+void StartHandler::close(){
+	currentState = waitingForModule;
+}
+
 /**
 	After you send AT+CREG? with AT+CREG=0
 	you wull get result as +CREG: n,s
