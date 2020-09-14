@@ -10,7 +10,8 @@ enum GPRS_state : int
 	closed = 0,
 	readyToOpen = 1,
 	open = 2,
-	waitingForStartHandler = 3
+	waitingForStartHandler = 3,
+	checkingConnection = 4
 };
 
 class GPRS : public AbstractAction
@@ -25,6 +26,8 @@ class GPRS : public AbstractAction
 		int close();
 		
 	private:
+		GPRS_state parseQueryString();
+	
 		StartHandler startHandler;
 		SimHandler* pSimHandler;
 		

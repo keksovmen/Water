@@ -108,6 +108,8 @@ bool SimHandler::stripCode(){
 		return true;
 	}
 	if(buffer.startsWith("+HTTPACTION:")){
+		if(!buffer.endsWith("\n"))
+			return false;
 		resultCode = OK;
 		return true;
 	}
@@ -115,11 +117,15 @@ bool SimHandler::stripCode(){
 	if(buffer[buffer.length() - 1] == '\n'){
 		buffer.trim();
 		
-		char last = buffer[buffer.length() -1];
+		char last = buffer[buffer.length() - 1];
 		// Serial.println("LAST - " + last);
 		
 		//if last digit is not a code, maybe anwser is not full
 		if(!isdigit(last)){
+			return false;
+		}
+		if(buffer.length() > 1 &&
+			!isSpace(buffer[buffer.length() - 2])){
 			return false;
 		}
 		resultCode = String(last).toInt();
