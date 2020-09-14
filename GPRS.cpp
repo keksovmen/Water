@@ -3,18 +3,18 @@
 
 bool GPRS::init(SimHandler* pHandler){
 	pSimHandler = pHandler;
-	// startHandler.init(pHandler);
+	startHandler.init(pHandler);
 	// setDelay(1000);
 	return true;
 }
 
 int GPRS::doActions(unsigned long deltaTime){
-	// if(!startHandler.isReady()){
-		// startHandler.doActions(deltaTime);
-		// if(!startHandler.isReady()){
-			// return waitingForStartHandler;
-		// }
-	// }
+	if(!startHandler.isReady()){
+		startHandler.doActions(deltaTime);
+		if(!startHandler.isReady()){
+			return waitingForStartHandler;
+		}
+	}
 	switch(currentState){
 		case closed:
 			//set APN param

@@ -1,7 +1,7 @@
 #pragma once
 #include "AbstractAction.h"
 #include "SimHandler.h"
-// #include "StartHandler.h"
+#include "StartHandler.h"
 
 //main purpose is to open GPRS connection
 
@@ -25,7 +25,7 @@ class GPRS : public AbstractAction
 		int close();
 		
 	private:
-		// StartHandler startHandler;
+		StartHandler startHandler;
 		SimHandler* pSimHandler;
 		
 		int currentState = closed;

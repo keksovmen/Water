@@ -24,8 +24,6 @@ int HTTP::doActions(unsigned long deltaTime){
 		currentState = readyToWork;
 	}
 	
-	// currentState = isGPRS_Open(deltaTime) ? readyToWork : waitingForGPRS;
-	
 	switch(currentState){
 		case readyToWork:
 			//init session
