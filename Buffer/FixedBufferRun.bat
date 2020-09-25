@@ -3,6 +3,7 @@ setlocal
 set SOURCE_FILES=FixedBufferTest.cpp
 set OUTPUT_NAME=test.exe
 
+cls
 echo Start compiling
 g++ -o %OUTPUT_NAME% %SOURCE_FILES%
 echo Finished
