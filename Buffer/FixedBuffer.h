@@ -1,7 +1,9 @@
 #pragma once
-#ifndef ARDUINO
+#ifdef ARDUINO
+	#include <Arduino.h>
+#else
 	#include <string>
-	typedef std::string string;
+	typedef std::string String;
 #endif
 
 //TODO: add function that will return 
@@ -63,7 +65,7 @@ class FixedBuffer
 			@return true only if there is match
 		*/
 		
-		bool endsWith(string str){
+		bool endsWith(String str){
 			int index = length - str.length();
 			if(index < 0)
 				return false;
@@ -81,7 +83,7 @@ class FixedBuffer
 			@return true only if there is match
 		*/
 		
-		bool startsWith(string str){
+		bool startsWith(String str){
 			int wordLength = str.length();
 			if(wordLength > length)
 				return false;
@@ -101,7 +103,7 @@ class FixedBuffer
 					of str located
 		*/
 		
-		int indexOf(string str){
+		int indexOf(String str){
 			int wordLength = str.length();
 			if(wordLength > length)
 				return -1;
