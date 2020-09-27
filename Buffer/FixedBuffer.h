@@ -101,10 +101,30 @@ class FixedBuffer
 				return *this;
 			
 			int sum = index + amount;
-			if(index >= length || sum > length)
+			if(index >= length || sum > length || sum == 0)
 				return *this;
 			
 			strcpy(data + index, data + sum);
+			//TODO: change length
+			return *this;
+		}
+		
+		FixedBuffer& substring(int from, int to = -1){
+			if(from == to || 
+					from < 0 || 
+					to < -1 ||
+					from >= length ||
+					to > length)
+				return *this;
+				
+			if(to == -1)
+				to = length;
+			
+			if(from > to)
+				return *this;
+			
+			remove(to, length - to);
+			remove(0, from);
 			
 			return *this;
 		}
