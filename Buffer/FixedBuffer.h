@@ -4,6 +4,10 @@
 	typedef std::string string;
 #endif
 
+//TODO: add function that will return 
+//string [from - to) and not modify itself
+//for parsing purpuses
+
 /**
 	Same as String but with fixed length
 */
