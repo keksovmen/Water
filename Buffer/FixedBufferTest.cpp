@@ -112,7 +112,7 @@ bool checkEndWith(const char* origin, const char* ending){
 	
 	copyIntoBuffer(buffer, origin);
 	
-	if(buffer.endWith(ending)){
+	if(buffer.endsWith(ending)){
 		return true;
 	}else{
 		return false;

@@ -4,14 +4,21 @@
 	typedef std::string string;
 #endif
 
+/**
+	Same as String but with fixed length
+*/
 
 template<int N>
 class FixedBuffer
 {
 	public:
-		// FixedBuffer();
-		
 		char& operator[] (int index){return data[index];}
+		
+		
+		/**
+			Instead of append function
+			Will put null terminator at the end
+		*/
 		
 		FixedBuffer& operator+= (char c){
 			data[length] = c;
@@ -20,12 +27,25 @@ class FixedBuffer
 			return *this;
 		}
 		
+		
+		//Iterators
 		char* begin(){return data;}
 		char* end(){return &data[length];}
 		
-		bool isFull(){return length >= size;}
 		
-		bool endWith(string str){
+		/**
+			@return true if there is no more space
+		*/
+		
+		bool isFull(){return length > size;}
+		
+		
+		/**
+			@param str to find at the end
+			@return true only if there is match
+		*/
+		
+		bool endsWith(string str){
 			int index = length - str.length();
 			if(index < 0)
 				return false;
@@ -36,6 +56,12 @@ class FixedBuffer
 			}
 			return true;
 		}
+		
+		
+		/**
+			@param str to find at the begining
+			@return true only if there is match
+		*/
 		
 		bool startsWith(string str){
 			int wordLength = str.length();
@@ -49,11 +75,11 @@ class FixedBuffer
 			return true;
 		}
 		
-		/**
 		
-		@param str what to find
-		@return -1 if there is no coincidence
-				index from [0, length) where first letter
+		/**
+			@param str what to find
+			@return -1 if there is no coincidence
+					index from [0, length) where first letter
 					of str located
 		*/
 		
@@ -72,6 +98,16 @@ class FixedBuffer
 			}
 			return -1;
 		}
+		
+		
+		/**
+			Deletes all space characters \t\r\f\n\v
+			from both ends
+			
+			Modifies this buffer
+			
+			@return as builder pattern
+		*/
 		
 		FixedBuffer& trim(){
 			if(length == 0)
@@ -96,6 +132,16 @@ class FixedBuffer
 			return *this;
 		}
 		
+		
+		/**
+			Modifies this buffer
+			
+			@param index inclusive
+			@param amount how much characters to delete
+			
+			@return as builder pattern
+		*/
+		
 		FixedBuffer& remove(int index, int amount){
 			if(index < 0 || amount < 0)
 				return *this;
@@ -109,6 +155,17 @@ class FixedBuffer
 			
 			return *this;
 		}
+		
+		
+		/**
+			Modifies this buffer
+			
+			@param from inclusive
+			@param to exclusive, may not present so 
+					end of buffer will be selected 
+					
+			@return as builder pattern
+		*/
 		
 		FixedBuffer& substring(int from, int to = -1){
 			if(from == to || 
@@ -130,13 +187,21 @@ class FixedBuffer
 			return *this;
 		}
 		
+		
+		//Getters
+		
 		char* getData(){return data;};
 		int getSize(){return size;};
 		int getLength(){return length;};
 	
 	private:
+		//represents max size minus zero terminator
+		const int size = N - 1;
+		
+		//buffer
 		char data [N];
-		const int size = N;
+		
+		//represent current length, data[length] = '\0'
 		int length = 0;
 	
 };
