@@ -17,6 +17,8 @@ void checkIndexOf(const char* origin, const char* search, int expected);
 
 void checkTrim(const char* origin, const char* expected);
 
+bool checkRemove(const char* origin, int start, int amount, const char* expected);
+
 
 template<int N>
 void copyIntoBuffer(FixedBuffer<N>& buffer, const char* data);
@@ -59,6 +61,16 @@ int main()
 	checkTrim("\n123\n", "123");
 	checkTrim("\r\n 1 2 3 \r\n", "1 2 3");
 	checkTrim("\n123", "123");
+	
+	assert (checkRemove("0123456789", 0, 3, "3456789"));
+	assert (checkRemove("0123456789", 3, 3, "0126789"));
+	assert (checkRemove("0123456789", 5, 5, "01234"));
+	assert (checkRemove("0123456789", 9, 1, "012345678"));
+	assert (checkRemove("0123456789", 9, 2, "0123456789"));
+	assert (checkRemove("0123456789", 15, 0, "0123456789"));
+	assert (checkRemove("0123456789", -15, 0, "0123456789"));
+	assert (checkRemove("0123456789", -15, -4, "0123456789"));
+	assert (checkRemove("0123456789", 1, -4, "0123456789"));
 }
 
 void checkLength(int divider){
@@ -130,6 +142,13 @@ void checkTrim(const char* origin, const char* expected){
 	assert (buffer.getLength() == strlen(expected));
 }
 
+bool checkRemove(const char* origin, int start, int amount, const char* expected){
+	FixedBuffer<512> buffer;
+	
+	copyIntoBuffer(buffer, origin);
+	buffer.remove(start, amount);
+	return strcmp(buffer.getData(), expected) == 0;
+}
 
 template<int N>
 void copyIntoBuffer(FixedBuffer<N>& buffer, const char* data){

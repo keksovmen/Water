@@ -96,6 +96,19 @@ class FixedBuffer
 			return *this;
 		}
 		
+		FixedBuffer& remove(int index, int amount){
+			if(index < 0 || amount < 0)
+				return *this;
+			
+			int sum = index + amount;
+			if(index >= length || sum > length)
+				return *this;
+			
+			strcpy(data + index, data + sum);
+			
+			return *this;
+		}
+		
 		char* getData(){return data;};
 		int getSize(){return size;};
 		int getLength(){return length;};
