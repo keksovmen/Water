@@ -5,17 +5,17 @@
 
 
 
-void checkLength(int divider);
+bool checkLength(int divider);
 
-void findString(const char* origin, const char* search, bool expected);
+bool findString(const char* origin, const char* search);
 
-void checkEndWith(const char* origin, const char* ending, bool expected);
+bool checkEndWith(const char* origin, const char* ending);
 
-void checkStartsWith(const char* origin, const char* start, bool expected);
+bool checkStartsWith(const char* origin, const char* start);
 
-void checkIndexOf(const char* origin, const char* search, int expected);
+bool checkIndexOf(const char* origin, const char* search, int expected);
 
-void checkTrim(const char* origin, const char* expected);
+bool checkTrim(const char* origin, const char* expected);
 
 bool checkRemove(const char* origin, int start, int amount, const char* expected);
 
@@ -28,39 +28,39 @@ int main()
 {
 	using namespace std;
 	
-	checkLength(1);
-	checkLength(2);
-	checkLength(4);
+	assert (checkLength(1));
+	assert (checkLength(2));
+	assert (checkLength(4));
 	
-	findString("123456789", "567", true);
-	findString("123456789", "111", false);
-	findString("asd dsa qwe fgh", " ds", true);
+	assert (findString("123456789", "567") == true);
+	assert (findString("123456789", "111") == false);
+	assert (findString("asd dsa qwe fgh", " ds") == true);
 	
-	checkEndWith("qwerty dsa", "dsa", true);
-	checkEndWith("qwerty dsa", "sa", true);
-	checkEndWith("qwerty dsa", "a", true);
-	checkEndWith("qwerty dsa", " ", false);
-	checkEndWith("qwerty dsa", "asd", false);
-	checkEndWith("a", "asd", false);
+	assert (checkEndWith("qwerty dsa", "dsa") == true);
+	assert (checkEndWith("qwerty dsa", "sa") == true);
+	assert (checkEndWith("qwerty dsa", "a") == true);
+	assert (checkEndWith("qwerty dsa", " ") == false);
+	assert (checkEndWith("qwerty dsa", "asd") == false);
+	assert (checkEndWith("a", "asd") == false);
 	
-	checkStartsWith("qwerty", "qwe", true);
-	checkStartsWith("  werty", " ", true);
-	checkStartsWith("  qwerty", "qwerty", false);
-	checkStartsWith("  qwerty", "  q", true);
-	checkStartsWith("asd", "asdfghjkl", false);
+	assert (checkStartsWith("qwerty", "qwe") == true);
+	assert (checkStartsWith("  werty", " ") == true);
+	assert (checkStartsWith("  qwerty", "qwerty") == false);
+	assert (checkStartsWith("  qwerty", "  q") == true);
+	assert (checkStartsWith("asd", "asdfghjkl") == false);
 	
-	checkIndexOf("0123456789", "3", 3);
-	checkIndexOf("0123456789", "12", 1);
-	checkIndexOf("one two three", "four", -1);
-	checkIndexOf("one two three", "three", 8);
+	assert (checkIndexOf("0123456789", "3", 3));
+	assert (checkIndexOf("0123456789", "12", 1));
+	assert (checkIndexOf("one two three", "four", -1));
+	assert (checkIndexOf("one two three", "three", 8));
 	
-	checkTrim(" ", "");
-	checkTrim("\t", "");
-	checkTrim("\r\f\t", "");
-	checkTrim("\r\f\t", "");
-	checkTrim("\n123\n", "123");
-	checkTrim("\r\n 1 2 3 \r\n", "1 2 3");
-	checkTrim("\n123", "123");
+	assert (checkTrim(" ", ""));
+	assert (checkTrim("\t", ""));
+	assert (checkTrim("\r\f\t", ""));
+	assert (checkTrim("\r\f\t", ""));
+	assert (checkTrim("\n123\n", "123"));
+	assert (checkTrim("\r\n 1 2 3 \r\n", "1 2 3"));
+	assert (checkTrim("\n123", "123"));
 	
 	assert (checkRemove("0123456789", 0, 3, "3456789"));
 	assert (checkRemove("0123456789", 3, 3, "0126789"));
@@ -73,73 +73,70 @@ int main()
 	assert (checkRemove("0123456789", 1, -4, "0123456789"));
 }
 
-void checkLength(int divider){
+bool checkLength(int divider){
 	assert (divider > 0);
 	
 	FixedBuffer<512> buffer;
 	for(int i = 0; i < buffer.getSize(); i++){
 		buffer+= 'f';
 	}
-	assert(strlen(buffer.begin()) == buffer.getLength());
+	return strlen(buffer.begin()) == buffer.getLength();
 }
 
-void findString(const char* origin, const char* search, bool expected){
+bool findString(const char* origin, const char* search){
 	FixedBuffer<512> buffer;
 	
 	copyIntoBuffer(buffer, origin);
 	
 	char* result = strstr(buffer.begin(), search);
 	if(result){
-		assert(expected == true);
+		return true;
 	}else{
-		assert(expected == false);
+		return false;
 	}
 }
 
-void checkEndWith(const char* origin, const char* ending, bool expected){
+bool checkEndWith(const char* origin, const char* ending){
 	FixedBuffer<512> buffer;
 	
 	copyIntoBuffer(buffer, origin);
 	
 	if(buffer.endWith(ending)){
-		assert(expected == true);
+		return true;
 	}else{
-		assert(expected == false);
+		return false;
 	}
 }
 
-void checkStartsWith(const char* origin, const char* start, bool expected){
+bool checkStartsWith(const char* origin, const char* start){
 	FixedBuffer<512> buffer;
 	
 	copyIntoBuffer(buffer, origin);
 	
 	if(buffer.startsWith(start)){
-		assert(expected == true);
+		return true;
 	}else{
-		assert(expected == false);
+		return false;
 	}
 }
 
-void checkIndexOf(const char* origin, const char* search, int expected){
+bool checkIndexOf(const char* origin, const char* search, int expected){
 	FixedBuffer<512> buffer;
 	
 	copyIntoBuffer(buffer, origin);
 	int index = buffer.indexOf(search);
 	
-	if(index){
-		assert(expected == index);
-	}else{
-		assert(expected == -1);
-	}
+	return index == expected;
 }
 
-void checkTrim(const char* origin, const char* expected){
+bool checkTrim(const char* origin, const char* expected){
 	FixedBuffer<512> buffer;
 	
 	copyIntoBuffer(buffer, origin);
 	buffer.trim();
-	assert (strcmp(buffer.getData(), expected) == 0);
 	assert (buffer.getLength() == strlen(expected));
+	
+	return strcmp(buffer.getData(), expected) == 0;
 }
 
 bool checkRemove(const char* origin, int start, int amount, const char* expected){
@@ -147,6 +144,7 @@ bool checkRemove(const char* origin, int start, int amount, const char* expected
 	
 	copyIntoBuffer(buffer, origin);
 	buffer.remove(start, amount);
+	
 	return strcmp(buffer.getData(), expected) == 0;
 }
 
