@@ -105,7 +105,8 @@ class FixedBuffer
 				return *this;
 			
 			strcpy(data + index, data + sum);
-			//TODO: change length
+			length -= amount;
+			
 			return *this;
 		}
 		

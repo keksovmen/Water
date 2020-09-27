@@ -155,6 +155,7 @@ bool checkRemove(const char* origin, int start, int amount, const char* expected
 	
 	copyIntoBuffer(buffer, origin);
 	buffer.remove(start, amount);
+	assert (buffer.getLength() == strlen(expected));
 	
 	return strcmp(buffer.getData(), expected) == 0;
 }
@@ -164,6 +165,7 @@ bool checkSubstring(const char* origin, int from, int to, const char* expected){
 	
 	copyIntoBuffer(buffer, origin);
 	buffer.substring(from, to);
+	assert (buffer.getLength() == strlen(expected));
 	
 	return strcmp(buffer.getData(), expected) == 0;
 }
