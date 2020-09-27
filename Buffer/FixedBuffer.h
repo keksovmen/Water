@@ -73,12 +73,32 @@ class FixedBuffer
 			return -1;
 		}
 		
-		// FixedBuffer& trim(){
+		FixedBuffer& trim(){
+			if(length == 0)
+				return *this;
 			
-		// }
+			for(int i = length - 1; i >= 0; i--){
+				if(isspace(data[i]) == 0)
+					break;
+				data[i] = '\0';
+				length--;
+			}
+			
+			int count = 0;
+			for(int i = 0; i < length; i++){
+				if(isspace(data[i]) == 0)
+					break;
+				count++;
+			}
+			
+			strcpy(data, data + count);
+			length -= count;
+			return *this;
+		}
 		
+		char* getData(){return data;};
 		int getSize(){return size;};
-		int getLength(){return length;}
+		int getLength(){return length;};
 	
 	private:
 		char data [N];

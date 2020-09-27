@@ -15,6 +15,8 @@ void checkStartsWith(const char* origin, const char* start, bool expected);
 
 void checkIndexOf(const char* origin, const char* search, int expected);
 
+void checkTrim(const char* origin, const char* expected);
+
 
 template<int N>
 void copyIntoBuffer(FixedBuffer<N>& buffer, const char* data);
@@ -49,6 +51,14 @@ int main()
 	checkIndexOf("0123456789", "12", 1);
 	checkIndexOf("one two three", "four", -1);
 	checkIndexOf("one two three", "three", 8);
+	
+	checkTrim(" ", "");
+	checkTrim("\t", "");
+	checkTrim("\r\f\t", "");
+	checkTrim("\r\f\t", "");
+	checkTrim("\n123\n", "123");
+	checkTrim("\r\n 1 2 3 \r\n", "1 2 3");
+	checkTrim("\n123", "123");
 }
 
 void checkLength(int divider){
@@ -109,6 +119,15 @@ void checkIndexOf(const char* origin, const char* search, int expected){
 	}else{
 		assert(expected == -1);
 	}
+}
+
+void checkTrim(const char* origin, const char* expected){
+	FixedBuffer<512> buffer;
+	
+	copyIntoBuffer(buffer, origin);
+	buffer.trim();
+	assert (strcmp(buffer.getData(), expected) == 0);
+	assert (buffer.getLength() == strlen(expected));
 }
 
 
