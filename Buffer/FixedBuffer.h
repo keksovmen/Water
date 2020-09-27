@@ -49,9 +49,29 @@ class FixedBuffer
 			return true;
 		}
 		
-		// int indexOf(string str){
+		/**
+		
+		@param str what to find
+		@return -1 if there is no coincidence
+				index from [0, length) where first letter
+					of str located
+		*/
+		
+		int indexOf(string str){
+			int wordLength = str.length();
+			if(wordLength > length)
+				return -1;
 			
-		// }
+			#ifdef ARDUINO
+				char* find = strstr(data, str);
+			#else
+				char* find = strstr(data, str.data());
+			#endif
+			if(find){
+				return find - data;
+			}
+			return -1;
+		}
 		
 		// FixedBuffer& trim(){
 			

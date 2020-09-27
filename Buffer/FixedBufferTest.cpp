@@ -13,6 +13,8 @@ void checkEndWith(const char* origin, const char* ending, bool expected);
 
 void checkStartsWith(const char* origin, const char* start, bool expected);
 
+void checkIndexOf(const char* origin, const char* search, int expected);
+
 
 template<int N>
 void copyIntoBuffer(FixedBuffer<N>& buffer, const char* data);
@@ -42,6 +44,11 @@ int main()
 	checkStartsWith("  qwerty", "qwerty", false);
 	checkStartsWith("  qwerty", "  q", true);
 	checkStartsWith("asd", "asdfghjkl", false);
+	
+	checkIndexOf("0123456789", "3", 3);
+	checkIndexOf("0123456789", "12", 1);
+	checkIndexOf("one two three", "four", -1);
+	checkIndexOf("one two three", "three", 8);
 }
 
 void checkLength(int divider){
@@ -90,6 +97,20 @@ void checkStartsWith(const char* origin, const char* start, bool expected){
 		assert(expected == false);
 	}
 }
+
+void checkIndexOf(const char* origin, const char* search, int expected){
+	FixedBuffer<512> buffer;
+	
+	copyIntoBuffer(buffer, origin);
+	int index = buffer.indexOf(search);
+	
+	if(index){
+		assert(expected == index);
+	}else{
+		assert(expected == -1);
+	}
+}
+
 
 template<int N>
 void copyIntoBuffer(FixedBuffer<N>& buffer, const char* data){
