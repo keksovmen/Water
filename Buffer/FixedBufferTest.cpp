@@ -21,6 +21,8 @@ bool checkRemove(const char* origin, int start, int amount, const char* expected
 
 bool checkSubstring(const char* origin, int from, int to, const char* expected);
 
+bool checkClear(const char* origin);
+
 
 template<int N>
 void copyIntoBuffer(FixedBuffer<N>& buffer, const char* data);
@@ -82,6 +84,8 @@ int main()
 	assert (checkSubstring("0123456789", 10, -1, "0123456789"));
 	assert (checkSubstring("0123456789", 5, 1, "0123456789"));
 	assert (checkSubstring("0123456789", 0, 10, "0123456789"));
+	
+	assert (checkClear("123456678"));
 }
 
 bool checkLength(int divider){
@@ -168,6 +172,15 @@ bool checkSubstring(const char* origin, int from, int to, const char* expected){
 	assert (buffer.getLength() == strlen(expected));
 	
 	return strcmp(buffer.getData(), expected) == 0;
+}
+
+bool checkClear(const char* origin){
+	FixedBuffer<512> buffer;
+	
+	copyIntoBuffer(buffer, origin);
+	buffer.clear();
+	
+	return strlen(buffer.getData()) == buffer.getLength();
 }
 
 template<int N>

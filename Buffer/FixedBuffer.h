@@ -41,6 +41,20 @@ class FixedBuffer
 		
 		
 		/**
+			Made buffer empty again
+			
+			@return as builder pattern
+		*/
+		
+		FixedBuffer& clear(){
+			length = 0;
+			data[0] = '\0';
+			
+			return *this;
+		}
+		
+		
+		/**
 			@param str to find at the end
 			@return true only if there is match
 		*/
