@@ -37,6 +37,26 @@ class FixedBuffer
 			return true;
 		}
 		
+		bool startsWith(string str){
+			int wordLength = str.length();
+			if(wordLength > length)
+				return false;
+			
+			for(int i = 0; i < wordLength; i++){
+				if(data[i] != str[i])
+					return false;
+			}
+			return true;
+		}
+		
+		// int indexOf(string str){
+			
+		// }
+		
+		// FixedBuffer& trim(){
+			
+		// }
+		
 		int getSize(){return size;};
 		int getLength(){return length;}
 	
