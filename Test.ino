@@ -2,9 +2,10 @@
 // #include "GPRS.h"
 // #include "HTTP.h"
 // #include "SimHandler.h"
-#include "SimIOWrapper.h"
-#include "SimResultParser.h"
-#include "SimCommandWriter.h"
+// #include "SimIOWrapper.h"
+// #include "SimResultParser.h"
+// #include "SimCommandWriter.h"
+#include "SimFacade.h"
 // #include "Buffer/FixedBuffer.h"
 
 
@@ -14,9 +15,10 @@
 SoftwareSerial sim (2, 3);
 // HTTP http;
 // SimHandler simHandler;
-SimIOWrapper<BUFFER_SIZE> wrapper (sim);
-SimResultParser<BUFFER_SIZE> parser;
-SimCommandWriter<BUFFER_SIZE> writer;
+// SimIOWrapper<BUFFER_SIZE> wrapper (sim);
+// SimResultParser<BUFFER_SIZE> parser;
+// SimCommandWriter<BUFFER_SIZE> writer;
+SimFacade<BUFFER_SIZE> simHandler(sim);
 
 //Excpected sim module flags ATE0 and ATV0
 
@@ -30,15 +32,16 @@ void setup(){
 	// wrapper.writeCommand("AT");
 	Serial.begin(9600);
 	sim.begin(9600);
-	writer.writeAT(wrapper);
-	wrapper.readToBuffer();
-	Serial.println(parser.isSimpleMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
-	writer.writeCREG(wrapper);
-	wrapper.readToBuffer();
-	Serial.println(parser.isComplexMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
-	writer.writeCSQ(wrapper);
-	wrapper.readToBuffer();
-	Serial.println(parser.isComplexMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
+	Serial.println(simHandler.isModuleUp() ? "TRUE" : "FALSE");
+	// writer.writeAT(wrapper);
+	// wrapper.readToBuffer();
+	// Serial.println(parser.isSimpleMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
+	// writer.writeCREG(wrapper);
+	// wrapper.readToBuffer();
+	// Serial.println(parser.isComplexMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
+	// writer.writeCSQ(wrapper);
+	// wrapper.readToBuffer();
+	// Serial.println(parser.isComplexMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
 	// gprs.init(&sim);
 	// simHandler.init(&sim);
 	// http.init(&simHandler);

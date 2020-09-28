@@ -37,3 +37,12 @@ bool SimResultParser<N>::isComplexMessageReady(FixedBuffer<N>& buffer){
 	return buffer.endsWith("\r\n0\r\n") ||	//success code
 			buffer.endsWith("\r\n4\r\n");	//error code
 }
+
+template<int N>
+int SimResultParser<N>::fetchResultCode(FixedBuffer<N>& buffer){
+	buffer.trim();
+	int code = atoi(buffer.end() - 1);
+	buffer--;
+	
+	return code;
+}

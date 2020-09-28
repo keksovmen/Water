@@ -34,6 +34,20 @@ class FixedBuffer
 		}
 		
 		
+		/**
+			Basicly remove last character
+		*/
+		
+		FixedBuffer& operator--(int){
+			if(length <= 0)
+				return *this;
+			
+			length--;
+			data[length] = '\0';
+			return *this;
+		}
+		
+		
 		//Iterators
 		char* begin(){return data;}
 		char* end(){return &data[length];}
