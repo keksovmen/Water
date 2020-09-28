@@ -24,11 +24,22 @@ bool SimFacade<N>::isModuleUp(){
 	}
 	
 	if(parser.isSimpleMessageReady(wrapper.getBuffer())){
-		if(parser.fetchResultCode(wrapper.getBuffer()) == 
-				ANWSER_CODES::OK){
-			return true;
-		}else{
-			return false;
+		ANWSER_CODES numberFetch = static_cast<ANWSER_CODES>(
+			parser.fetchResultCode(wrapper.getBuffer()));
+		switch (numberFetch){
+			case OK:
+				return true;
+				
+			case UNDEFINED:
+				numberFetch = static_cast<ANWSER_CODES>(
+					parser.fetchSimpleTextCode(wrapper.getBuffer()));
+				if(numberFetch == ANWSER_CODES::OK){
+					return true;
+				}
+				return false;
+				
+			default:
+				return false;
 		}
 	}else{
 		//TODO: Coud fail here due to Unsolicited messages
@@ -67,4 +78,21 @@ NETWORK_CONNECTION SimFacade<N>::isConnectedToNetwork(){
 	}
 	
 	return NETWORK_CONNECTION::UNKNOWN;
+}
+
+
+template<int N>
+bool SimFacade<N>::setDefaultParams(){
+	if(writer.writeEcho(wrapper, false) &&
+			writer.writeNumberFormat(wrapper, true) &&
+			writer.writeCallReady(wrapper, false) &&
+			writer.writeReportAsError(wrapper, true) &&
+			writer.writeAT(wrapper)){
+		if(wrapper.readToBuffer()){
+			if(parser.fetchResultCode(wrapper.getBuffer()) == ANWSER_CODES::OK){
+				return true;
+			}
+		}
+	}
+	return false;
 }

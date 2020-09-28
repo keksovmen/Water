@@ -12,6 +12,7 @@ SimIOWrapper<N>::SimIOWrapper(SoftwareSerial& refSerial) :
 
 template<int N>
 bool SimIOWrapper<N>::writeCommand(const String& cmd){
+	Serial.println(cmd);
 	unsigned int written = refPort.println(cmd);
 	buffer.clear();
 	

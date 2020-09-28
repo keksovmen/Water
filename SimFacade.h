@@ -14,6 +14,7 @@ class SimFacade
 		
 		bool isModuleUp();
 		NETWORK_CONNECTION isConnectedToNetwork();
+		bool setDefaultParams();
 		
 	private:
 		SimIOWrapper<N> wrapper;

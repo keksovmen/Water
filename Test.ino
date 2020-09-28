@@ -32,6 +32,15 @@ void setup(){
 	// wrapper.writeCommand("AT");
 	Serial.begin(9600);
 	sim.begin(9600);
+	if(!simHandler.isModuleUp()){
+		delay(5000);
+		if(!simHandler.isModuleUp()){
+			Serial.println("Module if offline");
+			while(1){}
+		}
+	}
+	
+	Serial.println(simHandler.setDefaultParams() ? "TRUE" : "FALSE");
 	Serial.println(simHandler.isModuleUp() ? "TRUE" : "FALSE");
 	Serial.println(simHandler.isConnectedToNetwork());
 	// writer.writeAT(wrapper);

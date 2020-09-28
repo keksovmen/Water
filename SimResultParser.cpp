@@ -1,4 +1,5 @@
 #include "SimResultParser.h"
+#include "Enums.h"
 
 /**
 	Minimum responce length is 3 characters
@@ -41,12 +42,32 @@ bool SimResultParser<N>::isComplexMessageReady(FixedBuffer<N>& buffer){
 template<int N>
 int SimResultParser<N>::fetchResultCode(FixedBuffer<N>& buffer){
 	buffer.trim();
-	int code = atoi(buffer.end() - 1);
-	buffer--;
+	const char* last = buffer.end() - 1;
 	
-	return code;
+	if(isDigit(*last)){
+		buffer--;
+		return atoi(last);
+	}
+	
+	return ANWSER_CODES::UNDEFINED;
 }
 
+
+template<int N>
+int SimResultParser<N>::fetchSimpleTextCode(FixedBuffer<N>& buffer){
+	buffer.trim();
+	if(buffer.endsWith("OK")){
+		buffer--;
+		buffer--;
+		return ANWSER_CODES::OK;
+	}
+	
+	if(buffer.endsWith("ERROR")){
+		return ANWSER_CODES::ERROR;
+	}
+	
+	return ANWSER_CODES::UNDEFINED;
+}
 
 /**
 	Expects buffer as +CREG:<n>,<stat>\r\n
