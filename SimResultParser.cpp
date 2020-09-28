@@ -46,3 +46,18 @@ int SimResultParser<N>::fetchResultCode(FixedBuffer<N>& buffer){
 	
 	return code;
 }
+
+
+/**
+	Expects buffer as +CREG:<n>,<stat>\r\n
+	And expect <n> = 0
+*/
+
+template<int N>
+int SimResultParser<N>::fetchNetworkRegistration(FixedBuffer<N>& buffer){
+	buffer.trim();
+	int code = atoi(buffer.end() - 1);
+	buffer--;
+	
+	return code;
+}

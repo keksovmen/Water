@@ -33,6 +33,7 @@ void setup(){
 	Serial.begin(9600);
 	sim.begin(9600);
 	Serial.println(simHandler.isModuleUp() ? "TRUE" : "FALSE");
+	Serial.println(simHandler.isConnectedToNetwork());
 	// writer.writeAT(wrapper);
 	// wrapper.readToBuffer();
 	// Serial.println(parser.isSimpleMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");

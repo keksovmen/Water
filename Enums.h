@@ -27,3 +27,27 @@ enum ANWSER_CODES : int
 	PROCEEDING = 9,	//An AT command is being processed
 	UNDEFINED = 10	//my type for code to work	
 };
+
+
+/**
+	All possible codes from AT+CREG?
+	
+	0 - Not registered, MT is not currently searching a new
+		operator to register to
+	1 - Registered, home network
+	2 - Not registered, but MT is currently searching a new
+		operator to register to
+	3 - Registration denied
+	4 - Unknown
+	5 - Registered, roaming
+*/
+
+enum NETWORK_CONNECTION : int
+{
+	NOT_REGISTERED_NOT_SEARCING = 0,
+	REGISTERED = 1,
+	NOT_REGISTERED_SEARCHING = 2,
+	DENIED = 3,
+	UNKNOWN = 4,
+	REGISTERED_ROAMING = 5
+};

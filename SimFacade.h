@@ -4,6 +4,7 @@
 #include "SimIOWrapper.h"
 #include "SimCommandWriter.h"
 #include "SimResultParser.h"
+#include "Enums.h"
 
 template<int N>
 class SimFacade
@@ -12,7 +13,7 @@ class SimFacade
 		SimFacade(SoftwareSerial& refPort);
 		
 		bool isModuleUp();
-		bool isConnectedToNetwork();
+		NETWORK_CONNECTION isConnectedToNetwork();
 		
 	private:
 		SimIOWrapper<N> wrapper;

@@ -8,7 +8,7 @@ class SimResultParser
 		bool isSimpleMessageReady(FixedBuffer<N>& buffer);
 		bool isComplexMessageReady(FixedBuffer<N>& buffer);
 		int fetchResultCode(FixedBuffer<N>& buffer);
-		
+		int fetchNetworkRegistration(FixedBuffer<N>& buffer);
 	private:
 		
 		
