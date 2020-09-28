@@ -4,18 +4,21 @@
 //in millis
 const static unsigned int MIN_DELAY = 25;
 
-SimIOWrapper::SimIOWrapper(SoftwareSerial& refSerial) : 
+template<int N>
+SimIOWrapper<N>::SimIOWrapper(SoftwareSerial& refSerial) : 
 	refPort(refSerial){
 		
 }
 
-bool SimIOWrapper::writeCommand(const String& cmd){
+template<int N>
+bool SimIOWrapper<N>::writeCommand(const String& cmd){
 	unsigned int written = refPort.println(cmd);
 	buffer.clear();
 	return written == cmd.length();
 }
 
-bool SimIOWrapper::readToBuffer(){
+template<int N>
+bool SimIOWrapper<N>::readToBuffer(){
 	if(refPort.available() == 0){
 		delay(MIN_DELAY);
 	}

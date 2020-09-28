@@ -2,7 +2,8 @@
 #include <SoftwareSerial.h>
 #include "Buffer/FixedBuffer.h"
 
-//TODO: add template int N to select buffer size
+
+template<int N>
 class SimIOWrapper
 {
 	public:
@@ -14,10 +15,12 @@ class SimIOWrapper
 		
 		bool readToBuffer();
 		
-		FixedBuffer<128>& getBuffer(){return buffer;};
+		FixedBuffer<N>& getBuffer(){return buffer;};
 		
 	private:
 		SoftwareSerial& refPort;
-		FixedBuffer<128> buffer;
+		FixedBuffer<N> buffer;
 		
 };
+
+template class SimIOWrapper<128>;

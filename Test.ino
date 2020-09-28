@@ -6,12 +6,15 @@
 #include "SimResultParser.h"
 // #include "Buffer/FixedBuffer.h"
 
+
+#define BUFFER_SIZE 128
+
 // Device dev;
 SoftwareSerial sim (2, 3);
 // HTTP http;
 // SimHandler simHandler;
-SimIOWrapper wrapper (sim);
-SimResultParser<128> parser;
+SimIOWrapper<BUFFER_SIZE> wrapper (sim);
+SimResultParser<BUFFER_SIZE> parser;
 
 //Excpected sim module flags ATE0 and ATV0
 
