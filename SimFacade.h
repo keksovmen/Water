@@ -12,6 +12,7 @@ class SimFacade
 		SimFacade(SoftwareSerial& refPort);
 		
 		bool isModuleUp();
+		bool isConnectedToNetwork();
 		
 	private:
 		SimIOWrapper<N> wrapper;

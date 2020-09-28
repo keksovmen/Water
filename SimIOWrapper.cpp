@@ -14,7 +14,9 @@ template<int N>
 bool SimIOWrapper<N>::writeCommand(const String& cmd){
 	unsigned int written = refPort.println(cmd);
 	buffer.clear();
-	return written == cmd.length();
+	
+	//- 2 because will be added \r\n
+	return (written - 2) == cmd.length();
 }
 
 template<int N>
