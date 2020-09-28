@@ -3,6 +3,7 @@
 // #include "HTTP.h"
 // #include "SimHandler.h"
 #include "SimIOWrapper.h"
+#include "SimResultParser.h"
 // #include "Buffer/FixedBuffer.h"
 
 // Device dev;
@@ -10,6 +11,7 @@ SoftwareSerial sim (2, 3);
 // HTTP http;
 // SimHandler simHandler;
 SimIOWrapper wrapper (sim);
+SimResultParser<128> parser;
 
 //Excpected sim module flags ATE0 and ATV0
 
@@ -23,16 +25,12 @@ void setup(){
 	// wrapper.writeCommand("AT");
 	Serial.begin(9600);
 	sim.begin(9600);
-	Serial.println(wrapper.getBuffer().getLength());
 	wrapper.writeCommand("AT");
 	wrapper.readToBuffer();
-	Serial.println(wrapper.getBuffer().getLength());
-	wrapper.writeCommand("AT");
+	Serial.println(parser.isSimpleMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
+	wrapper.writeCommand("AT+CREG?");
 	wrapper.readToBuffer();
-	Serial.println(wrapper.getBuffer().getLength());
-	wrapper.writeCommand("AT");
-	wrapper.readToBuffer();
-	Serial.println(wrapper.getBuffer().getLength());
+	Serial.println(parser.isComplexMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
 	
 	// gprs.init(&sim);
 	// simHandler.init(&sim);

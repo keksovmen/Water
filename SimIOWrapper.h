@@ -2,7 +2,7 @@
 #include <SoftwareSerial.h>
 #include "Buffer/FixedBuffer.h"
 
-
+//TODO: add template int N to select buffer size
 class SimIOWrapper
 {
 	public:
