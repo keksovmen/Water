@@ -10,7 +10,11 @@ class SimIOWrapper
 			// refPort(refSerial){};
 		explicit SimIOWrapper(SoftwareSerial& refSerial);
 		
-		void does();
+		bool writeCommand(const String& cmd);
+		
+		bool readToBuffer();
+		
+		FixedBuffer<128>& getBuffer(){return buffer;};
 		
 	private:
 		SoftwareSerial& refPort;
