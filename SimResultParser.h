@@ -10,6 +10,7 @@ class SimResultParser
 		int fetchResultCode(FixedBuffer<N>& buffer);
 		int fetchSimpleTextCode(FixedBuffer<N>& buffer);
 		int fetchNetworkRegistration(FixedBuffer<N>& buffer);
+		int fetchGPRSStatus(FixedBuffer<N>& buffer);
 	private:
 		
 		

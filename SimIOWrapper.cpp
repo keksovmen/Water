@@ -21,6 +21,34 @@ bool SimIOWrapper<N>::writeCommand(const String& cmd){
 }
 
 template<int N>
+SimIOWrapper<N>& SimIOWrapper<N>::writeChar(char c){
+	Serial.print(c);
+	refPort.print(c);
+	return *this;
+}
+
+template<int N>
+SimIOWrapper<N>& SimIOWrapper<N>::writeInt(int c){
+	Serial.print(c);
+	refPort.print(c);
+	return *this;
+}
+
+template<int N>
+SimIOWrapper<N>& SimIOWrapper<N>::writeString(const char* c){
+	Serial.print(c);
+	refPort.print(c);
+	return *this;
+}
+
+template<int N>
+void SimIOWrapper<N>::writeSendCommand(){
+	Serial.print("\r\n");
+	refPort.print("\r\n");
+	buffer.clear();
+}
+
+template<int N>
 bool SimIOWrapper<N>::readToBuffer(){
 	if(refPort.available() == 0){
 		delay(MIN_DELAY);
@@ -42,3 +70,15 @@ bool SimIOWrapper<N>::readToBuffer(){
 	
 	return true;
 }
+
+template<int N>
+bool SimIOWrapper<N>::readToBufferTimeout(int millis){
+	while(millis > 0){
+		if(readToBuffer()){
+			return true;
+		}
+		millis -= MIN_DELAY;
+	}
+	return false;
+}
+

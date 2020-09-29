@@ -1,5 +1,7 @@
 #include "SimResultParser.h"
 #include "Enums.h"
+#include "Util.h"
+
 
 /**
 	Minimum responce length is 3 characters
@@ -46,6 +48,7 @@ int SimResultParser<N>::fetchResultCode(FixedBuffer<N>& buffer){
 	
 	if(isDigit(*last)){
 		buffer--;
+	
 		return atoi(last);
 	}
 	
@@ -77,8 +80,29 @@ int SimResultParser<N>::fetchSimpleTextCode(FixedBuffer<N>& buffer){
 template<int N>
 int SimResultParser<N>::fetchNetworkRegistration(FixedBuffer<N>& buffer){
 	buffer.trim();
+	//TODO: use instead of atoi characterToInt() from Util.h
 	int code = atoi(buffer.end() - 1);
 	buffer--;
 	
 	return code;
+}
+
+/**
+	Message looks like:
+	
+	+SAPBR: cid,status
+	
+		cid - index of barier
+		status:
+			0 - connecting
+			1 - connected
+			2 - closing
+			3 - closed
+*/
+
+template<int N>
+int SimResultParser<N>::fetchGPRSStatus(FixedBuffer<N>& buffer){
+	buffer.trim();
+	buffer.remove(0, 8);
+	return characterToInt(buffer[0]);
 }

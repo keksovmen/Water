@@ -51,3 +51,40 @@ enum NETWORK_CONNECTION : int
 	UNKNOWN = 4,
 	REGISTERED_ROAMING = 5
 };
+
+
+/**
+	All possible methods for AT+SAPBR
+	
+	0 - Close bearer
+	1 - Open bearer
+	2 - Query bearer
+	3 - Set bearer parameters
+	4 - Get bearer parameters
+*/
+
+enum SAPBR_COMMANDS : int 
+{
+	CLOSE_BEARER = 0,
+	OPEN_BEARER = 1,
+	QUERY_BEARER = 2,
+	SET_PARAM_BEARER = 3,
+	GET_PARAM_BEARER = 4
+};
+
+
+/**
+	All possible values from AT+SAPBR=2,id
+		0 - connecting
+		1 - connected
+		2 - closing
+		3 - closed
+*/
+
+enum BEARER_STATUS : int
+{
+	GPRS_CONNECTING = 0,
+	GPRS_CONNECTED = 1,
+	GPRS_CLOSING = 2,
+	GPRS_CLOSED = 3
+};

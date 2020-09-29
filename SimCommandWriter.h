@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SimIOWrapper.h"
+#include "Enums.h"
 
 template<int N>
 class SimCommandWriter
@@ -13,10 +14,11 @@ class SimCommandWriter
 		bool writeNumberFormat(SimIOWrapper<N>& wrapper, bool turnOn);
 		bool writeCallReady(SimIOWrapper<N>& wrapper, bool turnOn);
 		bool writeReportAsError(SimIOWrapper<N>& wrapper, bool turnOn);
+		bool writeSAPBR(SimIOWrapper<N>& wrapper, SAPBR_COMMANDS cmd, const char* param = nullptr, const char* value = nullptr);
 		
 		
 	private:
-		
+		//TODO: made SimIOWrapper as refParam
 		
 };
 

@@ -28,8 +28,6 @@ SimFacade<BUFFER_SIZE> simHandler(sim);
 
 
 void setup(){
-	// wrapper.does();
-	// wrapper.writeCommand("AT");
 	Serial.begin(9600);
 	sim.begin(9600);
 	if(!simHandler.isModuleUp()){
@@ -40,9 +38,12 @@ void setup(){
 		}
 	}
 	
-	Serial.println(simHandler.setDefaultParams() ? "TRUE" : "FALSE");
-	Serial.println(simHandler.isModuleUp() ? "TRUE" : "FALSE");
-	Serial.println(simHandler.isConnectedToNetwork());
+	// Serial.println(simHandler.setDefaultParams() ? "TRUE" : "FALSE");
+	Serial.println(simHandler.connectToGPRS("\"internet\"") ? "TRUE" : "FALSE");
+	
+	// Serial.println(simHandler.isModuleUp() ? "TRUE" : "FALSE");
+	// Serial.println(simHandler.isConnectedToNetwork());
+	
 	// writer.writeAT(wrapper);
 	// wrapper.readToBuffer();
 	// Serial.println(parser.isSimpleMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
@@ -108,12 +109,12 @@ void loop(){
 		// Serial.println(gprs.buffer);
 	// }
 	
-	// if(Serial.available()){
-		// sim.write(Serial.read());
-	// }
-	// if(sim.available()){	
-		// Serial.write(sim.read());
-	// }
+	if(Serial.available()){
+		sim.write(Serial.read());
+	}
+	if(sim.available()){	
+		Serial.write(sim.read());
+	}
 	
 	
 	

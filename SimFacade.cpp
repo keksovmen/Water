@@ -4,7 +4,7 @@
 
 template<int N>
 SimFacade<N>::SimFacade(SoftwareSerial& refPort) :
-wrapper(refPort)
+wrapper(refPort), gprsHandler(wrapper, writer, parser)
 {
 	
 }
@@ -95,4 +95,13 @@ bool SimFacade<N>::setDefaultParams(){
 		}
 	}
 	return false;
+}
+
+
+template<int N>
+bool SimFacade<N>::connectToGPRS(const char* apn){
+	if(gprsHandler.isConnected()){
+		return true;
+	}
+	return gprsHandler.connect(apn);
 }

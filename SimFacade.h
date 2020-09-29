@@ -5,6 +5,7 @@
 #include "SimCommandWriter.h"
 #include "SimResultParser.h"
 #include "Enums.h"
+#include "GPRSHandler.h"
 
 template<int N>
 class SimFacade
@@ -15,11 +16,13 @@ class SimFacade
 		bool isModuleUp();
 		NETWORK_CONNECTION isConnectedToNetwork();
 		bool setDefaultParams();
+		bool connectToGPRS(const char* apn);
 		
 	private:
 		SimIOWrapper<N> wrapper;
 		SimCommandWriter<N> writer;
 		SimResultParser<N> parser;
+		GPRSHandler<N> gprsHandler;
 		
 };
 
