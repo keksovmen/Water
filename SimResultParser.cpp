@@ -103,6 +103,6 @@ int SimResultParser<N>::fetchNetworkRegistration(FixedBuffer<N>& buffer){
 template<int N>
 int SimResultParser<N>::fetchGPRSStatus(FixedBuffer<N>& buffer){
 	buffer.trim();
-	buffer.remove(0, 8);
+	buffer.remove(0, 10);
 	return characterToInt(buffer[0]);
 }

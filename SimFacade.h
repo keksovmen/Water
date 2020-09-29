@@ -17,6 +17,7 @@ class SimFacade
 		NETWORK_CONNECTION isConnectedToNetwork();
 		bool setDefaultParams();
 		bool connectToGPRS(const char* apn);
+		bool disconnectFromGPRS();
 		
 	private:
 		SimIOWrapper<N> wrapper;

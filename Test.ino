@@ -40,6 +40,7 @@ void setup(){
 	
 	// Serial.println(simHandler.setDefaultParams() ? "TRUE" : "FALSE");
 	Serial.println(simHandler.connectToGPRS("\"internet\"") ? "TRUE" : "FALSE");
+	Serial.println(simHandler.disconnectFromGPRS() ? "TRUE" : "FALSE");
 	
 	// Serial.println(simHandler.isModuleUp() ? "TRUE" : "FALSE");
 	// Serial.println(simHandler.isConnectedToNetwork());

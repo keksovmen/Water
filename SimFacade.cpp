@@ -105,3 +105,12 @@ bool SimFacade<N>::connectToGPRS(const char* apn){
 	}
 	return gprsHandler.connect(apn);
 }
+
+template<int N>
+bool SimFacade<N>::disconnectFromGPRS(){
+	if(!gprsHandler.isConnected()){
+		return true;
+	}
+	
+	return gprsHandler.close();
+}

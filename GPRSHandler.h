@@ -17,6 +17,7 @@ class GPRSHandler
 					
 		bool isConnected();
 		bool connect(const char* apn);
+		bool close();
 		
 		
 	private:

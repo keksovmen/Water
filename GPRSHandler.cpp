@@ -66,3 +66,14 @@ bool GPRSHandler<N>::connect(const char* apn){
 	
 	return isConnected();
 }
+
+template<int N>
+bool GPRSHandler<N>::close(){
+	refWriter.writeSAPBR(refWrapper, SAPBR_COMMANDS::CLOSE_BEARER);
+	
+	if(!refWrapper.readToBufferTimeout(2000)){
+		return false;
+	}
+	
+	return !isConnected();
+}
