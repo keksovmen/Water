@@ -45,14 +45,14 @@ bool GPRSHandler<N>::isConnected(){
 template<int N>
 bool GPRSHandler<N>::connect(const char* apn){
 	refWriter.writeSAPBR(refWrapper, SET_PARAM_BEARER,
-						"\"Contype\"", "\"GPRS\"");
+						"Contype", "GPRS");
 	
 	if(!readAndExpectSuccess(refWrapper, refParser)){
 		return false;
 	}
 	
 	refWriter.writeSAPBR(refWrapper, SET_PARAM_BEARER,
-						"\"APN\"", apn);
+						"APN", apn);
 	
 	if(!readAndExpectSuccess(refWrapper, refParser)){
 		return false;

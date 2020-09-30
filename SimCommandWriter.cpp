@@ -60,11 +60,61 @@ bool SimCommandWriter<N>::writeSAPBR(SimIOWrapper<N>& wrapper, SAPBR_COMMANDS cm
 		writeString(",1");
 	if((param) && (value)){
 		
-		wrapper.writeChar(',').
+		//TODO: made param without double quotes, write them as single char
+		wrapper.writeString(",\"").
 			writeString(param).
-			writeChar(',').
-			writeString(value);
+			writeString("\",\"").
+			writeString(value).
+			writeChar('"');
 	}
 	wrapper.writeSendCommand();
+	return true;
+}
+
+template<int N>
+bool SimCommandWriter<N>::writeHTPP(SimIOWrapper<N>& wrapper, HTTP_COMMANDS cmd){
+	switch (cmd){
+		case HTTP_INIT:
+			return wrapper.writeCommand("AT+HTTPINIT");
+		
+		case HTTP_TERM:
+			return wrapper.writeCommand("AT+HTTPTERM");
+			
+		default: return false;
+	}
+}
+
+
+template<int N>
+bool SimCommandWriter<N>::writeHTPPSetParam(SimIOWrapper<N>& wrapper, const char* param, const char* value){
+	wrapper.writeString("AT+HTTPPARA=").
+		writeChar('"').
+		writeString(param).
+		writeString("\",\"").
+		writeString(value).
+		writeChar('"').
+		writeSendCommand();
+	
+	return true;
+}
+
+
+template<int N>
+bool SimCommandWriter<N>::writeHTPPAction(SimIOWrapper<N>& wrapper, bool isPost){
+	if(isPost){
+		return wrapper.writeCommand("AT+HTTPACTION=1");
+	}else{
+		return wrapper.writeCommand("AT+HTTPACTION=0");
+	}
+}
+
+template<int N>
+bool SimCommandWriter<N>::writeHTPPData(SimIOWrapper<N> wrapper, int length){
+	wrapper.writeString("AT+HTTPDATA=").
+		writeInt(length).
+		writeChar(',').
+		writeInt(5000).
+		writeSendCommand();
+	
 	return true;
 }

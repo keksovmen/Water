@@ -117,15 +117,15 @@ class FixedBuffer
 					of str located
 		*/
 		
-		int indexOf(String str){
-			int wordLength = str.length();
+		int indexOf(const char* str){
+			int wordLength = strlen(str);
 			if(wordLength > length)
 				return -1;
 			
 			#ifdef ARDUINO
 				char* find = strstr(data, str);
 			#else
-				char* find = strstr(data, str.data());
+				char* find = strstr(data, str);
 			#endif
 			if(find){
 				return find - data;

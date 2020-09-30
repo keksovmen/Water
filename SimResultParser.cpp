@@ -106,3 +106,36 @@ int SimResultParser<N>::fetchGPRSStatus(FixedBuffer<N>& buffer){
 	buffer.remove(0, 10);
 	return characterToInt(buffer[0]);
 }
+
+/**
+	Message looks loke:
+	
+	+HTTPACTION: <method>,<status>,<data length>
+		method - 0 - GET, 1 - POST
+		status - 3 digit as real http status code
+		data length - amount of recieved data from server
+
+*/
+
+template<int N>
+int SimResultParser<N>::fetchHTTPStatus(FixedBuffer<N>& buffer){
+	buffer.trim();
+	int index = buffer.indexOf("+HTTPACTION: ");
+	if(index == -1){
+		return -1;
+		//error
+	}
+	
+	index += 12;	//length of HTTPACTION:\s, index on \s
+	index += 3;//<method> and ',', so now on <status> should be
+	return characterToInt(buffer[index]);
+}
+
+
+template<int N>
+bool SimResultParser<N>::containDownload(FixedBuffer<N>& buffer){
+	if(buffer.indexOf("DOWNLOAD") == -1){
+		return false;
+	}
+	return true;
+}

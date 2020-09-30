@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "SimFacade.h"
+#include "Util.h"
 
 
 template<int N>
@@ -103,6 +104,7 @@ bool SimFacade<N>::connectToGPRS(const char* apn){
 	if(gprsHandler.isConnected()){
 		return true;
 	}
+	
 	return gprsHandler.connect(apn);
 }
 
@@ -113,4 +115,36 @@ bool SimFacade<N>::disconnectFromGPRS(){
 	}
 	
 	return gprsHandler.close();
+}
+
+
+template<int N>
+PostDataHandler<N> SimFacade<N>::sendPostRequest(const char* url, int dataLength){
+	writer.writeHTPP(wrapper, HTTP_COMMANDS::HTTP_INIT);
+	readAndExpectSuccess(wrapper, parser);
+	
+	writer.writeHTPPSetParam(wrapper, "URL", url);
+	readAndExpectSuccess(wrapper, parser);
+	
+	writer.writeHTPPSetParam(wrapper, "CONTENT", "application/x-www-form-urlencoded");
+	readAndExpectSuccess(wrapper, parser);
+	
+	writer.writeHTPPData(wrapper, dataLength);
+	if(!wrapper.readToBuffer()){
+		Serial.println("Error with sendPostRequest() 1");
+		//error
+	}
+	
+	if(!parser.containDownload(wrapper.getBuffer())){
+		// delay(50);
+		if(!wrapper.readToBuffer()){
+			Serial.println("Error with sendPostRequest() 3");
+		}
+		if(!parser.containDownload(wrapper.getBuffer())){
+			Serial.println("Error with sendPostRequest() 2");
+		}
+		//error
+	}
+	
+	return PostDataHandler<N>(wrapper, parser, writer);
 }

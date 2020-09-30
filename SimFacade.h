@@ -6,6 +6,7 @@
 #include "SimResultParser.h"
 #include "Enums.h"
 #include "GPRSHandler.h"
+#include "PostDataHandler.h"
 
 template<int N>
 class SimFacade
@@ -18,6 +19,7 @@ class SimFacade
 		bool setDefaultParams();
 		bool connectToGPRS(const char* apn);
 		bool disconnectFromGPRS();
+		PostDataHandler<N> sendPostRequest(const char* url, int dataLength);
 		
 	private:
 		SimIOWrapper<N> wrapper;

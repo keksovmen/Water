@@ -11,6 +11,8 @@ class SimResultParser
 		int fetchSimpleTextCode(FixedBuffer<N>& buffer);
 		int fetchNetworkRegistration(FixedBuffer<N>& buffer);
 		int fetchGPRSStatus(FixedBuffer<N>& buffer);
+		int fetchHTTPStatus(FixedBuffer<N>& buffer);
+		bool containDownload(FixedBuffer<N>& buffer);
 	private:
 		
 		

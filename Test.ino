@@ -30,6 +30,7 @@ SimFacade<BUFFER_SIZE> simHandler(sim);
 void setup(){
 	Serial.begin(9600);
 	sim.begin(9600);
+	
 	if(!simHandler.isModuleUp()){
 		delay(5000);
 		if(!simHandler.isModuleUp()){
@@ -38,9 +39,54 @@ void setup(){
 		}
 	}
 	
+	if(!simHandler.isConnectedToNetwork()){
+		delay(5000);
+		if(!simHandler.isConnectedToNetwork()){
+			Serial.println("Module can't connect to network");
+			while(1){}
+		}
+	}
+	
+	if(!simHandler.connectToGPRS("internet")){
+		delay(5000);
+		if(!simHandler.connectToGPRS("internet")){
+			Serial.println("Module can't connect to GPRS");
+			while(1){}
+		}
+	}
+	
+	const char* str = "temperature=69&pressure=1000";
+	const int strLength = strlen(str);
+	
+	PostDataHandler<BUFFER_SIZE> dataHandler = simHandler.sendPostRequest("http://128.69.240.186/Send.php", strLength);
+	dataHandler.write(str);
+	
+	if(!dataHandler.send()){
+		Serial.println("Module can't go furthre then HTTPACTION");
+		while(1){}
+	}
+	
+	if(!dataHandler.isSended()){
+		if(!dataHandler.isSended()){
+			Serial.println("Send already took 10 sec");
+			while(!dataHandler.isSended()){
+				Serial.println("Send took another 5 sec");
+			}
+		}
+	}
+	
+	if(!dataHandler.isSendedSuccesfully()){
+		Serial.println("Send finished with not Success code");
+	}
+	
+	dataHandler.finish();
+	
+	simHandler.disconnectFromGPRS();
+	
+	
 	// Serial.println(simHandler.setDefaultParams() ? "TRUE" : "FALSE");
-	Serial.println(simHandler.connectToGPRS("\"internet\"") ? "TRUE" : "FALSE");
-	Serial.println(simHandler.disconnectFromGPRS() ? "TRUE" : "FALSE");
+	// Serial.println(simHandler.connectToGPRS("\"internet\"") ? "TRUE" : "FALSE");
+	// Serial.println(simHandler.disconnectFromGPRS() ? "TRUE" : "FALSE");
 	
 	// Serial.println(simHandler.isModuleUp() ? "TRUE" : "FALSE");
 	// Serial.println(simHandler.isConnectedToNetwork());
