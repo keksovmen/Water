@@ -21,9 +21,9 @@ bool readAndExpectSuccess(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, 
 	bool rdy = false;
 	
 	if(isComplex){
-		rdy = parser.isComplexMessageReady(wrapper.getBuffer());
+		rdy = parser.isComplexMessageReady();
 	}else{
-		rdy = parser.isSimpleMessageReady(wrapper.getBuffer());
+		rdy = parser.isSimpleMessageReady();
 	}
 	
 	if(!rdy){
@@ -33,7 +33,7 @@ bool readAndExpectSuccess(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, 
 	}
 	
 	if(static_cast<ANWSER_CODES>
-			(parser.fetchResultCode(wrapper.getBuffer()))
+			(parser.fetchResultCode())
 				== ANWSER_CODES::OK){
 		return true;
 	}

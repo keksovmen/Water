@@ -22,7 +22,7 @@ bool GPRSHandler<N>::isConnected(){
 	}
 
 	BEARER_STATUS status = static_cast<BEARER_STATUS>(
-		refParser.fetchGPRSStatus(refWrapper.getBuffer()));
+		refParser.fetchGPRSStatus());
 		
 	switch (status){
 		case GPRS_CONNECTING:

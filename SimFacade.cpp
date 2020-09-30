@@ -5,7 +5,8 @@
 
 template<int N>
 SimFacade<N>::SimFacade(SoftwareSerial& refPort) :
-wrapper(refPort), writer(wrapper), gprsHandler(wrapper, writer, parser)
+	wrapper(refPort), writer(wrapper),
+	parser(wrapper.getBuffer()), gprsHandler(wrapper, writer, parser)
 {
 	
 }
@@ -19,16 +20,18 @@ bool SimFacade<N>::isModuleUp(){
 		return false;
 	}
 	
-	if(parser.isSimpleMessageReady(wrapper.getBuffer())){
+	if(parser.isSimpleMessageReady()){
 		ANWSER_CODES numberFetch = static_cast<ANWSER_CODES>(
-			parser.fetchResultCode(wrapper.getBuffer()));
+			parser.fetchResultCode()
+			);
+			
 		switch (numberFetch){
 			case OK:
 				return true;
 				
 			case UNDEFINED:
 				numberFetch = static_cast<ANWSER_CODES>(
-					parser.fetchSimpleTextCode(wrapper.getBuffer()));
+					parser.fetchSimpleTextCode());
 				if(numberFetch == ANWSER_CODES::OK){
 					return true;
 				}
@@ -56,11 +59,11 @@ NETWORK_CONNECTION SimFacade<N>::isConnectedToNetwork(){
 		return NETWORK_CONNECTION::UNKNOWN;
 	}
 	
-	if(parser.isComplexMessageReady(wrapper.getBuffer())){
-		if(parser.fetchResultCode(wrapper.getBuffer()) ==
+	if(parser.isComplexMessageReady()){
+		if(parser.fetchResultCode() ==
 				ANWSER_CODES::OK){
 			return static_cast<NETWORK_CONNECTION>(
-					parser.fetchNetworkRegistration(wrapper.getBuffer())
+					parser.fetchNetworkRegistration()
 					);
 		}else{
 			return NETWORK_CONNECTION::UNKNOWN;
@@ -83,7 +86,7 @@ bool SimFacade<N>::setDefaultParams(){
 	
 	if(wrapper.readToBuffer()){
 		for(int i = 0; i < 5; i++){
-			if(parser.fetchResultCode(wrapper.getBuffer()) != ANWSER_CODES::OK){
+			if(parser.fetchResultCode() != ANWSER_CODES::OK){
 				return false;
 			}
 		}
@@ -131,12 +134,12 @@ PostDataHandler<N> SimFacade<N>::sendPostRequest(const char* url, int dataLength
 		//error
 	}
 	
-	if(!parser.containDownload(wrapper.getBuffer())){
+	if(!parser.containDownload()){
 		// delay(50);
 		if(!wrapper.readToBuffer()){
 			Serial.println("Error with sendPostRequest() 3");
 		}
-		if(!parser.containDownload(wrapper.getBuffer())){
+		if(!parser.containDownload()){
 			Serial.println("Error with sendPostRequest() 2");
 		}
 		//error

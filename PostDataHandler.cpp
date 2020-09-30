@@ -36,7 +36,7 @@ bool PostDataHandler<N>::isSended(){
 template<int N>
 bool PostDataHandler<N>::isSendedSuccesfully(){
 	//TODO: made enum for codes
-	return refParser.fetchHTTPStatus(refWrapper.getBuffer()) == 2;
+	return refParser.fetchHTTPStatus() == 2;
 }
 
 

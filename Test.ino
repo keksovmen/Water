@@ -93,13 +93,13 @@ void setup(){
 	
 	// writer.writeAT();
 	// wrapper.readToBuffer();
-	// Serial.println(parser.isSimpleMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
+	// Serial.println(parser.isSimpleMessageReady() ? "TRUE" : "FALSE");
 	// writer.writeCREG();
 	// wrapper.readToBuffer();
-	// Serial.println(parser.isComplexMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
+	// Serial.println(parser.isComplexMessageReady() ? "TRUE" : "FALSE");
 	// writer.writeCSQ();
 	// wrapper.readToBuffer();
-	// Serial.println(parser.isComplexMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
+	// Serial.println(parser.isComplexMessageReady() ? "TRUE" : "FALSE");
 	// gprs.init(&sim);
 	// simHandler.init(&sim);
 	// http.init(&simHandler);

@@ -7,7 +7,7 @@ template<int N>
 class SimCommandWriter
 {
 	public:
-		SimCommandWriter(SimIOWrapper<N>& refWrapper);
+		explicit SimCommandWriter(SimIOWrapper<N>& refWrapper);
 	
 		void writeAT();
 		void writeCREG();

@@ -5,16 +5,20 @@ template<int N>
 class SimResultParser
 {
 	public:
-		bool isSimpleMessageReady(FixedBuffer<N>& buffer);
-		bool isComplexMessageReady(FixedBuffer<N>& buffer);
-		int fetchResultCode(FixedBuffer<N>& buffer);
-		int fetchSimpleTextCode(FixedBuffer<N>& buffer);
-		int fetchNetworkRegistration(FixedBuffer<N>& buffer);
-		int fetchGPRSStatus(FixedBuffer<N>& buffer);
-		int fetchHTTPStatus(FixedBuffer<N>& buffer);
-		bool containDownload(FixedBuffer<N>& buffer);
-	private:
+		explicit SimResultParser(FixedBuffer<N>& refBuffer);
 		
+		bool isSimpleMessageReady();
+		bool isComplexMessageReady();
+		bool containDownload();
+		
+		int fetchResultCode();
+		int fetchSimpleTextCode();
+		int fetchNetworkRegistration();
+		int fetchGPRSStatus();
+		int fetchHTTPStatus();
+		
+	private:
+		FixedBuffer<N>& buffer;
 		
 };
 

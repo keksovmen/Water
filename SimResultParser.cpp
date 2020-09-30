@@ -3,6 +3,13 @@
 #include "Util.h"
 
 
+template<int N>
+SimResultParser<N>::SimResultParser(FixedBuffer<N>& refBuffer) :
+	buffer(refBuffer){
+	
+}
+
+
 /**
 	Minimum responce length is 3 characters
 	
@@ -19,7 +26,9 @@
 */
 
 template<int N>
-bool SimResultParser<N>::isSimpleMessageReady(FixedBuffer<N>& buffer){
+bool SimResultParser<N>::isSimpleMessageReady(){
+	//TODO: if contain other messages you have to check
+	//something like: from end to start looking for 0 or 4 \r\n
 	return buffer.endsWith("\r\n");
 }
 
@@ -33,16 +42,29 @@ bool SimResultParser<N>::isSimpleMessageReady(FixedBuffer<N>& buffer){
 */
 
 template<int N>
-bool SimResultParser<N>::isComplexMessageReady(FixedBuffer<N>& buffer){
+bool SimResultParser<N>::isComplexMessageReady(){
 	if(buffer.getLength() <= 3){
 		return false;
 	}
+	//TODO: osntead of endWith use indexOf()
 	return buffer.endsWith("\r\n0\r\n") ||	//success code
 			buffer.endsWith("\r\n4\r\n");	//error code
 }
 
+
 template<int N>
-int SimResultParser<N>::fetchResultCode(FixedBuffer<N>& buffer){
+bool SimResultParser<N>::containDownload(){
+	if(buffer.indexOf("DOWNLOAD") == -1){
+		return false;
+	}
+	return true;
+}
+
+
+template<int N>
+int SimResultParser<N>::fetchResultCode(){
+	//TODO: use find indexOf \r\n(0 or 4)\r\n
+	//to proper handling
 	buffer.trim();
 	const char* last = buffer.end() - 1;
 	
@@ -57,7 +79,9 @@ int SimResultParser<N>::fetchResultCode(FixedBuffer<N>& buffer){
 
 
 template<int N>
-int SimResultParser<N>::fetchSimpleTextCode(FixedBuffer<N>& buffer){
+int SimResultParser<N>::fetchSimpleTextCode(){
+	//TODO: use find indexOf \r\n(OK)\r\n
+	//to proper handling
 	buffer.trim();
 	if(buffer.endsWith("OK")){
 		buffer--;
@@ -72,20 +96,23 @@ int SimResultParser<N>::fetchSimpleTextCode(FixedBuffer<N>& buffer){
 	return ANWSER_CODES::UNDEFINED;
 }
 
+
 /**
 	Expects buffer as +CREG:<n>,<stat>\r\n
 	And expect <n> = 0
 */
 
 template<int N>
-int SimResultParser<N>::fetchNetworkRegistration(FixedBuffer<N>& buffer){
+int SimResultParser<N>::fetchNetworkRegistration(){
 	buffer.trim();
 	//TODO: use instead of atoi characterToInt() from Util.h
+	//use indexOf to proper handling
 	int code = atoi(buffer.end() - 1);
 	buffer--;
 	
 	return code;
 }
+
 
 /**
 	Message looks like:
@@ -101,11 +128,13 @@ int SimResultParser<N>::fetchNetworkRegistration(FixedBuffer<N>& buffer){
 */
 
 template<int N>
-int SimResultParser<N>::fetchGPRSStatus(FixedBuffer<N>& buffer){
+int SimResultParser<N>::fetchGPRSStatus(){
+	//TODO: use indexOf
 	buffer.trim();
 	buffer.remove(0, 10);
 	return characterToInt(buffer[0]);
 }
+
 
 /**
 	Message looks loke:
@@ -118,7 +147,7 @@ int SimResultParser<N>::fetchGPRSStatus(FixedBuffer<N>& buffer){
 */
 
 template<int N>
-int SimResultParser<N>::fetchHTTPStatus(FixedBuffer<N>& buffer){
+int SimResultParser<N>::fetchHTTPStatus(){
 	buffer.trim();
 	int index = buffer.indexOf("+HTTPACTION: ");
 	if(index == -1){
@@ -127,15 +156,6 @@ int SimResultParser<N>::fetchHTTPStatus(FixedBuffer<N>& buffer){
 	}
 	
 	index += 12;	//length of HTTPACTION:\s, index on \s
-	index += 3;//<method> and ',', so now on <status> should be
+	index += 3;		//<method> and ',', so now on <status> should be
 	return characterToInt(buffer[index]);
-}
-
-
-template<int N>
-bool SimResultParser<N>::containDownload(FixedBuffer<N>& buffer){
-	if(buffer.indexOf("DOWNLOAD") == -1){
-		return false;
-	}
-	return true;
 }
