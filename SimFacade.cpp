@@ -5,14 +5,14 @@
 
 template<int N>
 SimFacade<N>::SimFacade(SoftwareSerial& refPort) :
-wrapper(refPort), gprsHandler(wrapper, writer, parser)
+wrapper(refPort), writer(wrapper), gprsHandler(wrapper, writer, parser)
 {
 	
 }
 
 template<int N>
 bool SimFacade<N>::isModuleUp(){
-	writer.writeAT(wrapper);
+	writer.writeAT();
 	
 	if(!wrapper.readToBuffer()){
 		//if minimum time has passed and there is still no anwser
@@ -49,7 +49,7 @@ bool SimFacade<N>::isModuleUp(){
 
 template<int N>
 NETWORK_CONNECTION SimFacade<N>::isConnectedToNetwork(){
-	writer.writeCREG(wrapper);
+	writer.writeCREG();
 	
 	if(!wrapper.readToBuffer()){
 		//if minimum time has passed and there is still no anwser
@@ -75,11 +75,11 @@ NETWORK_CONNECTION SimFacade<N>::isConnectedToNetwork(){
 
 template<int N>
 bool SimFacade<N>::setDefaultParams(){
-	writer.writeEcho(wrapper, false);
-	writer.writeNumberFormat(wrapper, true);
-	writer.writeCallReady(wrapper, false);
-	writer.writeReportAsError(wrapper, true);
-	writer.writeAT(wrapper);
+	writer.writeEcho(false);
+	writer.writeNumberFormat(true);
+	writer.writeCallReady(false);
+	writer.writeReportAsError(true);
+	writer.writeAT();
 	
 	if(wrapper.readToBuffer()){
 		for(int i = 0; i < 5; i++){
@@ -116,16 +116,16 @@ bool SimFacade<N>::disconnectFromGPRS(){
 
 template<int N>
 PostDataHandler<N> SimFacade<N>::sendPostRequest(const char* url, int dataLength){
-	writer.writeHTPP(wrapper, HTTP_COMMANDS::HTTP_INIT);
+	writer.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
 	readAndExpectSuccess(wrapper, parser);
 	
-	writer.writeHTPPSetParam(wrapper, "URL", url);
+	writer.writeHTPPSetParam("URL", url);
 	readAndExpectSuccess(wrapper, parser);
 	
-	writer.writeHTPPSetParam(wrapper, "CONTENT", "application/x-www-form-urlencoded");
+	writer.writeHTPPSetParam("CONTENT", "application/x-www-form-urlencoded");
 	readAndExpectSuccess(wrapper, parser);
 	
-	writer.writeHTPPData(wrapper, dataLength);
+	writer.writeHTPPData(dataLength);
 	if(!wrapper.readToBuffer()){
 		Serial.println("Error with sendPostRequest() 1");
 		//error

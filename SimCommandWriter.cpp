@@ -2,22 +2,28 @@
 
 
 template<int N>
-void SimCommandWriter<N>::writeAT(SimIOWrapper<N>& wrapper){
+SimCommandWriter<N>::SimCommandWriter(SimIOWrapper<N>& refWrapper) :
+	wrapper (refWrapper){
+	
+}
+
+template<int N>
+void SimCommandWriter<N>::writeAT(){
 	wrapper.writeCommand("AT");
 }
 
 template<int N>
-void SimCommandWriter<N>::writeCREG(SimIOWrapper<N>& wrapper){
+void SimCommandWriter<N>::writeCREG(){
 	wrapper.writeCommand("AT+CREG?");
 }
 
 template<int N>
-void SimCommandWriter<N>::writeCSQ(SimIOWrapper<N>& wrapper){
+void SimCommandWriter<N>::writeCSQ(){
 	wrapper.writeCommand("AT+CSQ");
 }
 
 template<int N>
-void SimCommandWriter<N>::writeEcho(SimIOWrapper<N>& wrapper, bool turnOn){
+void SimCommandWriter<N>::writeEcho(bool turnOn){
 	if(turnOn){
 		wrapper.writeCommand("ATE1&W");
 	}else{
@@ -26,7 +32,7 @@ void SimCommandWriter<N>::writeEcho(SimIOWrapper<N>& wrapper, bool turnOn){
 }
 
 template<int N>
-void SimCommandWriter<N>::writeNumberFormat(SimIOWrapper<N>& wrapper, bool turnOn){
+void SimCommandWriter<N>::writeNumberFormat(bool turnOn){
 	if(turnOn){
 		wrapper.writeCommand("ATV0&W");
 	}else{
@@ -35,7 +41,7 @@ void SimCommandWriter<N>::writeNumberFormat(SimIOWrapper<N>& wrapper, bool turnO
 }
 
 template<int N>
-void SimCommandWriter<N>::writeCallReady(SimIOWrapper<N>& wrapper, bool turnOn){
+void SimCommandWriter<N>::writeCallReady(bool turnOn){
 	if(turnOn){
 		wrapper.writeCommand("AT+CIURC=1;&W");
 	}else{
@@ -44,7 +50,7 @@ void SimCommandWriter<N>::writeCallReady(SimIOWrapper<N>& wrapper, bool turnOn){
 }
 
 template<int N>
-void SimCommandWriter<N>::writeReportAsError(SimIOWrapper<N>& wrapper, bool turnOn){
+void SimCommandWriter<N>::writeReportAsError(bool turnOn){
 	if(turnOn){
 		wrapper.writeCommand("AT+CMEE=0;&W");
 	}else{
@@ -54,7 +60,7 @@ void SimCommandWriter<N>::writeReportAsError(SimIOWrapper<N>& wrapper, bool turn
 
 
 template<int N>
-void SimCommandWriter<N>::writeSAPBR(SimIOWrapper<N>& wrapper, SAPBR_COMMANDS cmd, const char* param, const char* value){
+void SimCommandWriter<N>::writeSAPBR(SAPBR_COMMANDS cmd, const char* param, const char* value){
 	wrapper.writeString("AT+SAPBR=").
 		writeInt(static_cast<int>(cmd)).
 		writeString(",1");
@@ -70,7 +76,7 @@ void SimCommandWriter<N>::writeSAPBR(SimIOWrapper<N>& wrapper, SAPBR_COMMANDS cm
 }
 
 template<int N>
-void SimCommandWriter<N>::writeHTPP(SimIOWrapper<N>& wrapper, HTTP_COMMANDS cmd){
+void SimCommandWriter<N>::writeHTPP(HTTP_COMMANDS cmd){
 	switch (cmd){
 		case HTTP_INIT:
 			wrapper.writeCommand("AT+HTTPINIT");
@@ -86,7 +92,7 @@ void SimCommandWriter<N>::writeHTPP(SimIOWrapper<N>& wrapper, HTTP_COMMANDS cmd)
 
 
 template<int N>
-void SimCommandWriter<N>::writeHTPPSetParam(SimIOWrapper<N>& wrapper, const char* param, const char* value){
+void SimCommandWriter<N>::writeHTPPSetParam(const char* param, const char* value){
 	wrapper.writeString("AT+HTTPPARA=").
 		writeChar('"').
 		writeString(param).
@@ -98,7 +104,7 @@ void SimCommandWriter<N>::writeHTPPSetParam(SimIOWrapper<N>& wrapper, const char
 
 
 template<int N>
-void SimCommandWriter<N>::writeHTPPAction(SimIOWrapper<N>& wrapper, bool isPost){
+void SimCommandWriter<N>::writeHTPPAction(bool isPost){
 	if(isPost){
 		wrapper.writeCommand("AT+HTTPACTION=1");
 	}else{
@@ -107,7 +113,7 @@ void SimCommandWriter<N>::writeHTPPAction(SimIOWrapper<N>& wrapper, bool isPost)
 }
 
 template<int N>
-void SimCommandWriter<N>::writeHTPPData(SimIOWrapper<N> wrapper, int length){
+void SimCommandWriter<N>::writeHTPPData(int length){
 	wrapper.writeString("AT+HTTPDATA=").
 		writeInt(length).
 		writeChar(',').

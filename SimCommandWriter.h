@@ -7,20 +7,23 @@ template<int N>
 class SimCommandWriter
 {
 	public:
-		void writeAT(SimIOWrapper<N>& wrapper);
-		void writeCREG(SimIOWrapper<N>& wrapper);
-		void writeCSQ(SimIOWrapper<N>& wrapper);
-		void writeEcho(SimIOWrapper<N>& wrapper, bool turnOn);
-		void writeNumberFormat(SimIOWrapper<N>& wrapper, bool turnOn);
-		void writeCallReady(SimIOWrapper<N>& wrapper, bool turnOn);
-		void writeReportAsError(SimIOWrapper<N>& wrapper, bool turnOn);
-		void writeSAPBR(SimIOWrapper<N>& wrapper, SAPBR_COMMANDS cmd, const char* param = nullptr, const char* value = nullptr);
-		void writeHTPP(SimIOWrapper<N>& wrapper, HTTP_COMMANDS cmd);
-		void writeHTPPSetParam(SimIOWrapper<N>& wrapper, const char* param, const char* value);
-		void writeHTPPAction(SimIOWrapper<N>& wrapper, bool isPost);
-		void writeHTPPData(SimIOWrapper<N> wrapper, int length);
+		SimCommandWriter(SimIOWrapper<N>& refWrapper);
+	
+		void writeAT();
+		void writeCREG();
+		void writeCSQ();
+		void writeEcho(bool turnOn);
+		void writeNumberFormat(bool turnOn);
+		void writeCallReady(bool turnOn);
+		void writeReportAsError(bool turnOn);
+		void writeSAPBR(SAPBR_COMMANDS cmd, const char* param = nullptr, const char* value = nullptr);
+		void writeHTPP(HTTP_COMMANDS cmd);
+		void writeHTPPSetParam(const char* param, const char* value);
+		void writeHTPPAction(bool isPost);
+		void writeHTPPData(int length);
+		
 	private:
-		//TODO: made SimIOWrapper as refParam
+		SimIOWrapper<N>& wrapper;
 		
 };
 

@@ -91,13 +91,13 @@ void setup(){
 	// Serial.println(simHandler.isModuleUp() ? "TRUE" : "FALSE");
 	// Serial.println(simHandler.isConnectedToNetwork());
 	
-	// writer.writeAT(wrapper);
+	// writer.writeAT();
 	// wrapper.readToBuffer();
 	// Serial.println(parser.isSimpleMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
-	// writer.writeCREG(wrapper);
+	// writer.writeCREG();
 	// wrapper.readToBuffer();
 	// Serial.println(parser.isComplexMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
-	// writer.writeCSQ(wrapper);
+	// writer.writeCSQ();
 	// wrapper.readToBuffer();
 	// Serial.println(parser.isComplexMessageReady(wrapper.getBuffer()) ? "TRUE" : "FALSE");
 	// gprs.init(&sim);

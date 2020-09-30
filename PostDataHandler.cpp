@@ -22,7 +22,7 @@ bool PostDataHandler<N>::send(){
 		return false;
 	}
 		
-	refWriter.writeHTPPAction(refWrapper, true);
+	refWriter.writeHTPPAction(true);
 	
 	return readAndExpectSuccess(refWrapper, refParser);
 }
@@ -42,6 +42,6 @@ bool PostDataHandler<N>::isSendedSuccesfully(){
 
 template<int N>
 void PostDataHandler<N>::finish(){
-	refWriter.writeHTPP(refWrapper, HTTP_COMMANDS::HTTP_TERM);
+	refWriter.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
 	readAndExpectSuccess(refWrapper, refParser);
 }
