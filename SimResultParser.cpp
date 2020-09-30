@@ -47,9 +47,9 @@ int SimResultParser<N>::fetchResultCode(FixedBuffer<N>& buffer){
 	const char* last = buffer.end() - 1;
 	
 	if(isDigit(*last)){
+		int result = characterToInt(*last);
 		buffer--;
-	
-		return atoi(last);
+		return result;
 	}
 	
 	return ANWSER_CODES::UNDEFINED;

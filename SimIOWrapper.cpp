@@ -1,5 +1,10 @@
-#include <Arduino.h>
 #include "SimIOWrapper.h"
+
+// #ifdef ABS
+	// #warning definied
+	// #include <Arduino.h>
+// #endif
+
 
 //in millis
 const static unsigned int MIN_DELAY = 25;
@@ -11,39 +16,46 @@ SimIOWrapper<N>::SimIOWrapper(SoftwareSerial& refSerial) :
 }
 
 template<int N>
-bool SimIOWrapper<N>::writeCommand(const String& cmd){
-	Serial.println(cmd);
-	unsigned int written = refPort.println(cmd);
-	buffer.clear();
-	
-	//- 2 because will be added \r\n
-	return (written - 2) == cmd.length();
+void SimIOWrapper<N>::writeCommand(const char* cmd){
+	writeString(cmd);
+	writeEndOfCommand();
 }
 
 template<int N>
 SimIOWrapper<N>& SimIOWrapper<N>::writeChar(char c){
-	Serial.print(c);
+	// #ifdef ABS
+		Serial.print(c);
+	// #endif
 	refPort.print(c);
+	
 	return *this;
 }
 
 template<int N>
 SimIOWrapper<N>& SimIOWrapper<N>::writeInt(int c){
-	Serial.print(c);
+	// #ifdef ABS
+		Serial.print(c);
+	// #endif
 	refPort.print(c);
+	
 	return *this;
 }
 
 template<int N>
 SimIOWrapper<N>& SimIOWrapper<N>::writeString(const char* c){
-	Serial.print(c);
+	// #ifdef ABS
+		Serial.print(c);
+	// #endif
 	refPort.print(c);
+	
 	return *this;
 }
 
 template<int N>
-void SimIOWrapper<N>::writeSendCommand(){
-	Serial.print("\r\n");
+void SimIOWrapper<N>::writeEndOfCommand(){
+	// #ifdef ABS
+		Serial.print("\r\n");
+	// #endif
 	refPort.print("\r\n");
 	buffer.clear();
 }
@@ -60,11 +72,18 @@ bool SimIOWrapper<N>::readToBuffer(){
 	
 	while(refPort.available()){
 		if(buffer.isFull()){
-			Serial.println("Buffer is full");
-			return false;
+			// #ifdef ABS
+				Serial.println("Buffer is full");
+			// #endif
+			
+			return true;
 		}
 		char c = refPort.read();
-		Serial.print(c);
+		
+		// #ifdef ABS
+			Serial.print(c);
+		// #endif
+		
 		buffer += c; 
 	}
 	
@@ -77,8 +96,10 @@ bool SimIOWrapper<N>::readToBufferTimeout(int millis){
 		if(readToBuffer()){
 			return true;
 		}
+		
 		millis -= MIN_DELAY;
 	}
+	
 	return false;
 }
 

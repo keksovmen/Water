@@ -17,7 +17,7 @@ void PostDataHandler<N>::write(const char* str){
 
 template<int N>
 bool PostDataHandler<N>::send(){
-	refWrapper.writeSendCommand();
+	refWrapper.writeEndOfCommand();
 	if(!readAndExpectSuccess(refWrapper, refParser)){
 		return false;
 	}

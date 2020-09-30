@@ -12,12 +12,7 @@ wrapper(refPort), gprsHandler(wrapper, writer, parser)
 
 template<int N>
 bool SimFacade<N>::isModuleUp(){
-	if(!writer.writeAT(wrapper)){
-		//if there is problem then next command will be corrapted
-		//TODO: fix it, maybe remember last command and how much 
-		//remains to write, or just send couple AT command to clear buffer
-		return false;
-	}
+	writer.writeAT(wrapper);
 	
 	if(!wrapper.readToBuffer()){
 		//if minimum time has passed and there is still no anwser
@@ -54,12 +49,7 @@ bool SimFacade<N>::isModuleUp(){
 
 template<int N>
 NETWORK_CONNECTION SimFacade<N>::isConnectedToNetwork(){
-	if(!writer.writeCREG(wrapper)){
-		//if there is problem then next command will be corrapted
-		//TODO: fix it, maybe remember last command and how much 
-		//remains to write, or just send couple AT command to clear buffer
-		return NETWORK_CONNECTION::UNKNOWN;
-	}
+	writer.writeCREG(wrapper);
 	
 	if(!wrapper.readToBuffer()){
 		//if minimum time has passed and there is still no anwser
@@ -70,7 +60,8 @@ NETWORK_CONNECTION SimFacade<N>::isConnectedToNetwork(){
 		if(parser.fetchResultCode(wrapper.getBuffer()) ==
 				ANWSER_CODES::OK){
 			return static_cast<NETWORK_CONNECTION>(
-				parser.fetchNetworkRegistration(wrapper.getBuffer()));
+					parser.fetchNetworkRegistration(wrapper.getBuffer())
+					);
 		}else{
 			return NETWORK_CONNECTION::UNKNOWN;
 		}
@@ -84,17 +75,22 @@ NETWORK_CONNECTION SimFacade<N>::isConnectedToNetwork(){
 
 template<int N>
 bool SimFacade<N>::setDefaultParams(){
-	if(writer.writeEcho(wrapper, false) &&
-			writer.writeNumberFormat(wrapper, true) &&
-			writer.writeCallReady(wrapper, false) &&
-			writer.writeReportAsError(wrapper, true) &&
-			writer.writeAT(wrapper)){
-		if(wrapper.readToBuffer()){
-			if(parser.fetchResultCode(wrapper.getBuffer()) == ANWSER_CODES::OK){
-				return true;
+	writer.writeEcho(wrapper, false);
+	writer.writeNumberFormat(wrapper, true);
+	writer.writeCallReady(wrapper, false);
+	writer.writeReportAsError(wrapper, true);
+	writer.writeAT(wrapper);
+	
+	if(wrapper.readToBuffer()){
+		for(int i = 0; i < 5; i++){
+			if(parser.fetchResultCode(wrapper.getBuffer()) != ANWSER_CODES::OK){
+				return false;
 			}
 		}
+		
+		return true;
 	}
+	
 	return false;
 }
 
