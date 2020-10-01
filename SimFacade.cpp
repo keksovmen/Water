@@ -22,11 +22,12 @@ bool SimFacade<N>::isModuleUp(){
 	
 	if(parser.isSimpleMessageReady()){
 		ANWSER_CODES numberFetch = static_cast<ANWSER_CODES>(
-			parser.fetchResultCode()
-			);
+									parser.fetchResultCode()
+									);
 			
 		//if code is undefiend try text variant
 		if(numberFetch == ANWSER_CODES::UNDEFINED){
+			
 			numberFetch = static_cast<ANWSER_CODES>(
 						parser.fetchSimpleTextCode()
 						);
@@ -72,22 +73,26 @@ NETWORK_CONNECTION SimFacade<N>::isConnectedToNetwork(){
 template<int N>
 bool SimFacade<N>::setDefaultParams(){
 	writer.writeEcho(false);
+	if(!readAndExpectSuccess(wrapper, parser))
+		return false;
+	
 	writer.writeNumberFormat(true);
+	if(!readAndExpectSuccess(wrapper, parser))
+		return false;
+	
 	writer.writeCallReady(false);
+	if(!readAndExpectSuccess(wrapper, parser))
+		return false;
+	
 	writer.writeReportAsError(true);
+	if(!readAndExpectSuccess(wrapper, parser))
+		return false;
+	
 	writer.writeAT();
+	if(!readAndExpectSuccess(wrapper, parser))
+		return false;
 	
-	if(wrapper.readToBuffer()){
-		for(int i = 0; i < 5; i++){
-			if(parser.fetchResultCode() != ANWSER_CODES::OK){
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
-	return false;
+	return true;
 }
 
 

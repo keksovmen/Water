@@ -102,7 +102,7 @@ int SimResultParser<N>::fetchResultCode(){
 	}
 	
 	int result = characterToInt(buffer[index]);
-	buffer.remove(index, 3);
+	// buffer.remove(index, 3);
 	
 	return result;
 }
@@ -118,17 +118,12 @@ int SimResultParser<N>::fetchSimpleTextCode(){
 		
 		if(index == -1){
 			return ANWSER_CODES::UNDEFINED;
-			
 		}else{
-			buffer.remove(index, 9);
-			
 			return ANWSER_CODES::ERROR;
 		}
 		
 	}else{
-		buffer.remove(index, 6);
-		
-		return ANWSER_CODES::ERROR;
+		return ANWSER_CODES::OK;
 	}
 }
 
