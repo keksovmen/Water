@@ -35,7 +35,7 @@ void setup(){
 		delay(5000);
 		if(!simHandler.isModuleUp()){
 			Serial.println("Module if offline");
-			while(1){}
+			// while(1){}
 		}
 	}
 	
@@ -43,7 +43,7 @@ void setup(){
 		delay(5000);
 		if(!simHandler.isConnectedToNetwork()){
 			Serial.println("Module can't connect to network");
-			while(1){}
+			// while(1){}
 		}
 	}
 	
@@ -51,7 +51,7 @@ void setup(){
 		delay(5000);
 		if(!simHandler.connectToGPRS("internet")){
 			Serial.println("Module can't connect to GPRS");
-			while(1){}
+			// while(1){}
 		}
 	}
 	
@@ -61,18 +61,18 @@ void setup(){
 	PostDataHandler<BUFFER_SIZE> dataHandler = simHandler.sendPostRequest("http://128.69.240.186/Send.php", strLength);
 	dataHandler.write(str);
 	
-	if(!dataHandler.send()){
-		Serial.println("Module can't go furthre then HTTPACTION");
-		while(1){}
-	}
-	
-	if(!dataHandler.isSended()){
+	if(dataHandler.send()){
 		if(!dataHandler.isSended()){
-			Serial.println("Send already took 10 sec");
-			while(!dataHandler.isSended()){
-				Serial.println("Send took another 5 sec");
+			if(!dataHandler.isSended()){
+				Serial.println("Send already took 10 sec");
+				while(!dataHandler.isSended()){
+					Serial.println("Send took another 5 sec");
+				}
 			}
 		}
+	}else{
+		Serial.println("Module can't go furthre then HTTPACTION");
+		// while(1){}
 	}
 	
 	if(!dataHandler.isSendedSuccesfully()){

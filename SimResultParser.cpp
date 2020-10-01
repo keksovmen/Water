@@ -89,37 +89,47 @@ int SimResultParser<N>::fetchResultCode(){
 
 template<int N>
 int SimResultParser<N>::fetchSimpleTextCode(){
-	//TODO: use find indexOf \r\n(OK)\r\n
-	//to proper handling
-	buffer.trim();
-	if(buffer.endsWith("OK")){
-		buffer--;
-		buffer--;
-		return ANWSER_CODES::OK;
-	}
+	//TODO: look realy hard to understand remove if else somehow
+	int index = buffer.indexOfEnd("\r\nOK\r\n");
 	
-	if(buffer.endsWith("ERROR")){
+	if(index == -1){
+		index = buffer.indexOfEnd("\r\nERROR\r\n");
+		
+		if(index == -1){
+			return ANWSER_CODES::UNDEFINED;
+			
+		}else{
+			buffer.remove(index, 9);
+			
+			return ANWSER_CODES::ERROR;
+		}
+		
+	}else{
+		buffer.remove(index, 6);
+		
 		return ANWSER_CODES::ERROR;
 	}
-	
-	return ANWSER_CODES::UNDEFINED;
 }
 
 
 /**
-	Expects buffer as +CREG:<n>,<stat>\r\n
-	And expect <n> = 0
+	Expects buffer as +CREG: <n>,<stat>\r\n
+		<n> = 0...2
+		<stat> = 0...5
 */
 
 template<int N>
 int SimResultParser<N>::fetchNetworkRegistration(){
-	buffer.trim();
-	//TODO: use instead of atoi characterToInt() from Util.h
-	//use indexOf to proper handling
-	int code = atoi(buffer.end() - 1);
-	buffer--;
+	int index = buffer.indexOf("+CREG: ");
 	
-	return code;
+	if(index == -1){
+		//display error some how
+		return -1;
+	}
+	
+	index += 9;	//move on <stat> position
+	
+	return characterToInt(buffer[index]);
 }
 
 
@@ -128,7 +138,7 @@ int SimResultParser<N>::fetchNetworkRegistration(){
 	
 	+SAPBR: cid,status
 	
-		cid - index of barier
+		cid - index of barier - 0...4
 		status:
 			0 - connecting
 			1 - connected
@@ -138,10 +148,16 @@ int SimResultParser<N>::fetchNetworkRegistration(){
 
 template<int N>
 int SimResultParser<N>::fetchGPRSStatus(){
-	//TODO: use indexOf
-	buffer.trim();
-	buffer.remove(0, 10);
-	return characterToInt(buffer[0]);
+	int index = buffer.indexOf("+SAPBR: ");
+	
+	if(index == -1){
+		//indicate error somehow
+		return -1;
+	}
+	
+	index += 10;
+	
+	return characterToInt(buffer[index]);
 }
 
 
@@ -157,14 +173,14 @@ int SimResultParser<N>::fetchGPRSStatus(){
 
 template<int N>
 int SimResultParser<N>::fetchHTTPStatus(){
-	buffer.trim();
 	int index = buffer.indexOf("+HTTPACTION: ");
+	
 	if(index == -1){
+		//indicate error
 		return -1;
-		//error
 	}
 	
-	index += 12;	//length of HTTPACTION:\s, index on \s
-	index += 3;		//<method> and ',', so now on <status> should be
+	index += 15;	//index will be on first character of status
+	
 	return characterToInt(buffer[index]);
 }
