@@ -122,14 +122,43 @@ class FixedBuffer
 			if(wordLength > length)
 				return -1;
 			
-			#ifdef ARDUINO
-				char* find = strstr(data, str);
-			#else
-				char* find = strstr(data, str);
-			#endif
+			char* find = strstr(data, str);
+			
 			if(find){
 				return find - data;
 			}
+			return -1;
+		}
+		
+		
+		/**
+			Same as indexOf but starts from the end,
+			from right to left
+			
+			@param str what to find
+			@return -1 if there is no match
+		*/
+		
+		int indexOfEnd(const char* str){
+			int wordLength = strlen(str);
+			if(wordLength > length || wordLength <= 0){
+				return -1;
+			}
+			
+			wordLength--;	//made as max index value
+			
+			for(int i_b = length - 1, i_m = wordLength; i_b >= 0; i_b--){
+				if(data[i_b] == str[i_m]){
+					i_m--;
+				}else{
+					i_m = wordLength;
+				}
+				
+				if(i_m < 0){
+					return i_b;
+				}
+			}
+			
 			return -1;
 		}
 		

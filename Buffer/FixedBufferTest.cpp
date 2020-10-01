@@ -21,6 +21,8 @@ bool checkRemove(const char* origin, int start, int amount, const char* expected
 
 bool checkSubstring(const char* origin, int from, int to, const char* expected);
 
+bool checkIndexOfEnd(const char* origin, const char* search, int expected);
+
 bool checkClear(const char* origin);
 
 
@@ -86,6 +88,11 @@ int main()
 	assert (checkSubstring("0123456789", 0, 10, "0123456789"));
 	
 	assert (checkClear("123456678"));
+	
+	assert (checkIndexOfEnd("0", "0", 0));
+	assert (checkIndexOfEnd("0123456789", "789", 7));
+	assert (checkIndexOfEnd("0123456789", "45", 4));
+	assert (checkIndexOfEnd("0123456789", "54", -1));
 }
 
 bool checkLength(int divider){
@@ -181,6 +188,14 @@ bool checkClear(const char* origin){
 	buffer.clear();
 	
 	return strlen(buffer.getData()) == buffer.getLength();
+}
+
+bool checkIndexOfEnd(const char* origin, const char* search, int expected){
+	FixedBuffer<512> buffer;
+	
+	copyIntoBuffer(buffer, origin);
+	
+	return buffer.indexOfEnd(search) == expected;
 }
 
 template<int N>
