@@ -27,9 +27,12 @@ SimResultParser<N>::SimResultParser(FixedBuffer<N>& refBuffer) :
 
 template<int N>
 bool SimResultParser<N>::isSimpleMessageReady(){
-	//TODO: if contain other messages you have to check
-	//something like: from end to start looking for 0 or 4 \r\n
-	return buffer.endsWith("\r\n");
+	if(buffer.indexOfEnd("0\r\n") != -1)
+		return true;
+	if(buffer.indexOfEnd("4\r\n") != -1)
+		return true;
+	
+	return false;
 }
 
 
@@ -46,35 +49,41 @@ bool SimResultParser<N>::isComplexMessageReady(){
 	if(buffer.getLength() <= 3){
 		return false;
 	}
-	//TODO: osntead of endWith use indexOf()
-	return buffer.endsWith("\r\n0\r\n") ||	//success code
-			buffer.endsWith("\r\n4\r\n");	//error code
+	
+	if(buffer.indexOfEnd("\r\n0\r\n") != -1)
+		return true;
+	if(buffer.indexOfEnd("\r\n4\r\n") != -1)
+		return true;
+	
+	return false;
 }
 
 
 template<int N>
 bool SimResultParser<N>::containDownload(){
-	if(buffer.indexOf("DOWNLOAD") == -1){
-		return false;
-	}
-	return true;
+	if(buffer.indexOf("DOWNLOAD") != -1)
+		return true;
+	
+	return false;
 }
 
 
 template<int N>
 int SimResultParser<N>::fetchResultCode(){
-	//TODO: use find indexOf \r\n(0 or 4)\r\n
-	//to proper handling
-	buffer.trim();
-	const char* last = buffer.end() - 1;
+	int index = buffer.indexOfEnd("0\r\n");
 	
-	if(isDigit(*last)){
-		int result = characterToInt(*last);
-		buffer--;
-		return result;
+	if(index == -1){
+		index = buffer.indexOfEnd("4\r\n");
+		
+		if(index == -1){
+			return ANWSER_CODES::UNDEFINED;
+		}
 	}
 	
-	return ANWSER_CODES::UNDEFINED;
+	int result = characterToInt(buffer[index]);
+	buffer.remove(index, 3);
+	
+	return result;
 }
 
 
