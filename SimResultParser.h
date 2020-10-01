@@ -10,6 +10,7 @@ class SimResultParser
 		bool isSimpleMessageReady();
 		bool isComplexMessageReady();
 		bool containDownload();
+		bool isHttpActionPresents();
 		
 		int fetchResultCode();
 		int fetchSimpleTextCode();

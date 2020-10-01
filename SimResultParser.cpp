@@ -69,6 +69,23 @@ bool SimResultParser<N>::containDownload(){
 
 
 template<int N>
+bool SimResultParser<N>::isHttpActionPresents(){
+	int index = buffer.indexOf("+HTTPACTION: ");
+	if(index == -1)
+		return false;
+	
+	int terminatorIndex = buffer.indexOfEnd("\r\n");
+	if(terminatorIndex == -1)
+		return false;
+	
+	if(terminatorIndex < index)
+		return false;
+	
+	return true;
+}
+
+
+template<int N>
 int SimResultParser<N>::fetchResultCode(){
 	int index = buffer.indexOfEnd("0\r\n");
 	

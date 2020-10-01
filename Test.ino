@@ -35,7 +35,7 @@ void setup(){
 		delay(5000);
 		if(!simHandler.isModuleUp()){
 			Serial.println("Module if offline");
-			// while(1){}
+			while(1){}
 		}
 	}
 	
@@ -43,7 +43,7 @@ void setup(){
 		delay(5000);
 		if(!simHandler.isConnectedToNetwork()){
 			Serial.println("Module can't connect to network");
-			// while(1){}
+			while(1){}
 		}
 	}
 	
@@ -51,7 +51,7 @@ void setup(){
 		delay(5000);
 		if(!simHandler.connectToGPRS("internet")){
 			Serial.println("Module can't connect to GPRS");
-			// while(1){}
+			while(1){}
 		}
 	}
 	

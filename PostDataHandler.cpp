@@ -29,7 +29,11 @@ bool PostDataHandler<N>::send(){
 
 template<int N>
 bool PostDataHandler<N>::isSended(){
-	return refWrapper.readToBufferTimeout(5000);
+	if(refWrapper.readToBufferTimeout(5000)){
+		return refParser.isHttpActionPresents();
+	}
+	
+	return false;
 }
 
 
