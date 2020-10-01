@@ -31,6 +31,10 @@ bool SimResultParser<N>::isSimpleMessageReady(){
 		return true;
 	if(buffer.indexOfEnd("4\r\n") != -1)
 		return true;
+	if(buffer.indexOfEnd("\r\nOK\r\n") != -1)
+		return true;
+	if(buffer.indexOfEnd("\r\nERROR\r\n") != -1)
+		return true;
 	
 	return false;
 }

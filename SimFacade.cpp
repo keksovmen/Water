@@ -25,21 +25,14 @@ bool SimFacade<N>::isModuleUp(){
 			parser.fetchResultCode()
 			);
 			
-		switch (numberFetch){
-			case OK:
-				return true;
-				
-			case UNDEFINED:
-				numberFetch = static_cast<ANWSER_CODES>(
-					parser.fetchSimpleTextCode());
-				if(numberFetch == ANWSER_CODES::OK){
-					return true;
-				}
-				return false;
-				
-			default:
-				return false;
+		//if code is undefiend try text variant
+		if(numberFetch == ANWSER_CODES::UNDEFINED){
+			numberFetch = static_cast<ANWSER_CODES>(
+						parser.fetchSimpleTextCode()
+						);
 		}
+			
+		return numberFetch == ANWSER_CODES::OK;
 	}else{
 		//TODO: Coud fail here due to Unsolicited messages
 		//UNDER VOLTAG etc. fix it, through parser
