@@ -21,6 +21,7 @@ class SimCommandWriter
 		void writeHTPPSetParam(const char* param, const char* value);
 		void writeHTPPAction(bool isPost);
 		void writeHTPPData(int length);
+		void writeReadHTTP(int from, int amount);
 		
 	private:
 		SimIOWrapper<N>& wrapper;

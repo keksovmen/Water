@@ -18,6 +18,10 @@ class SimResultParser
 		int fetchGPRSStatus();
 		int fetchHTTPStatus();
 		
+		unsigned long fetchHttpResponceLength();
+		
+		void removeReadHttpGarbage();
+		
 	private:
 		FixedBuffer<N>& buffer;
 		

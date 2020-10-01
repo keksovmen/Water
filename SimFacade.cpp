@@ -132,16 +132,26 @@ PostDataHandler<N> SimFacade<N>::sendPostRequest(const char* url, int dataLength
 		//error
 	}
 	
+	//error
 	if(!parser.containDownload()){
-		// delay(50);
 		if(!wrapper.readToBuffer()){
-			Serial.println("Error with sendPostRequest() 3");
-		}
-		if(!parser.containDownload()){
 			Serial.println("Error with sendPostRequest() 2");
 		}
-		//error
+		if(!parser.containDownload()){
+			Serial.println("Error with sendPostRequest() 3");
+		}
 	}
 	
 	return PostDataHandler<N>(wrapper, parser, writer);
+}
+
+
+template<int N>
+GetDataHandler<N> SimFacade<N>::sendGetRequest(){
+	writer.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
+	readAndExpectSuccess(wrapper, parser);
+	
+	writer.writeHTPPSetParam("URL", nullptr);
+	
+	return GetDataHandler<N>(wrapper, parser, writer);
 }

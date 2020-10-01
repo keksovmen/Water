@@ -96,10 +96,14 @@ void SimCommandWriter<N>::writeHTPPSetParam(const char* param, const char* value
 	wrapper.writeString("AT+HTTPPARA=").
 		writeChar('"').
 		writeString(param).
-		writeString("\",\"").
-		writeString(value).
+		writeString("\",\"");
+		
+	if(value){
+		wrapper.writeString(value).
 		writeChar('"').
 		writeEndOfCommand();
+	}
+	//else will be written later through other methods of SimIOWrapper
 }
 
 
@@ -119,4 +123,14 @@ void SimCommandWriter<N>::writeHTPPData(int length){
 		writeChar(',').
 		writeInt(5000).
 		writeEndOfCommand();
+}
+
+
+template<int N>
+void SimCommandWriter<N>::writeReadHTTP(int from, int amount){
+	wrapper.writeString("AT+HTTPREAD=").
+		writeInt(from).
+		writeChar(',').
+		writeInt(amount).
+		writeEndOfCommand(false);
 }

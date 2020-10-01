@@ -16,9 +16,9 @@ SimIOWrapper<N>::SimIOWrapper(SoftwareSerial& refSerial) :
 }
 
 template<int N>
-void SimIOWrapper<N>::writeCommand(const char* cmd){
+void SimIOWrapper<N>::writeCommand(const char* cmd, bool clearBuffer){
 	writeString(cmd);
-	writeEndOfCommand();
+	writeEndOfCommand(clearBuffer);
 }
 
 template<int N>
@@ -52,12 +52,15 @@ SimIOWrapper<N>& SimIOWrapper<N>::writeString(const char* c){
 }
 
 template<int N>
-void SimIOWrapper<N>::writeEndOfCommand(){
+void SimIOWrapper<N>::writeEndOfCommand(bool clearBuffer){
 	// #ifdef ABS
 		Serial.print("\r\n");
 	// #endif
 	refPort.print("\r\n");
-	buffer.clear();
+	
+	if(clearBuffer){
+		buffer.clear();
+	}
 }
 
 template<int N>

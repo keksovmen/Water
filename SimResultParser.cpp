@@ -200,3 +200,70 @@ int SimResultParser<N>::fetchHTTPStatus(){
 	
 	return characterToInt(buffer[index]);
 }
+
+
+/**
+	Message looks loke:
+	
+	+HTTPACTION: <method>,<status>,<data length>\r\n
+		method - 0 - GET, 1 - POST
+		status - 3 digit as real http status code
+		data length - amount of recieved data from server
+	
+
+*/
+
+template<int N>
+unsigned long SimResultParser<N>::fetchHttpResponceLength(){
+	int index = buffer.indexOf("+HTTPACTION: ");
+	
+	if(index == -1){
+		//indicate error
+		return 0;
+	}
+	
+	index += 19;	//on first char of <data length>
+	int endIndex = buffer.indexOfFrom(index, "\r\n");
+	
+	if(endIndex == -1){
+		//indicate error
+		return 0;
+	}
+	
+	int j = 0;
+	char storage[7];	//max length is 6 char and 7th for \0
+	for(int i = index; i < endIndex; i++, j++){
+		storage[j] = buffer[i];
+	}
+	
+	storage[j] = '0';
+	char* end;
+	return strtol(storage, &end, 10);
+}
+
+
+template<int N>
+void SimResultParser<N>::removeReadHttpGarbage(){
+	int index = buffer.indexOf("\r\n+HTTPREAD: ");
+	if(index == -1){
+		//indicate error
+		return;
+	}
+	
+	int endIndex = buffer.indexOfFrom(index + 10, "\r\n");
+	if(endIndex == -1){
+		//indicate error
+		return;
+	}
+	endIndex += 2;
+	
+	buffer.remove(index, endIndex - index);
+	
+	index = buffer.indexOfEnd("0\r\n");
+	if(index == -1){
+		//indicate error
+		return;
+	}
+	
+	buffer.remove(index, 3);
+}

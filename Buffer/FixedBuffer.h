@@ -60,6 +60,9 @@ class FixedBuffer
 		bool isFull(){return length > size;}
 		
 		
+		int remains(){return size - length;}
+		
+		
 		/**
 			Made buffer empty again
 			
@@ -118,11 +121,23 @@ class FixedBuffer
 		*/
 		
 		int indexOf(const char* str){
-			int wordLength = strlen(str);
-			if(wordLength > length)
+			return indexOfFrom(0, str);
+		}
+		
+		
+		/**
+			@param from index from which to start searching
+		*/
+		
+		int indexOfFrom(int from, const char* str){
+			if(from < 0)
 				return -1;
 			
-			char* find = strstr(data, str);
+			int wordLength = strlen(str);
+			if(wordLength + from > length)
+				return -1;
+			
+			char* find = strstr(data + from, str);
 			
 			if(find){
 				return find - data;
