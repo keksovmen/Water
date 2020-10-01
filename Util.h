@@ -32,8 +32,8 @@ bool readAndExpectSuccess(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, 
 		}
 	}
 	
-	if(static_cast<ANWSER_CODES>
-			(parser.fetchResultCode())
+	if(static_cast<ANWSER_CODES>(
+				parser.fetchResultCode())
 				== ANWSER_CODES::OK){
 		return true;
 	}

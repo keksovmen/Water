@@ -21,6 +21,8 @@ class GPRSHandler
 		
 		
 	private:
+		int retriveStatus();
+	
 		SimIOWrapper<N>& refWrapper;
 		SimCommandWriter<N>& refWriter;
 		SimResultParser<N>& refParser;
