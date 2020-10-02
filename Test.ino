@@ -64,7 +64,7 @@ void setup(){
 	const int strLength = strlen(str);
 	
 	PostDataHandler<BUFFER_SIZE> postDataHandler = simHandler.sendPostRequest("http://128.69.240.186/Send.php", strLength);
-	postDataHandler.write(str);
+	postDataHandler.writeString(str);
 	
 	if(postDataHandler.send()){
 		if(!postDataHandler.isSended()){
@@ -89,7 +89,7 @@ void setup(){
 	
 	GetDataHandler<BUFFER_SIZE> getHandler = simHandler.sendGetRequest();
 	
-	getHandler.write("http://128.69.240.186/ReadRaw.php");
+	getHandler.writeString("http://128.69.240.186/ReadRaw.php");
 	
 	if(getHandler.send()){
 		if(!getHandler.isSended()){
@@ -103,7 +103,6 @@ void setup(){
 	}else{
 		Serial.println("Module can't go furthre then HTTPACTION");
 		return;
-		// while(1){}
 	}
 	
 	getHandler.getBuffer().clear();

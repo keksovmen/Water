@@ -19,7 +19,7 @@ class SimCommandWriter
 		void writeSAPBR(SAPBR_COMMANDS cmd, const char* param = nullptr, const char* value = nullptr);
 		void writeHTPP(HTTP_COMMANDS cmd);
 		void writeHTPPSetParam(const char* param, const char* value);
-		void writeHTPPAction(bool isPost);
+		void writeHTPPAction(HTTP_REQUESTS method);
 		void writeHTPPData(int length);
 		void writeReadHTTP(int from, int amount);
 		

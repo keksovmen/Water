@@ -90,10 +90,47 @@ enum BEARER_STATUS : int
 };
 
 
+
 enum HTTP_COMMANDS : int
 {
 	HTTP_INIT,
 	HTTP_SET_PARAM,
 	HTTP_ACTION,
 	HTTP_TERM
+};
+
+
+/**
+	For AT+HTTPACTION=<n>
+		<n>:
+			0 - GET
+			1 - POST
+			2 - HEAD
+			3 - DELETE
+*/
+
+enum HTTP_REQUESTS : int
+{
+	HTTP_GET = 0,
+	HTTP_POST = 1,
+	HTTP_HEAD = 2,
+	HTTP_DELETE = 3
+};
+
+
+/**
+	Returned in AT+HTTPACTION
+	There are only first digits of codes,
+	they have 3 digit in each for more info
+*/
+
+enum HTTP_STATUS_CODES : int
+{
+	HTTP_STATUS_INFO = 1,
+	HTTP_STATUS_SUCCESS = 2,
+	HTTP_STATUS_REDIRECTION = 3,
+	HTTP_STATUS_CLIENT_ERROR = 4,
+	HTTP_STATUS_SERVER_ERROR = 5,
+	HTTP_STATUS_SIM_MODULE_ERROR = 6,
+	
 };

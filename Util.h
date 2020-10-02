@@ -28,7 +28,6 @@ bool readAndExpectSuccess(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, 
 	}
 	
 	if(!rdy){
-		// delay(10);
 		if(!wrapper.readToBuffer()){
 			return false;
 		}

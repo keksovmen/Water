@@ -1,6 +1,7 @@
 #include "GetDataHandler.h"
 #include "Util.h"
 
+
 template <int N>
 GetDataHandler<N>::GetDataHandler(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, SimCommandWriter<N>& writer) :
 	DataHandler<N>(wrapper, parser, writer){
@@ -17,7 +18,7 @@ bool GetDataHandler<N>::send(){
 		return false;
 	}
 		
-	this->refWriter.writeHTPPAction(false);
+	this->refWriter.writeHTPPAction(HTTP_REQUESTS::HTTP_GET);
 	
 	return readAndExpectSuccess(this->refWrapper, this->refParser);
 }

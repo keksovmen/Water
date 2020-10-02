@@ -14,9 +14,9 @@ class DataHandler
 		virtual bool send() = 0;
 		
 		
-		void write(const char* str);
-		void write(char c);
-		void write(int val);
+		void writeString(const char* str);
+		void writeChar(char c);
+		void writeInt(int val);
 		
 		bool isSended();
 		bool isSendedSuccesfully();

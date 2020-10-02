@@ -63,8 +63,41 @@ void SimIOWrapper<N>::writeEndOfCommand(bool clearBuffer){
 	}
 }
 
+
+
 template<int N>
 bool SimIOWrapper<N>::readToBuffer(){
+	if(tryReadToBuffer()){
+		while(tryReadToBuffer()){
+			
+		}
+			
+		return true;
+	}
+	
+	return false;
+}
+
+template<int N>
+bool SimIOWrapper<N>::readToBufferTimeout(int millis){
+	while(millis > 0){
+		if(tryReadToBuffer()){
+			while(tryReadToBuffer()){
+				
+			}
+			
+			return true;
+		}
+		
+		millis -= MIN_DELAY;
+	}
+	
+	return false;
+}
+
+
+template<int N>
+bool SimIOWrapper<N>::tryReadToBuffer(){
 	if(refPort.available() == 0){
 		delay(MIN_DELAY);
 	}
@@ -91,22 +124,5 @@ bool SimIOWrapper<N>::readToBuffer(){
 	}
 	
 	return true;
-}
-
-template<int N>
-bool SimIOWrapper<N>::readToBufferTimeout(int millis){
-	while(millis > 0){
-		if(readToBuffer()){
-			while(readToBuffer()){
-				
-			}
-			
-			return true;
-		}
-		
-		millis -= MIN_DELAY;
-	}
-	
-	return false;
 }
 

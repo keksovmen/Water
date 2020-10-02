@@ -10,6 +10,7 @@ class GetDataHandler : public DataHandler<N>
 		GetDataHandler(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, SimCommandWriter<N>& writer);
 		
 		bool send() override;
+		
 };
 
 template class GetDataHandler<128>;

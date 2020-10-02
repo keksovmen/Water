@@ -93,6 +93,7 @@ void SimCommandWriter<N>::writeHTPP(HTTP_COMMANDS cmd){
 
 template<int N>
 void SimCommandWriter<N>::writeHTPPSetParam(const char* param, const char* value){
+	//TODO: made separate header file with all comands as fields
 	wrapper.writeString("AT+HTTPPARA=").
 		writeChar('"').
 		writeString(param).
@@ -108,12 +109,11 @@ void SimCommandWriter<N>::writeHTPPSetParam(const char* param, const char* value
 
 
 template<int N>
-void SimCommandWriter<N>::writeHTPPAction(bool isPost){
-	if(isPost){
-		wrapper.writeCommand("AT+HTTPACTION=1");
-	}else{
-		wrapper.writeCommand("AT+HTTPACTION=0");
-	}
+void SimCommandWriter<N>::writeHTPPAction(HTTP_REQUESTS method){
+	wrapper.writeString("AT+HTTPACTION=").
+		writeInt(static_cast<int>(method)).
+		writeEndOfCommand();
+	
 }
 
 template<int N>

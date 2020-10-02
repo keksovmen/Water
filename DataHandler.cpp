@@ -1,7 +1,7 @@
 #include "DataHandler.h"
 #include "Enums.h"
 #include "Util.h"
-#include <Arduino.h>
+
 
 template <int N>
 DataHandler<N>::DataHandler(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, SimCommandWriter<N>& writer) :
@@ -10,17 +10,17 @@ DataHandler<N>::DataHandler(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser
 }
 
 template<int N>
-void DataHandler<N>::write(const char* str){
+void DataHandler<N>::writeString(const char* str){
 	refWrapper.writeString(str);
 }
 
 template<int N>
-void DataHandler<N>::write(char c){
+void DataHandler<N>::writeChar(char c){
 	refWrapper.writeChar(c);
 }
 
 template<int N>
-void DataHandler<N>::write(int val){
+void DataHandler<N>::writeInt(int val){
 	refWrapper.writeInt(val);
 }
 
@@ -40,8 +40,8 @@ bool DataHandler<N>::isSended(){
 
 template<int N>
 bool DataHandler<N>::isSendedSuccesfully(){
-	//TODO: made enum for codes
-	return refParser.fetchHTTPStatus() == 2;
+	return refParser.fetchHTTPStatus() == 
+		static_cast<int>(HTTP_STATUS_CODES::HTTP_STATUS_SUCCESS);
 }
 
 

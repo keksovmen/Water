@@ -25,6 +25,8 @@ class SimIOWrapper
 		FixedBuffer<N>& getBuffer(){return buffer;};
 		
 	private:
+		bool tryReadToBuffer();
+		
 		SoftwareSerial& refPort;
 		FixedBuffer<N> buffer;
 		
