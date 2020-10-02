@@ -15,32 +15,11 @@ template<int N>
 bool SimFacade<N>::isModuleUp(){
 	writer.writeAT();
 	
-	if(!wrapper.readToBuffer()){
-		//if minimum time has passed and there is still no anwser
+	if(!readAndExpectSuccess(wrapper, parser)){
 		return false;
 	}
 	
-	if(parser.isSimpleMessageReady()){
-		ANWSER_CODES numberFetch = static_cast<ANWSER_CODES>(
-									parser.fetchResultCode()
-									);
-			
-		//if code is undefiend try text variant
-		if(numberFetch == ANWSER_CODES::UNDEFINED){
-			
-			numberFetch = static_cast<ANWSER_CODES>(
-						parser.fetchSimpleTextCode()
-						);
-		}
-			
-		return numberFetch == ANWSER_CODES::OK;
-	}else{
-		//TODO: Coud fail here due to Unsolicited messages
-		//UNDER VOLTAG etc. fix it, through parser
-		return isModuleUp();
-	}
-	
-	return false;
+	return true;
 }
 
 

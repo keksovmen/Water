@@ -91,40 +91,19 @@ bool SimResultParser<N>::isHttpActionPresents(){
 
 template<int N>
 int SimResultParser<N>::fetchResultCode(){
-	int index = buffer.indexOfEnd("0\r\n");
-	
-	if(index == -1){
-		index = buffer.indexOfEnd("4\r\n");
-		
-		if(index == -1){
-			return ANWSER_CODES::UNDEFINED;
-		}
-	}
-	
-	int result = characterToInt(buffer[index]);
-	// buffer.remove(index, 3);
-	
-	return result;
-}
-
-
-template<int N>
-int SimResultParser<N>::fetchSimpleTextCode(){
-	//TODO: look realy hard to understand remove if else somehow
-	int index = buffer.indexOfEnd("\r\nOK\r\n");
-	
-	if(index == -1){
-		index = buffer.indexOfEnd("\r\nERROR\r\n");
-		
-		if(index == -1){
-			return ANWSER_CODES::UNDEFINED;
-		}else{
-			return ANWSER_CODES::ERROR;
-		}
-		
-	}else{
+	if(buffer.indexOfEnd("0\r\n") != -1)
 		return ANWSER_CODES::OK;
-	}
+	
+	if(buffer.indexOfEnd("\r\nOK\r\n") != -1)
+		return ANWSER_CODES::OK;
+	
+	if(buffer.indexOfEnd("4\r\n") != -1)
+		return ANWSER_CODES::ERROR;
+	
+	if(buffer.indexOfEnd("\r\nERROR\r\n") != -1)
+		return ANWSER_CODES::ERROR;
+	
+	return ANWSER_CODES::UNDEFINED;
 }
 
 

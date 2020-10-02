@@ -15,8 +15,8 @@ refWrapper(wrapper), refWriter(writer), refParser(parser){
 
 template<int N>
 bool GPRSHandler<N>::isConnected(){
-
 	int result = (retriveStatus());
+	
 	if(result == -1){
 		return false;
 	}

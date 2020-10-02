@@ -13,7 +13,6 @@ class SimResultParser
 		bool isHttpActionPresents();
 		
 		int fetchResultCode();
-		int fetchSimpleTextCode();
 		int fetchNetworkRegistration();
 		int fetchGPRSStatus();
 		int fetchHTTPStatus();

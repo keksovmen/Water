@@ -24,38 +24,34 @@ void SimCommandWriter<N>::writeCSQ(){
 
 template<int N>
 void SimCommandWriter<N>::writeEcho(bool turnOn){
-	if(turnOn){
-		wrapper.writeCommand("ATE1&W");
-	}else{
-		wrapper.writeCommand("ATE0&W");
-	}
+	wrapper.writeString("ATE").
+		writeChar(turnOn ? '1' : '0').
+		writeString("&W").
+		writeEndOfCommand();
 }
 
 template<int N>
 void SimCommandWriter<N>::writeNumberFormat(bool turnOn){
-	if(turnOn){
-		wrapper.writeCommand("ATV0&W");
-	}else{
-		wrapper.writeCommand("ATV1&W");
-	}
+	wrapper.writeString("ATV").
+		writeChar(turnOn ? '0' : '1').
+		writeString("&W").
+		writeEndOfCommand();
 }
 
 template<int N>
 void SimCommandWriter<N>::writeCallReady(bool turnOn){
-	if(turnOn){
-		wrapper.writeCommand("AT+CIURC=1;&W");
-	}else{
-		wrapper.writeCommand("AT+CIURC=0;&W");
-	}
+	wrapper.writeString("AT+CIURC=").
+		writeChar(turnOn ? '1' : '0').
+		writeString(";&W").
+		writeEndOfCommand();
 }
 
 template<int N>
 void SimCommandWriter<N>::writeReportAsError(bool turnOn){
-	if(turnOn){
-		wrapper.writeCommand("AT+CMEE=0;&W");
-	}else{
-		wrapper.writeCommand("AT+CMEE=1;&W");
-	}
+	wrapper.writeString("AT+CMEE=").
+		writeChar(turnOn ? '1' : '0').
+		writeString(";&W").
+		writeEndOfCommand();
 }
 
 
@@ -72,6 +68,7 @@ void SimCommandWriter<N>::writeSAPBR(SAPBR_COMMANDS cmd, const char* param, cons
 			writeString(value).
 			writeChar('"');
 	}
+	
 	wrapper.writeEndOfCommand();
 }
 
