@@ -2,6 +2,17 @@
 #include "Enums.h"
 #include "Util.h"
 
+const static char* DIGIT_SUCCESS = "0\r\n";
+const static char* DIGIT_COMPLEX_SUCCESS = "\r\n0\r\n";
+
+const static char* DIGIT_ERROR = "4\r\n";
+const static char* DIGIT_COMPLEX_ERROR = "\r\n4\r\n";
+
+const static char* TEXT_SUCCESS = "\r\nOK\r\n";
+const static char* TEXT_ERROR = "\r\nERROR\r\n";
+
+const static char* END_LINE = "\r\n";
+
 
 template<int N>
 SimResultParser<N>::SimResultParser(FixedBuffer<N>& refBuffer) :
@@ -27,13 +38,13 @@ SimResultParser<N>::SimResultParser(FixedBuffer<N>& refBuffer) :
 
 template<int N>
 bool SimResultParser<N>::isSimpleMessageReady(){
-	if(buffer.indexOfEnd("0\r\n") != -1)
+	if(buffer.indexOfEnd(DIGIT_SUCCESS) != -1)
 		return true;
-	if(buffer.indexOfEnd("4\r\n") != -1)
+	if(buffer.indexOfEnd(DIGIT_ERROR) != -1)
 		return true;
-	if(buffer.indexOfEnd("\r\nOK\r\n") != -1)
+	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return true;
-	if(buffer.indexOfEnd("\r\nERROR\r\n") != -1)
+	if(buffer.indexOfEnd(TEXT_ERROR) != -1)
 		return true;
 	
 	return false;
@@ -54,9 +65,13 @@ bool SimResultParser<N>::isComplexMessageReady(){
 		return false;
 	}
 	
-	if(buffer.indexOfEnd("\r\n0\r\n") != -1)
+	if(buffer.indexOfEnd(DIGIT_COMPLEX_SUCCESS) != -1)
 		return true;
-	if(buffer.indexOfEnd("\r\n4\r\n") != -1)
+	if(buffer.indexOfEnd(DIGIT_COMPLEX_ERROR) != -1)
+		return true;
+	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
+		return true;
+	if(buffer.indexOfEnd(TEXT_ERROR) != -1)
 		return true;
 	
 	return false;
@@ -65,7 +80,7 @@ bool SimResultParser<N>::isComplexMessageReady(){
 
 template<int N>
 bool SimResultParser<N>::containDownload(){
-	if(buffer.indexOf("DOWNLOAD") != -1)
+	if(buffer.indexOf("DOWNLOAD\r\n") != -1)
 		return true;
 	
 	return false;
@@ -78,29 +93,49 @@ bool SimResultParser<N>::isHttpActionPresents(){
 	if(index == -1)
 		return false;
 	
-	int terminatorIndex = buffer.indexOfEnd("\r\n");
+	int terminatorIndex = buffer.indexOfFrom(index + 11, END_LINE);
 	if(terminatorIndex == -1)
-		return false;
-	
-	if(terminatorIndex < index)
 		return false;
 	
 	return true;
 }
 
 
+/**
+	MEssage looks like 
+	\r\n+HTTPREAD: <n>\r\n
+		<n> = amount of read data
+*/
+
+template<int N>
+bool SimResultParser<N>::isReadHttpMessageFull(){
+	int index = buffer.indexOf("\r\n+HTTPREAD: ");
+	int endIndex = buffer.indexOfFrom(index + 11, END_LINE);
+	
+	if(endIndex == -1){
+		return false;
+	}
+	
+	if(endIndex == buffer.indexOfEnd(END_LINE)){
+		return false;
+	}
+	
+	return isSimpleMessageReady();
+}
+
+
 template<int N>
 int SimResultParser<N>::fetchResultCode(){
-	if(buffer.indexOfEnd("0\r\n") != -1)
+	if(buffer.indexOfEnd(DIGIT_SUCCESS) != -1)
 		return ANWSER_CODES::OK;
 	
-	if(buffer.indexOfEnd("\r\nOK\r\n") != -1)
+	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return ANWSER_CODES::OK;
 	
-	if(buffer.indexOfEnd("4\r\n") != -1)
+	if(buffer.indexOfEnd(DIGIT_ERROR) != -1)
 		return ANWSER_CODES::ERROR;
 	
-	if(buffer.indexOfEnd("\r\nERROR\r\n") != -1)
+	if(buffer.indexOfEnd(TEXT_ERROR) != -1)
 		return ANWSER_CODES::ERROR;
 	
 	return ANWSER_CODES::UNDEFINED;
@@ -116,12 +151,6 @@ int SimResultParser<N>::fetchResultCode(){
 template<int N>
 int SimResultParser<N>::fetchNetworkRegistration(){
 	int index = buffer.indexOf("+CREG: ");
-	
-	if(index == -1){
-		//display error some how
-		return -1;
-	}
-	
 	index += 9;	//move on <stat> position
 	
 	return characterToInt(buffer[index]);
@@ -144,12 +173,6 @@ int SimResultParser<N>::fetchNetworkRegistration(){
 template<int N>
 int SimResultParser<N>::fetchGPRSStatus(){
 	int index = buffer.indexOf("+SAPBR: ");
-	
-	if(index == -1){
-		//indicate error somehow
-		return -1;
-	}
-	
 	index += 10;
 	
 	return characterToInt(buffer[index]);
@@ -169,12 +192,6 @@ int SimResultParser<N>::fetchGPRSStatus(){
 template<int N>
 int SimResultParser<N>::fetchHTTPStatus(){
 	int index = buffer.indexOf("+HTTPACTION: ");
-	
-	if(index == -1){
-		//indicate error
-		return -1;
-	}
-	
 	index += 15;	//index will be on first character of status
 	
 	return characterToInt(buffer[index]);
@@ -194,20 +211,10 @@ int SimResultParser<N>::fetchHTTPStatus(){
 
 template<int N>
 unsigned long SimResultParser<N>::fetchHttpResponceLength(){
-	int index = buffer.indexOf("+HTTPACTION: ");
-	
-	if(index == -1){
-		//indicate error
-		return 0;
-	}
-	
+	int index = buffer.indexOf("+HTTPACTION: ");	
 	index += 19;	//on first char of <data length>
-	int endIndex = buffer.indexOfFrom(index, "\r\n");
 	
-	if(endIndex == -1){
-		//indicate error
-		return 0;
-	}
+	int endIndex = buffer.indexOfFrom(index, "\r\n");
 	
 	int j = 0;
 	char storage[7];	//max length is 6 char and 7th for \0
@@ -221,56 +228,13 @@ unsigned long SimResultParser<N>::fetchHttpResponceLength(){
 }
 
 
-/**
-	MEssage looks like 
-	\r\n+HTTPREAD: <n>\r\n
-		<n> = amount of read data
-*/
-
-template<int N>
-bool SimResultParser<N>::isReadHttpMessageFull(){
-	int index = buffer.indexOf("\r\n+HTTPREAD: ");
-	
-	if(index == -1){
-		return false;
-	}
-	
-	int endIndex = buffer.indexOfFrom(index + 11, "\r\n");
-	
-	if(endIndex == -1){
-		return false;
-	}
-	
-	if(endIndex == buffer.indexOfEnd("\r\n")){
-		return false;
-	}
-	
-	return true;
-}
-
-
 template<int N>
 void SimResultParser<N>::removeReadHttpGarbage(){
 	int index = buffer.indexOf("\r\n+HTTPREAD: ");
-	if(index == -1){
-		//indicate error
-		return;
-	}
-	
-	int endIndex = buffer.indexOfFrom(index + 10, "\r\n");
-	if(endIndex == -1){
-		//indicate error
-		return;
-	}
+	int endIndex = buffer.indexOfFrom(index + 10, END_LINE);
 	endIndex += 2;
-	
 	buffer.remove(index, endIndex - index);
 	
-	index = buffer.indexOfEnd("0\r\n");
-	if(index == -1){
-		//indicate error
-		return;
-	}
-	
+	index = buffer.indexOfEnd(DIGIT_SUCCESS);
 	buffer.remove(index, 3);
 }

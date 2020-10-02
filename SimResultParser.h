@@ -1,6 +1,17 @@
 #pragma once
 #include "Buffer/FixedBuffer.h"
 
+
+/**
+	THE MAIN RULE:
+	When you try to fetch some data,
+	you MUST know it already there!
+	Make sure through ready methods!
+	
+	
+*/
+
+
 template<int N>
 class SimResultParser
 {
@@ -11,6 +22,7 @@ class SimResultParser
 		bool isComplexMessageReady();
 		bool containDownload();
 		bool isHttpActionPresents();
+		bool isReadHttpMessageFull();
 		
 		int fetchResultCode();
 		int fetchNetworkRegistration();
@@ -19,7 +31,6 @@ class SimResultParser
 		
 		unsigned long fetchHttpResponceLength();
 		
-		bool isReadHttpMessageFull();
 		void removeReadHttpGarbage();
 		
 	private:

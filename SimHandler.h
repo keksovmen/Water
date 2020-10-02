@@ -10,10 +10,10 @@
 #include "GetDataHandler.h"
 
 template<int N>
-class SimFacade
+class SimHandler
 {
 	public:
-		SimFacade(SoftwareSerial& refPort);
+		SimHandler(SoftwareSerial& refPort);
 		
 		bool isModuleUp();
 		NETWORK_CONNECTION isConnectedToNetwork();
@@ -31,7 +31,7 @@ class SimFacade
 		
 };
 
-template class SimFacade<128>;
+template class SimHandler<128>;
 
 
 

@@ -1,10 +1,10 @@
 #include <Arduino.h>
-#include "SimFacade.h"
+#include "SimHandler.h"
 #include "Util.h"
 
 
 template<int N>
-SimFacade<N>::SimFacade(SoftwareSerial& refPort) :
+SimHandler<N>::SimHandler(SoftwareSerial& refPort) :
 	wrapper(refPort), writer(wrapper),
 	parser(wrapper.getBuffer()), gprsHandler(wrapper, writer, parser)
 {
@@ -12,7 +12,7 @@ SimFacade<N>::SimFacade(SoftwareSerial& refPort) :
 }
 
 template<int N>
-bool SimFacade<N>::isModuleUp(){
+bool SimHandler<N>::isModuleUp(){
 	writer.writeAT();
 	
 	if(!readAndExpectSuccess(wrapper, parser)){
@@ -42,33 +42,19 @@ bool SimFacade<N>::isModuleUp(){
 */
 
 template<int N>
-NETWORK_CONNECTION SimFacade<N>::isConnectedToNetwork(){
+NETWORK_CONNECTION SimHandler<N>::isConnectedToNetwork(){
 	writer.writeCREG();
-	
-	if(!wrapper.readToBuffer()){
+	if(!readAndExpectSuccess(wrapper, parser, true)){
 		//if minimum time has passed and there is still no anwser
 		return NETWORK_CONNECTION::UNKNOWN;
 	}
 	
-	if(parser.isComplexMessageReady()){
-		if(parser.fetchResultCode() ==
-				ANWSER_CODES::OK){
-			return static_cast<NETWORK_CONNECTION>(
-					parser.fetchNetworkRegistration()
-					);
-		}else{
-			return NETWORK_CONNECTION::UNKNOWN;
-		}
-	}else{
-		return isConnectedToNetwork();
-	}
-	
-	return NETWORK_CONNECTION::UNKNOWN;
+	return static_cast<NETWORK_CONNECTION>(parser.fetchNetworkRegistration());
 }
 
 
 template<int N>
-bool SimFacade<N>::setDefaultParams(){
+bool SimHandler<N>::setDefaultParams(){
 	writer.writeEcho(false);
 	if(!readAndExpectSuccess(wrapper, parser))
 		return false;
@@ -94,7 +80,7 @@ bool SimFacade<N>::setDefaultParams(){
 
 
 template<int N>
-bool SimFacade<N>::connectToGPRS(const char* apn){
+bool SimHandler<N>::connectToGPRS(const char* apn){
 	if(gprsHandler.isConnected()){
 		return true;
 	}
@@ -103,7 +89,7 @@ bool SimFacade<N>::connectToGPRS(const char* apn){
 }
 
 template<int N>
-bool SimFacade<N>::disconnectFromGPRS(){
+bool SimHandler<N>::disconnectFromGPRS(){
 	if(!gprsHandler.isConnected()){
 		return true;
 	}
@@ -113,7 +99,7 @@ bool SimFacade<N>::disconnectFromGPRS(){
 
 
 template<int N>
-PostDataHandler<N> SimFacade<N>::sendPostRequest(const char* url, int dataLength){
+PostDataHandler<N> SimHandler<N>::sendPostRequest(const char* url, int dataLength){
 	writer.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
 	//Add check if already init so you could close it
 	readAndExpectSuccess(wrapper, parser);
@@ -145,7 +131,7 @@ PostDataHandler<N> SimFacade<N>::sendPostRequest(const char* url, int dataLength
 
 
 template<int N>
-GetDataHandler<N> SimFacade<N>::sendGetRequest(){
+GetDataHandler<N> SimHandler<N>::sendGetRequest(){
 	writer.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
 	//Add check if already init so you could close it
 	readAndExpectSuccess(wrapper, parser);

@@ -5,7 +5,7 @@
 // #include "SimIOWrapper.h"
 // #include "SimResultParser.h"
 // #include "SimCommandWriter.h"
-#include "SimFacade.h"
+#include "SimHandler.h"
 // #include "Buffer/FixedBuffer.h"
 
 
@@ -18,7 +18,7 @@ SoftwareSerial sim (2, 3);
 // SimIOWrapper<BUFFER_SIZE> wrapper (sim);
 // SimResultParser<BUFFER_SIZE> parser;
 // SimCommandWriter<BUFFER_SIZE> writer;
-SimFacade<BUFFER_SIZE> simHandler(sim);
+SimHandler<BUFFER_SIZE> simHandler(sim);
 
 //Excpected sim module flags ATE0 and ATV0
 
@@ -60,74 +60,74 @@ void setup(){
 		}
 	}
 	
-	// const char* str = "temperature=69&pressure=1000";
-	// const int strLength = strlen(str);
+	const char* str = "temperature=69&pressure=1000";
+	const int strLength = strlen(str);
 	
-	// PostDataHandler<BUFFER_SIZE> postDataHandler = simHandler.sendPostRequest("http://128.69.240.186/Send.php", strLength);
-	// postDataHandler.writeString(str);
+	PostDataHandler<BUFFER_SIZE> postDataHandler = simHandler.sendPostRequest("http://128.69.240.186/Send.php", strLength);
+	postDataHandler.writeString(str);
 	
-	// if(postDataHandler.send()){
-		// if(!postDataHandler.isSended()){
-			// if(!postDataHandler.isSended()){
-				// Serial.println("Send already took 10 sec");
-				// while(!postDataHandler.isSended()){
-					// Serial.println("Send took another 5 sec");
-				// }
-			// }
-		// }
-	// }else{
-		// Serial.println("Module can't go furthre then HTTPACTION");
-		// return;
-	// }
+	if(postDataHandler.send()){
+		if(!postDataHandler.isSended()){
+			if(!postDataHandler.isSended()){
+				Serial.println("Send already took 10 sec");
+				while(!postDataHandler.isSended()){
+					Serial.println("Send took another 5 sec");
+				}
+			}
+		}
+	}else{
+		Serial.println("Module can't go furthre then HTTPACTION");
+		return;
+	}
 	
-	// if(!postDataHandler.isSendedSuccesfully()){
-		// Serial.println("Send finished with not Success code");
-	// }
+	if(!postDataHandler.isSendedSuccesfully()){
+		Serial.println("Send finished with not Success code");
+	}
 	
-	// postDataHandler.finish();
+	postDataHandler.finish();
 	
 	
-	// GetDataHandler<BUFFER_SIZE> getHandler = simHandler.sendGetRequest();
+	GetDataHandler<BUFFER_SIZE> getHandler = simHandler.sendGetRequest();
 	
-	// getHandler.writeString("http://128.69.240.186/ReadRaw.php");
+	getHandler.writeString("http://128.69.240.186/ReadRaw.php");
 	
-	// if(getHandler.send()){
-		// if(!getHandler.isSended()){
-			// if(!getHandler.isSended()){
-				// Serial.println("Send already took 10 sec");
-				// while(!getHandler.isSended()){
-					// Serial.println("Send took another 5 sec");
-				// }
-			// }
-		// }
-	// }else{
-		// Serial.println("Module can't go furthre then HTTPACTION");
-		// return;
-	// }
+	if(getHandler.send()){
+		if(!getHandler.isSended()){
+			if(!getHandler.isSended()){
+				Serial.println("Send already took 10 sec");
+				while(!getHandler.isSended()){
+					Serial.println("Send took another 5 sec");
+				}
+			}
+		}
+	}else{
+		Serial.println("Module can't go furthre then HTTPACTION");
+		return;
+	}
 	
-	// getHandler.getBuffer().clear();
-	// int counter = 0;
-	// while(getHandler.readResponce()){
-		// auto& b = getHandler.getBuffer();
-		// int index = b.indexOf("\n");
-		// index++;
-		// if(index == -1){
-			// continue;
-		// }
+	getHandler.getBuffer().clear();
+	int counter = 0;
+	while(getHandler.readResponce()){
+		auto& b = getHandler.getBuffer();
+		int index = b.indexOf("\n");
+		index++;
+		if(index == -1){
+			continue;
+		}
 		
-		// counter++;
-		// for(int i = 0; i < index; i++){
-			// Serial.print(b[i]);
-		// }
+		counter++;
+		for(int i = 0; i < index; i++){
+			Serial.print(b[i]);
+		}
 
-		// b.substring(index);
-	// }
+		b.substring(index);
+	}
 	
-	// Serial.print("COUNTER = ");
-	// Serial.println(counter);
+	Serial.print("COUNTER = ");
+	Serial.println(counter);
 	
 	
-	// getHandler.finish();
+	getHandler.finish();
 	
 	simHandler.disconnectFromGPRS();
 	
