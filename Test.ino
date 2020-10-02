@@ -31,26 +31,26 @@ void setup(){
 	Serial.begin(9600);
 	sim.begin(9600);
 	
-	// if(!simHandler.isModuleUp()){
-		// delay(5000);
-		// if(!simHandler.isModuleUp()){
-			// Serial.println("Module if offline");
-			// return;
-		// }
-	// }
+	if(!simHandler.isModuleUp()){
+		delay(5000);
+		if(!simHandler.isModuleUp()){
+			Serial.println("Module if offline");
+			return;
+		}
+	}
 	
-	// if(!simHandler.setDefaultParams()){
-		// Serial.println("Defaults are not set");
-		// return;
-	// }
+	if(!simHandler.setDefaultParams()){
+		Serial.println("Defaults are not set");
+		return;
+	}
 	
-	// if(!simHandler.isConnectedToNetwork()){
-		// delay(5000);
-		// if(!simHandler.isConnectedToNetwork()){
-			// Serial.println("Module can't connect to network");
-			// return;
-		// }
-	// }
+	if(!simHandler.isConnectedToNetwork()){
+		delay(5000);
+		if(!simHandler.isConnectedToNetwork()){
+			Serial.println("Module can't connect to network");
+			return;
+		}
+	}
 	
 	if(!simHandler.connectToGPRS("internet")){
 		delay(5000);
@@ -60,32 +60,31 @@ void setup(){
 		}
 	}
 	
-	// const char* str = "temperature=69&pressure=1000";
-	// const int strLength = strlen(str);
+	const char* str = "temperature=69&pressure=1000";
+	const int strLength = strlen(str);
 	
-	// PostDataHandler<BUFFER_SIZE> dataHandler = simHandler.sendPostRequest("http://128.69.240.186/Send.php", strLength);
-	// dataHandler.write(str);
+	PostDataHandler<BUFFER_SIZE> postDataHandler = simHandler.sendPostRequest("http://128.69.240.186/Send.php", strLength);
+	postDataHandler.write(str);
 	
-	// if(dataHandler.send()){
-		// if(!dataHandler.isSended()){
-			// if(!dataHandler.isSended()){
-				// Serial.println("Send already took 10 sec");
-				// while(!dataHandler.isSended()){
-					// Serial.println("Send took another 5 sec");
-				// }
-			// }
-		// }
-	// }else{
-		// Serial.println("Module can't go furthre then HTTPACTION");
-		// return;
-		// while(1){}
-	// }
+	if(postDataHandler.send()){
+		if(!postDataHandler.isSended()){
+			if(!postDataHandler.isSended()){
+				Serial.println("Send already took 10 sec");
+				while(!postDataHandler.isSended()){
+					Serial.println("Send took another 5 sec");
+				}
+			}
+		}
+	}else{
+		Serial.println("Module can't go furthre then HTTPACTION");
+		return;
+	}
 	
-	// if(!dataHandler.isSendedSuccesfully()){
-		// Serial.println("Send finished with not Success code");
-	// }
+	if(!postDataHandler.isSendedSuccesfully()){
+		Serial.println("Send finished with not Success code");
+	}
 	
-	// dataHandler.finish();
+	postDataHandler.finish();
 	
 	
 	GetDataHandler<BUFFER_SIZE> getHandler = simHandler.sendGetRequest();
@@ -110,27 +109,28 @@ void setup(){
 	getHandler.getBuffer().clear();
 	int counter = 0;
 	while(getHandler.readResponce()){
-		auto b = getHandler.getBuffer();
+		auto& b = getHandler.getBuffer();
 		int index = b.indexOf("\n");
+		index++;
 		if(index == -1){
 			continue;
 		}
+		
 		counter++;
-		// Serial.println("	START	");
-		// for(int i = 0; i <= index; i++){
-			// Serial.print(b[i]);
-		// }
-		// Serial.println("	END		");
-		b.substring(index + 1);
+		for(int i = 0; i < index; i++){
+			Serial.print(b[i]);
+		}
+
+		b.substring(index);
 	}
 	
 	Serial.print("COUNTER = ");
 	Serial.println(counter);
 	
 	
-	// getHandler.finish();
+	getHandler.finish();
 	
-	// simHandler.disconnectFromGPRS();
+	simHandler.disconnectFromGPRS();
 	
 	
 	// Serial.println(simHandler.setDefaultParams() ? "TRUE" : "FALSE");

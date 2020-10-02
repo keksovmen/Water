@@ -236,9 +236,37 @@ unsigned long SimResultParser<N>::fetchHttpResponceLength(){
 		storage[j] = buffer[i];
 	}
 	
-	storage[j] = '0';
+	storage[j] = '\0';
 	char* end;
 	return strtol(storage, &end, 10);
+}
+
+
+/**
+	MEssage looks like 
+	\r\n+HTTPREAD: <n>\r\n
+		<n> = amount of read data
+*/
+
+template<int N>
+bool SimResultParser<N>::isReadHttpMessageFull(){
+	int index = buffer.indexOf("\r\n+HTTPREAD: ");
+	
+	if(index == -1){
+		return false;
+	}
+	
+	int endIndex = buffer.indexOfFrom(index + 11, "\r\n");
+	
+	if(endIndex == -1){
+		return false;
+	}
+	
+	if(endIndex == buffer.indexOfEnd("\r\n")){
+		return false;
+	}
+	
+	return true;
 }
 
 

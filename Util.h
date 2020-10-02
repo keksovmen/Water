@@ -1,5 +1,6 @@
 #pragma once
 
+// #include <Arduino.h>
 #include "SimIOWrapper.h"
 #include "SimResultParser.h"
 #include "Enums.h"
@@ -27,6 +28,7 @@ bool readAndExpectSuccess(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, 
 	}
 	
 	if(!rdy){
+		// delay(10);
 		if(!wrapper.readToBuffer()){
 			return false;
 		}

@@ -97,6 +97,10 @@ template<int N>
 bool SimIOWrapper<N>::readToBufferTimeout(int millis){
 	while(millis > 0){
 		if(readToBuffer()){
+			while(readToBuffer()){
+				
+			}
+			
 			return true;
 		}
 		

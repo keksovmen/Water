@@ -25,14 +25,14 @@ class DataHandler
 		
 		bool readResponce();
 		
-		FixedBuffer<N> getBuffer(){ return refWrapper.getBuffer();};
+		FixedBuffer<N>& getBuffer(){ return refWrapper.getBuffer();};
 		
 	protected:
 		SimIOWrapper<N>& refWrapper;
 		SimResultParser<N>& refParser;
 		SimCommandWriter<N>& refWriter;
 		
-		int readIndex = 0;
+		unsigned int readIndex = 0;
 		
 		unsigned long responceLength = 0;
 		

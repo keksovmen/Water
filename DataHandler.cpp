@@ -1,7 +1,7 @@
 #include "DataHandler.h"
 #include "Enums.h"
 #include "Util.h"
-
+#include <Arduino.h>
 
 template <int N>
 DataHandler<N>::DataHandler(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, SimCommandWriter<N>& writer) :
@@ -74,13 +74,23 @@ bool DataHandler<N>::readResponce(){
 	if(refWrapper.getBuffer().remains() < 20){
 		//TODO: made read to buffer return actual amount readed
 		//so you can fetch how much did you read
+		Serial.println("BUFFER OVERFLOW");
 		return true;
 	}
+
+	Serial.println(responceLength);
+	if(readIndex >= responceLength){
+		return false;
+	}
+	
 	refWriter.writeReadHTTP(readIndex, 44);
 	readIndex += 44;
 	
-	if(!readAndExpectSuccess(refWrapper, refParser)){
-		return false;
+	while(1){
+		refWrapper.readToBuffer();
+		if(refParser.isReadHttpMessageFull()){
+			break;
+		}
 	}
 	
 	//remove all garbage

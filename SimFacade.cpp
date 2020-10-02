@@ -118,6 +118,7 @@ bool SimFacade<N>::disconnectFromGPRS(){
 template<int N>
 PostDataHandler<N> SimFacade<N>::sendPostRequest(const char* url, int dataLength){
 	writer.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
+	//Add check if already init so you could close it
 	readAndExpectSuccess(wrapper, parser);
 	
 	writer.writeHTPPSetParam("URL", url);
@@ -149,6 +150,7 @@ PostDataHandler<N> SimFacade<N>::sendPostRequest(const char* url, int dataLength
 template<int N>
 GetDataHandler<N> SimFacade<N>::sendGetRequest(){
 	writer.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
+	//Add check if already init so you could close it
 	readAndExpectSuccess(wrapper, parser);
 	
 	writer.writeHTPPSetParam("URL", nullptr);

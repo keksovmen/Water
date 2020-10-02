@@ -20,6 +20,7 @@ class SimResultParser
 		
 		unsigned long fetchHttpResponceLength();
 		
+		bool isReadHttpMessageFull();
 		void removeReadHttpGarbage();
 		
 	private:

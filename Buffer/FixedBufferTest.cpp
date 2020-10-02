@@ -25,6 +25,8 @@ bool checkIndexOfEnd(const char* origin, const char* search, int expected);
 
 bool checkClear(const char* origin);
 
+bool checkTest();
+
 
 template<int N>
 void copyIntoBuffer(FixedBuffer<N>& buffer, const char* data);
@@ -93,6 +95,8 @@ int main()
 	assert (checkIndexOfEnd("0123456789", "789", 7));
 	assert (checkIndexOfEnd("0123456789", "45", 4));
 	assert (checkIndexOfEnd("0123456789", "54", -1));
+	
+	assert (checkTest());
 }
 
 bool checkLength(int divider){
@@ -196,6 +200,21 @@ bool checkIndexOfEnd(const char* origin, const char* search, int expected){
 	copyIntoBuffer(buffer, origin);
 	
 	return buffer.indexOfEnd(search) == expected;
+}
+
+bool checkTest(){
+	FixedBuffer<512> buffer;
+	
+	copyIntoBuffer(buffer, "Temperature - C: 01	Pressure - mb: 1001\nTemperature - C: 02	Pressure - mb: 1002\nTemperature - C: 03	Pressure - mb: 1003\nTemperature - C: 04	Pressure - mb: 1004\n");
+	for(int i = 0; i < 4; i++){
+		int index = buffer.indexOf("\n");
+		index++;
+		buffer.substring(index);		
+		std::cout << buffer.begin() << std::endl;
+		std::cout << "INDEX = " << index << "\tLENGTH = "<< buffer.getLength() << std::endl;
+	}
+	assert (buffer.getLength() == 40);
+	return strcmp(buffer.begin(), "") > 0;
 }
 
 template<int N>
