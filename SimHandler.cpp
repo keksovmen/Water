@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "SimHandler.h"
 #include "Util.h"
+#include "HTTPHandler.h"
 
 
 template<int N>

@@ -15,8 +15,14 @@ int characterToInt(char c);
 
 template<int N>
 bool readAndExpectSuccess(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, bool isComplex = false){
+	return readAndGetCode(wrapper, parser) == ANWSER_CODES::OK;
+}
+
+
+template<int N>
+ANWSER_CODES readAndGetCode(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, bool isComplex = false){
 	if(!wrapper.readToBuffer()){
-		return false;
+		return ANWSER_CODES::UNDEFINED;
 	}
 	
 	bool rdy = false;
@@ -29,15 +35,9 @@ bool readAndExpectSuccess(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, 
 	
 	if(!rdy){
 		if(!wrapper.readToBuffer()){
-			return false;
+			return ANWSER_CODES::UNDEFINED;
 		}
 	}
 	
-	if(static_cast<ANWSER_CODES>(
-				parser.fetchResultCode())
-				== ANWSER_CODES::OK){
-		return true;
-	}
-	
-	return false;
+	return static_cast<ANWSER_CODES>(parser.fetchResultCode());
 }
