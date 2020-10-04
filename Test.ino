@@ -39,6 +39,11 @@ void setup(){
 		}
 	}
 	
+	if(!simHandler.isModuleAlive()){
+		Serial.println("Module is not alive");
+			return;
+	}
+	
 	if(!simHandler.setDefaultParams()){
 		Serial.println("Defaults are not set");
 		return;

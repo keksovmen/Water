@@ -16,6 +16,7 @@ class SimHandler
 		SimHandler(SoftwareSerial& refPort);
 		
 		bool isModuleUp();
+		bool isModuleAlive();
 		NETWORK_CONNECTION isConnectedToNetwork();
 		bool setDefaultParams();
 		bool connectToGPRS(const char* apn);

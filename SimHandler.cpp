@@ -24,6 +24,18 @@ bool SimHandler<N>::isModuleUp(){
 }
 
 
+template<int N>
+bool SimHandler<N>::isModuleAlive(){
+	for(int i = 0; i < 10; i ++){
+		if(!isModuleUp())
+			return false;
+		delay(300);
+	}
+	
+	return true;
+}
+
+
 /**
 	After you send AT+CREG? with AT+CREG=0
 	you wull get result as +CREG: n,s
@@ -118,6 +130,7 @@ PostDataHandler<N> SimHandler<N>::sendPostRequest(const char* url, int dataLengt
 	}
 	
 	//error
+	//TODO: use HTTPHandler here
 	if(!parser.containDownload()){
 		if(!wrapper.readToBuffer()){
 			Serial.println("Error with sendPostRequest() 2");
