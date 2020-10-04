@@ -82,6 +82,16 @@ void loop(){
 		printAskintTime();
 		askForTime();
 	}
+	
+	if(digitalRead(BUTTON_SEND) == LOW){
+		printSending();
+		sendSensorData();
+	}
+	
+	if(digitalRead(BUTTON_SHOW) == LOW){
+		printMessage("Asking server");
+		askServerData();
+	}
 	// delay(1000);
 	// if(Serial.available()){
 		// sim.write(Serial.read());
@@ -162,6 +172,7 @@ void printTime(){
 	lcd.print(clk.getSeconds());
 }
 
+
 void sendSensorData(){
 	if(!checkSimModuleReady()){
 		Serial.println("SEND SENSOR DATA FAILED");
@@ -227,6 +238,62 @@ void showEntry(int temp, int pressure){
 	delay(1500);
 }
 
+void askServerData(){
+	if(!checkSimModuleReady()){
+		Serial.println("ASK FOR DATA FAILED!");
+		return;
+	}
+	
+	GetDataHandler<BUFFER_SIZE> getHandler = simHandler.sendGetRequest();
+	
+	getHandler.writeString("http://128.69.240.186/ReadRaw.php");
+	
+	if(getHandler.send()){
+		if(!getHandler.isSended()){
+			if(!getHandler.isSended()){
+				Serial.println("Send already took 10 sec");
+				while(!getHandler.isSended()){
+					Serial.println("Send took another 5 sec");
+				}
+			}
+		}
+	}else{
+		Serial.println("SEND FAILED");
+		getHandler.finish();
+		return;
+	}
+	
+	if(!getHandler.isSendedSuccesfully()){
+		Serial.println("SEND FINISHED WITH NO SUCCESS CODE");
+		getHandler.finish();
+		return;
+	}
+	
+	getHandler.getBuffer().clear();
+	while(getHandler.readResponce()){
+		auto& b = getHandler.getBuffer();
+		
+		int index = b.indexOf("\n");
+		if(index == -1)
+			continue;
+		int startIndex = b.indexOf("Temperature");
+		
+		int temp = atoi(&b[startIndex + 16]);
+		int pressure = atoi(&b[startIndex + 34]);
+		
+		showEntry(temp, pressure);
+		
+		b.substring(index + 1);
+		
+	}
+	
+	getHandler.finish();
+	
+	if(!simHandler.disconnectFromGPRS()){
+		Serial.println("Failed to close GPRS");
+	}
+}
+
 bool checkSimModuleReady(){
 	if(!simHandler.isModuleUp()){
 		delay(5000);
@@ -261,7 +328,15 @@ bool checkSimModuleReady(){
 }
 
 void printAskintTime(){
+	printMessage("Asking time");
+}
+
+void printSending(){
+	printMessage("Sending data");
+}
+
+void printMessage(const char* str){
 	lcd.clear();
 	lcd.setCursor(0, 0);
-	lcd.print("Asking time");
+	lcd.print(str);
 }
