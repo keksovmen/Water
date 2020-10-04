@@ -30,65 +30,107 @@ bool Clock::parse(const char* str){
 	return true;
 }
 
-void Clock::addMillis(int mil){
+bool Clock::addMillis(int mil){
+	bool r = false;
+	
 	millis += mil;
 	while(millis >= 1000){
 		addSeconds(1);
 		millis -= 1000;
+		
+		r = true;
 	}
+	
+	return r;
 }
 
 
-void Clock::addSeconds(int sec){
+bool Clock::addSeconds(int sec){
+	bool r = false;
+	
 	seconds += sec;
 	while(seconds >= 60){
 		addMinutes(1);
 		seconds -= 60;
+		
+		r = true;
 	}
+	
+	return r;
 }
 
 
-void Clock::addMinutes(int min){
+bool Clock::addMinutes(int min){
+	bool r = false;
+	
 	minutes += min;
 	while(minutes >= 60){
 		addHours(1);
 		minutes -= 60;
+		
+		r = true;
 	}
+	
+	return r;
 }
 
 
-void Clock::addHours(int hour){
+bool Clock::addHours(int hour){
+	bool r = false;
+	
 	hours += hour;
 	while(hours >= 24){
 		addDays(1);
 		hours -= 24;
+		
+		r = true;
 	}
+	
+	return r;
 }
 
 
-void Clock::addDays(int day){
+bool Clock::addDays(int day){
+	bool r = false;
+	
 	days += day;
 	while(days > findMothDays(months)){
 		days -= findMothDays(months);
 		addMonths(1);
+		
+		r = true;
 	}
+	
+	return r;
 }
 
 
-void Clock::addMonths(int month){
+bool Clock::addMonths(int month){
+	bool r = false;
+	
 	months += month;
 	while(months > 12){
 		addYears(1);
 		months -= 12;
+		
+		r = true;
 	}
+	
+	return r;
 }
 
 
-void Clock::addYears(int year){
+bool Clock::addYears(int year){
+	bool r = false;
+	
 	years += year;
 	while(years >= 100){
 		years -= 100;
+		
+		r = true;
 	}
+	
+	return r;
 }
 
 

@@ -6,13 +6,13 @@ class Clock
 		
 		bool parse(const char* str);
 		
-		void addMillis(int mil);
-		void addSeconds(int sec);
-		void addMinutes(int min);
-		void addHours(int hour);
-		void addDays(int dda);
-		void addMonths(int month);
-		void addYears(int year);
+		bool addMillis(int mil);
+		bool addSeconds(int sec);
+		bool addMinutes(int min);
+		bool addHours(int hour);
+		bool addDays(int dda);
+		bool addMonths(int month);
+		bool addYears(int year);
 		
 		int getMillis(){return millis;};
 		int getSeconds(){return seconds;};

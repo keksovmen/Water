@@ -1,12 +1,15 @@
 #include <LiquidCrystal_I2C.h>
 #include "SimHandler.h"
 #include "Clock.h"
-// #include "Device.h"
+#include "Device.h"
 
 
 #define BUFFER_SIZE 128
+#define BUTTON_TIME 8
+#define BUTTON_SEND 9
+#define BUTTON_SHOW 10
 
-// Device dev;
+Device dev;
 
 SoftwareSerial sim (2, 3);
 SimHandler<BUFFER_SIZE> simHandler(sim);
@@ -27,10 +30,21 @@ void setup(){
 	Serial.begin(9600);
 	sim.begin(9600);
 	
+	pinMode(BUTTON_TIME, INPUT);
+	pinMode(BUTTON_SEND, INPUT);
+	pinMode(BUTTON_SHOW, INPUT);
+	
+	digitalWrite(BUTTON_TIME, HIGH);
+	digitalWrite(BUTTON_SEND, HIGH);
+	digitalWrite(BUTTON_SHOW, HIGH);
+	
 	lcd.init();
 	lcd.backlight();
-	printTime();
 	
+	if(!dev.init()){
+		Serial.println("Device is not connected");
+		while(1){};
+	}
 	
 	if(!simHandler.isModuleUp()){
 		delay(5000);
@@ -51,7 +65,8 @@ void setup(){
 	}
 	
 	timeBefore = millis();
-	askForTime();
+	// askForTime();
+	// sendSensorData();
 }
 
 void loop(){
@@ -59,9 +74,15 @@ void loop(){
 	int timePassed = timeNow - timeBefore;
 	timeBefore = timeNow;
 	
-	clk.addMillis(timePassed);
-	printTime();
-	delay(1000);
+	if(clk.addMillis(timePassed)){
+		printTime();
+	}
+	
+	if(digitalRead(BUTTON_TIME) == LOW){
+		printAskintTime();
+		askForTime();
+	}
+	// delay(1000);
 	// if(Serial.available()){
 		// sim.write(Serial.read());
 	// }
@@ -115,6 +136,10 @@ void askForTime(){
 	}
 	
 	getHandler.finish();
+	
+	if(!simHandler.disconnectFromGPRS()){
+		Serial.println("Failed to close GPRS");
+	}
 }
 
 
@@ -143,9 +168,18 @@ void sendSensorData(){
 		return;
 	}
 	
+	
+	dev.readResults();
+	int temp = dev.getTemperature();
+	int press = dev.getPressure();
 	// const char* str = "temperature=69&pressure=1000";
 	//TODO: made some class to monitor length
-	PostDataHandler<BUFFER_SIZE> postDataHandler = simHandler.sendPostRequest("http://128.69.240.186/Send.php", 1);
+	PostDataHandler<BUFFER_SIZE> postDataHandler = simHandler.sendPostRequest("http://128.69.240.186/Send.php", 28);
+	postDataHandler.writeString("temperature=");
+	postDataHandler.writeInt(temp);
+	postDataHandler.writeString("&pressure=");
+	postDataHandler.writeInt(press);
+	
 	// postDataHandler.writeString(str);
 	
 	if(postDataHandler.send()){
@@ -171,8 +205,27 @@ void sendSensorData(){
 	
 	postDataHandler.finish();
 	
+	if(!simHandler.disconnectFromGPRS()){
+		Serial.println("Failed to close GPRS");
+	}
+	
+	showEntry(temp, press);
 }
 
+void showEntry(int temp, int pressure){
+	lcd.clear();
+	lcd.setCursor(0,0);
+	lcd.print("TEMP = ");
+	lcd.setCursor(8,0);
+	lcd.print(temp);
+	
+	lcd.setCursor(0,1);
+	lcd.print("PRES = ");
+	lcd.setCursor(8,1);
+	lcd.print(pressure);
+	
+	delay(1500);
+}
 
 bool checkSimModuleReady(){
 	if(!simHandler.isModuleUp()){
@@ -205,4 +258,10 @@ bool checkSimModuleReady(){
 	}
 	
 	return true;
+}
+
+void printAskintTime(){
+	lcd.clear();
+	lcd.setCursor(0, 0);
+	lcd.print("Asking time");
 }
