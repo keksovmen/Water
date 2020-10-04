@@ -18,7 +18,7 @@ bool Clock::parse(const char* str){
 		return false;
 	
 	days = atoi(str);
-	moths = atoi(str + 3);
+	months = atoi(str + 3);
 	years = atoi(str + 6);
 	hours = atoi(str + 9);
 	minutes = atoi(str + 12);
@@ -66,18 +66,18 @@ void Clock::addHours(int hour){
 
 void Clock::addDays(int day){
 	days += day;
-	while(days > findMothDays(moths)){
-		days -= findMothDays(moths);
-		addMoths(1);
+	while(days > findMothDays(months)){
+		days -= findMothDays(months);
+		addMonths(1);
 	}
 }
 
 
-void Clock::addMoths(int moth){
-	moths += moth;
-	while(moths > 12){
+void Clock::addMonths(int month){
+	months += month;
+	while(months > 12){
 		addYears(1);
-		moths -= 12;
+		months -= 12;
 	}
 }
 
@@ -90,8 +90,8 @@ void Clock::addYears(int year){
 }
 
 
-int Clock::findMothDays(int moth){
-	switch(moth){
+int Clock::findMothDays(int month){
+	switch(month){
 		case 1:
 		case 3:
 		case 5:

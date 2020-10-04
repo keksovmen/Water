@@ -7,7 +7,7 @@ void checkAddMillis();
 void checkAddMinutes();
 void checkAddHours();
 void checkAddDays();
-void checkAddMoths();
+void checkAddMonths();
 void checkAddYears();
 void checkParse();
 
@@ -16,7 +16,7 @@ int main(){
 	checkAddMinutes();
 	checkAddHours();
 	checkAddDays();
-	checkAddMoths();
+	checkAddMonths();
 	checkAddYears();
 	checkParse();
 }
@@ -62,17 +62,17 @@ void checkAddDays(){
 	
 	c.addDays(31);
 	assert (c.getDays() == 13);
-	assert (c.getMoths() == 2);
+	assert (c.getMonths() == 2);
 }
 
 
-void checkAddMoths(){
+void checkAddMonths(){
 	Clock c;
-	c.addMoths(6);
-	assert (c.getMoths() == 7);
+	c.addMonths(6);
+	assert (c.getMonths() == 7);
 	
-	c.addMoths(26);
-	assert (c.getMoths() == 9);
+	c.addMonths(26);
+	assert (c.getMonths() == 9);
 	assert (c.getYears() == 22);
 }
 
@@ -92,7 +92,7 @@ void checkParse(){
 	assert (c.parse("04/10/20\n14/09/53"));
 	
 	assert(c.getDays() == 4);
-	assert(c.getMoths() == 10);
+	assert(c.getMonths() == 10);
 	assert(c.getYears() == 20);
 	assert(c.getHours() == 14);
 	assert(c.getMinutes() == 9);

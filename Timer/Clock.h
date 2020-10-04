@@ -11,7 +11,7 @@ class Clock
 		void addMinutes(int min);
 		void addHours(int hour);
 		void addDays(int dda);
-		void addMoths(int moth);
+		void addMonths(int month);
 		void addYears(int year);
 		
 		int getMillis(){return millis;};
@@ -19,14 +19,14 @@ class Clock
 		int getMinutes(){return minutes;};
 		int getHours(){return hours;};
 		int getDays(){return days;};
-		int getMoths(){return moths;};
+		int getMonths(){return months;};
 		int getYears(){return years;};
 		
 	private:
-		int findMothDays(int moth);
+		int findMothDays(int month);
 	
 		int days = 1;
-		int moths = 1;
+		int months = 1;
 		int years = 20;
 		
 		int hours = 0;
