@@ -4,7 +4,6 @@ Device::Device(){
 }
 
 bool Device::init(){
-	setDelay(5000);
 	bool readyState = false;
 	if(!sensor.begin()){
 		readyState = false;
@@ -14,14 +13,10 @@ bool Device::init(){
 	return readyState;
 }
 
-int Device::doActions(unsigned long deltaTime){
-	if(!checkIfTimePassed(deltaTime)){
-		return 0;
-	}
+void Device::readResults(){
 	// do actions, take mesures
 	temperature = fetchTemperature();
 	pressure = fetchPressure(temperature);
-	return 1;
 }
 
 double Device::fetchTemperature(){
