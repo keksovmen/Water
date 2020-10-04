@@ -13,11 +13,35 @@
 int characterToInt(char c);
 
 
+/**
+	Tries to read from buffer
+	and parse result anwser
+	
+	@param wrapper only for readToBuffer() method
+	@param parser to find if message is full and fetch code
+	@param isComplex for what type of message to expect
+	
+	@return true if result is present and success
+
+*/
+
 template<int N>
 bool readAndExpectSuccess(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, bool isComplex = false){
 	return readAndGetCode(wrapper, parser) == ANWSER_CODES::OK;
 }
 
+
+/**
+	Tries to read from buffer
+	and parse result anwser
+	
+	@param wrapper only for readToBuffer() method
+	@param parser to find if message is full and fetch code
+	@param isComplex for what type of message to expect
+	
+	@return ANWSER_CODES if success or mine UNDEFINED if failed
+
+*/
 
 template<int N>
 ANWSER_CODES readAndGetCode(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, bool isComplex = false){

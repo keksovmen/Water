@@ -9,17 +9,21 @@
 //in millis
 const static unsigned int MIN_DELAY = 25;
 
+
+
 template<int N>
 SimIOWrapper<N>::SimIOWrapper(SoftwareSerial& refSerial) : 
 	refPort(refSerial){
 		
 }
 
+
 template<int N>
 void SimIOWrapper<N>::writeCommand(const char* cmd, bool clearBuffer){
 	writeString(cmd);
 	writeEndOfCommand(clearBuffer);
 }
+
 
 template<int N>
 SimIOWrapper<N>& SimIOWrapper<N>::writeChar(char c){
@@ -31,6 +35,7 @@ SimIOWrapper<N>& SimIOWrapper<N>::writeChar(char c){
 	return *this;
 }
 
+
 template<int N>
 SimIOWrapper<N>& SimIOWrapper<N>::writeInt(int c){
 	// #ifdef ABS
@@ -41,6 +46,7 @@ SimIOWrapper<N>& SimIOWrapper<N>::writeInt(int c){
 	return *this;
 }
 
+
 template<int N>
 SimIOWrapper<N>& SimIOWrapper<N>::writeString(const char* c){
 	// #ifdef ABS
@@ -50,6 +56,7 @@ SimIOWrapper<N>& SimIOWrapper<N>::writeString(const char* c){
 	
 	return *this;
 }
+
 
 template<int N>
 void SimIOWrapper<N>::writeEndOfCommand(bool clearBuffer){
@@ -64,7 +71,6 @@ void SimIOWrapper<N>::writeEndOfCommand(bool clearBuffer){
 }
 
 
-
 template<int N>
 bool SimIOWrapper<N>::readToBuffer(){
 	if(tryReadToBuffer()){
@@ -77,6 +83,7 @@ bool SimIOWrapper<N>::readToBuffer(){
 	
 	return false;
 }
+
 
 template<int N>
 bool SimIOWrapper<N>::readToBufferTimeout(int millis){
@@ -98,15 +105,22 @@ bool SimIOWrapper<N>::readToBufferTimeout(int millis){
 
 template<int N>
 bool SimIOWrapper<N>::tryReadToBuffer(){
+	//if there is no data wait
 	if(refPort.available() == 0){
 		delay(MIN_DELAY);
 	}
 	
+	//if there is still no data return
 	if(refPort.available() == 0){
 		return false;
 	}
 	
+	//read as much as possible
 	while(refPort.available()){
+		
+		//WARNING error place
+		//try to find optimal buffer size
+		//to prevent from overfloving
 		if(buffer.isFull()){
 			// #ifdef ABS
 				Serial.println("Buffer is full");
@@ -114,6 +128,7 @@ bool SimIOWrapper<N>::tryReadToBuffer(){
 			
 			return true;
 		}
+		
 		char c = refPort.read();
 		
 		// #ifdef ABS

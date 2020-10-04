@@ -5,47 +5,58 @@
 
 
 #define BUFFER_SIZE 128
+
 #define BUTTON_TIME 8
 #define BUTTON_SEND 9
 #define BUTTON_SHOW 10
 
+//Barrometr, termometr
 Device dev;
 
+//Sim module
 SoftwareSerial sim (2, 3);
 SimHandler<BUFFER_SIZE> simHandler(sim);
 
+//Display
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
+//Time
 Clock clk;
 
-
-// void askForTime();
-
+//For proper calculation of time
 unsigned long timeBefore;
-// unsigned long timePassed = 15000;
-// bool sended = false;
+
 
 
 void setup(){
 	Serial.begin(9600);
 	sim.begin(9600);
 	
+	
+	//Buttons, as input
 	pinMode(BUTTON_TIME, INPUT);
 	pinMode(BUTTON_SEND, INPUT);
 	pinMode(BUTTON_SHOW, INPUT);
 	
+	
+	//Set them on HIGH, to short after
 	digitalWrite(BUTTON_TIME, HIGH);
 	digitalWrite(BUTTON_SEND, HIGH);
 	digitalWrite(BUTTON_SHOW, HIGH);
 	
+	
 	lcd.init();
 	lcd.backlight();
 	
+	
+	//Check if device is connected
 	if(!dev.init()){
 		Serial.println("Device is not connected");
 		while(1){};
 	}
 	
+	
+	//Check if module is anwserying at least
 	if(!simHandler.isModuleUp()){
 		delay(5000);
 		if(!simHandler.isModuleUp()){
@@ -54,45 +65,60 @@ void setup(){
 		}
 	}
 	
+	
+	//Check if module is working properly
 	if(!simHandler.isModuleAlive()){
 		Serial.println("Module is not alive");
 		while(1){};
 	}
 	
+	
+	//Set default parameters
 	if(!simHandler.setDefaultParams()){
 		Serial.println("Defaults are not set");
 		while(1){};
 	}
 	
+	
+	//update time
 	timeBefore = millis();
-	// askForTime();
-	// sendSensorData();
 }
 
 void loop(){
+	//calculate delta time
 	unsigned long timeNow = millis();
 	int timePassed = timeNow - timeBefore;
 	timeBefore = timeNow;
 	
+	
+	//check if summ of millis exceeded 1 sec
 	if(clk.addMillis(timePassed)){
 		printTime();
 	}
 	
+	
+	//if button 8 pressed
 	if(digitalRead(BUTTON_TIME) == LOW){
-		printAskintTime();
+		printMessage("Asking time");
 		askForTime();
 	}
 	
+	
+	//if button 9 pressed
 	if(digitalRead(BUTTON_SEND) == LOW){
-		printSending();
+		printMessage("Sending data");
 		sendSensorData();
 	}
 	
+	
+	//if button 10 pressed
 	if(digitalRead(BUTTON_SHOW) == LOW){
 		printMessage("Asking server");
 		askServerData();
 	}
-	// delay(1000);
+	
+	
+	//DEBUG
 	// if(Serial.available()){
 		// sim.write(Serial.read());
 	// }
@@ -103,6 +129,8 @@ void loop(){
 }
 
 
+//Tries to get time frome server
+//And update current clock
 void askForTime(){
 	if(!checkSimModuleReady()){
 		Serial.println("ASK FOR TIME FAILED!");
@@ -153,6 +181,7 @@ void askForTime(){
 }
 
 
+//Pretty time format printing
 void printTime(){
 	lcd.clear();
 	lcd.setCursor(0, 0);
@@ -173,6 +202,8 @@ void printTime(){
 }
 
 
+//Tries to send temperature and pressure
+//to server, also displays what was send
 void sendSensorData(){
 	if(!checkSimModuleReady()){
 		Serial.println("SEND SENSOR DATA FAILED");
@@ -183,15 +214,13 @@ void sendSensorData(){
 	dev.readResults();
 	int temp = dev.getTemperature();
 	int press = dev.getPressure();
-	// const char* str = "temperature=69&pressure=1000";
+	
 	//TODO: made some class to monitor length
 	PostDataHandler<BUFFER_SIZE> postDataHandler = simHandler.sendPostRequest("http://128.69.240.186/Send.php", 28);
 	postDataHandler.writeString("temperature=");
 	postDataHandler.writeInt(temp);
 	postDataHandler.writeString("&pressure=");
 	postDataHandler.writeInt(press);
-	
-	// postDataHandler.writeString(str);
 	
 	if(postDataHandler.send()){
 		if(!postDataHandler.isSended()){
@@ -223,6 +252,8 @@ void sendSensorData(){
 	showEntry(temp, press);
 }
 
+
+//Display temperature and pressure values for some time
 void showEntry(int temp, int pressure){
 	lcd.clear();
 	lcd.setCursor(0,0);
@@ -238,6 +269,9 @@ void showEntry(int temp, int pressure){
 	delay(1500);
 }
 
+
+//Tries to get raw sensor data from server
+//Also displays it
 void askServerData(){
 	if(!checkSimModuleReady()){
 		Serial.println("ASK FOR DATA FAILED!");
@@ -294,6 +328,8 @@ void askServerData(){
 	}
 }
 
+
+//Check if sim module is working and tries to open GPRS connection
 bool checkSimModuleReady(){
 	if(!simHandler.isModuleUp()){
 		delay(5000);
@@ -327,14 +363,8 @@ bool checkSimModuleReady(){
 	return true;
 }
 
-void printAskintTime(){
-	printMessage("Asking time");
-}
 
-void printSending(){
-	printMessage("Sending data");
-}
-
+//CAUTION max length of str is 16 symbols
 void printMessage(const char* str){
 	lcd.clear();
 	lcd.setCursor(0, 0);

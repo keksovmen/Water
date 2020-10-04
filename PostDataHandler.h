@@ -3,6 +3,13 @@
 #include "DataHandler.h"
 
 
+/**
+	Child of DataHandler
+	Handles POST messages
+	
+	Write commands will write into POST body
+*/
+
 template<int N>
 class PostDataHandler : public DataHandler<N>
 {

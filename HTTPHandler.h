@@ -4,13 +4,37 @@
 #include "SimCommandWriter.h"
 #include "SimResultParser.h"
 
+
+/**
+	Simplifies implementation of 
+	SimHandler::sendPost or sendGet methods
+	
+	Current state is requries inmplementation
+	into SimHandler class
+*/
+
+
 template<int N>
 class HTTPHandler
 {
 	public:
 		HTTPHandler(SimIOWrapper<N>& refWrapper,SimCommandWriter<N>& refWriter, SimResultParser<N>& refParser);
 		
+		/**
+			Tries to initiate POST session
+			
+			@return true if succeed
+		*/
+		
 		bool initPostRequest(const char* url, int dataLength);
+		
+		
+		/**
+			Tries to initiate GET session
+			
+			@return true if succeed
+		*/
+		
 		bool initGetRequest();
 	
 	private:

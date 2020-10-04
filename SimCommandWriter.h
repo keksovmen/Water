@@ -3,6 +3,14 @@
 #include "SimIOWrapper.h"
 #include "Enums.h"
 
+/**
+	Wrapper over SimIOWrapper for more easy command writing
+	contain all command for sim module
+	
+	//TODO: made all comands as flesh memory at top of the file
+*/
+
+
 template<int N>
 class SimCommandWriter
 {

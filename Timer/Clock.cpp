@@ -10,8 +10,7 @@
 
 /**
 	Expetcs data as:
-	dd/MM/yy
-	hh/mm//ss
+	dd/MM/yy|hh/mm/ss
 */
 
 bool Clock::parse(const char* str){
