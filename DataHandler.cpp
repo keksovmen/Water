@@ -20,8 +20,13 @@ void DataHandler<N>::writeChar(char c){
 }
 
 template<int N>
-void DataHandler<N>::writeInt(int val){
-	refWrapper.writeInt(val);
+void DataHandler<N>::writeInt(int i){
+	refWrapper.writeInt(i);
+}
+
+template<int N>
+void DataHandler<N>::writeDouble(double d, int amountAfterDot){
+	
 }
 
 

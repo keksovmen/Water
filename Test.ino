@@ -27,11 +27,14 @@ Clock clk;
 unsigned long timeBefore;
 
 
-
 void setup(){
 	Serial.begin(9600);
 	sim.begin(9600);
 	
+	
+	Serial.println(sizeof(PostDataHandler<BUFFER_SIZE>));
+	Serial.println(sizeof(GetDataHandler<BUFFER_SIZE>));
+	Serial.println(sizeof(DataHandler<BUFFER_SIZE>));
 	
 	//Buttons, as input
 	pinMode(BUTTON_TIME, INPUT);
@@ -47,6 +50,7 @@ void setup(){
 	
 	lcd.init();
 	lcd.backlight();
+	
 	
 	
 	//Check if device is connected

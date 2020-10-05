@@ -3,6 +3,7 @@
 #include "SimIOWrapper.h"
 #include "SimCommandWriter.h"
 #include "SimResultParser.h"
+#include "BaseWriter.h"
 
 
 /**
@@ -11,7 +12,7 @@
 */
 
 template<int N>
-class DataHandler
+class DataHandler : public BaseWriter
 {
 	public:
 		DataHandler(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, SimCommandWriter<N>& writer);
@@ -26,10 +27,10 @@ class DataHandler
 		virtual bool send() = 0;
 		
 		
-		void writeString(const char* str);
-		void writeChar(char c);
-		void writeInt(int val);
-		
+		void writeString(const char* str) override;
+		void writeChar(char c) override;
+		void writeInt(int i) override;
+		void writeDouble(double d, int amountAfterDot) override;
 		
 		/**
 			Check if request was sended fully on server

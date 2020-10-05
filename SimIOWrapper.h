@@ -1,6 +1,7 @@
 #pragma once
 #include <SoftwareSerial.h>
 #include "Buffer/FixedBuffer.h"
+#include "BaseWriter.h"
 
 /**
 	Handles the lowest IO operations
@@ -12,7 +13,7 @@
 
 
 template<int N>
-class SimIOWrapper
+class SimIOWrapper : public BaseWriter
 {
 	public:
 	//Test instead of link use pointer???
@@ -32,36 +33,44 @@ class SimIOWrapper
 		
 		
 		/**
+			Writes a string into the serial port
+			Won't send termination sequence
+			
+			@param str to send
+		*/
+		
+		void writeString(const char* str) override;
+		
+		
+		/**
 			Writes a char into the serial port
 			Won't send termination sequence
 			
 			@param c to send
-			@return as builder pattern
 		*/
 		
-		SimIOWrapper<N>& writeChar(char c);
+		void writeChar(char c) override;
 		
 		
 		/**
 			Writes an integer into the serial port
 			Won't send termination sequence
 			
-			@param c to send
-			@return as builder pattern
+			@param i to send
 		*/
 		
-		SimIOWrapper<N>& writeInt(int c);
+		void writeInt(int i) override;
 		
 		
 		/**
-			Writes a string into the serial port
+			Writes a double into the serial port
 			Won't send termination sequence
 			
-			@param c to send
-			@return as builder pattern
+			@param d to send
+			@param amountAfterDot how much digits after dot
 		*/
 		
-		SimIOWrapper<N>& writeString(const char* c);
+		void writeDouble(double d, int amountAfterDot) override;
 		
 		
 		/**

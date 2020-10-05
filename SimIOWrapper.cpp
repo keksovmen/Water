@@ -26,35 +26,38 @@ void SimIOWrapper<N>::writeCommand(const char* cmd, bool clearBuffer){
 
 
 template<int N>
-SimIOWrapper<N>& SimIOWrapper<N>::writeChar(char c){
+void SimIOWrapper<N>::writeString(const char* str){
 	// #ifdef ABS
-		Serial.print(c);
+		Serial.print(str);
 	// #endif
-	refPort.print(c);
-	
-	return *this;
+	refPort.print(str);
 }
 
 
 template<int N>
-SimIOWrapper<N>& SimIOWrapper<N>::writeInt(int c){
+void SimIOWrapper<N>::writeChar(char c){
 	// #ifdef ABS
 		Serial.print(c);
 	// #endif
 	refPort.print(c);
-	
-	return *this;
 }
 
 
 template<int N>
-SimIOWrapper<N>& SimIOWrapper<N>::writeString(const char* c){
+void SimIOWrapper<N>::writeInt(int i){
 	// #ifdef ABS
-		Serial.print(c);
+		Serial.print(i);
 	// #endif
-	refPort.print(c);
-	
-	return *this;
+	refPort.print(i);
+}
+
+
+template<int N>
+void SimIOWrapper<N>::writeDouble(double d, int amountAfterDot){
+	// #ifdef ABS
+		Serial.print(d, amountAfterDot);
+	// #endif
+	refPort.print(d, amountAfterDot);
 }
 
 
