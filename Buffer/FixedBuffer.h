@@ -3,7 +3,6 @@
 	#include <Arduino.h>
 #else
 	#include <string>
-	typedef std::string String;
 #endif
 
 //TODO: add function that will return 
@@ -82,8 +81,8 @@ class FixedBuffer
 			@return true only if there is match
 		*/
 		
-		bool endsWith(String str){
-			int index = length - str.length();
+		bool endsWith(const char* str){
+			int index = length - strlen(str);
 			if(index < 0)
 				return false;
 			
@@ -100,8 +99,8 @@ class FixedBuffer
 			@return true only if there is match
 		*/
 		
-		bool startsWith(String str){
-			int wordLength = str.length();
+		bool startsWith(const char* str){
+			int wordLength = strlen(str);
 			if(wordLength > length)
 				return false;
 			
