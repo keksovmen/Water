@@ -10,11 +10,16 @@ class ParameterHandler
 		int getLength();
 		void handleWritingValue(BaseWriter& writer);
 		
-		Parameter<double>& getTemp(){return temp;}
-		Parameter<double>& getPressure(){return press;}
+		Parameter<PrimitivFloatParameter<double>>& getTemp(){return temp;}
+		Parameter<PrimitivFloatParameter<double>>& getPressure(){return press;}
+		// Parameter<Clock>& getClock(){return clock;}
 		
 	private:
-		Parameter<double> temp = Parameter<double>(PARAMETER_TYPES::PARAMETER_DOUBLE, 0);
-		Parameter<double> press = Parameter<double>(PARAMETER_TYPES::PARAMETER_DOUBLE, 1);
+		Parameter<PrimitivFloatParameter<double>> temp =
+			Parameter<PrimitivFloatParameter<double>>(0);
+		
+		Parameter<PrimitivFloatParameter<double>> press = 
+			Parameter<PrimitivFloatParameter<double>>(1);
+		// Parameter<Clock> clock = Parameter<Clock>(PARAMETER_TYPES::PARAMETER_USER_DEFINED, 2);
 	
 };

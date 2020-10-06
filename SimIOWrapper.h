@@ -39,7 +39,7 @@ class SimIOWrapper : public BaseWriter
 			@param str to send
 		*/
 		
-		void writeString(const char* str) override;
+		void write(const char* str) override;
 		
 		
 		/**
@@ -49,7 +49,7 @@ class SimIOWrapper : public BaseWriter
 			@param c to send
 		*/
 		
-		void writeChar(char c) override;
+		void write(char c) override;
 		
 		
 		/**
@@ -59,7 +59,16 @@ class SimIOWrapper : public BaseWriter
 			@param i to send
 		*/
 		
-		void writeInt(int i) override;
+		virtual void write(int i) override;
+		
+		/**
+			Writes n long into the serial port
+			Won't send termination sequence
+			
+			@param i to send
+		*/
+		
+		void write(long l) override;
 		
 		
 		/**
@@ -70,7 +79,7 @@ class SimIOWrapper : public BaseWriter
 			@param amountAfterDot how much digits after dot
 		*/
 		
-		void writeDouble(double d, int amountAfterDot) override;
+		void write(double d, int amountAfterDot) override;
 		
 		
 		/**

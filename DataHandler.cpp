@@ -10,23 +10,29 @@ DataHandler<N>::DataHandler(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser
 }
 
 template<int N>
-void DataHandler<N>::writeString(const char* str){
-	refWrapper.writeString(str);
+void DataHandler<N>::write(const char* str){
+	refWrapper.write(str);
 }
 
 template<int N>
-void DataHandler<N>::writeChar(char c){
-	refWrapper.writeChar(c);
+void DataHandler<N>::write(char c){
+	refWrapper.write(c);
 }
 
 template<int N>
-void DataHandler<N>::writeInt(int i){
-	refWrapper.writeInt(i);
+void DataHandler<N>::write(int i){
+	refWrapper.write(i);
+}
+
+
+template<int N>
+void DataHandler<N>::write(long l){
+	refWrapper.write(l);
 }
 
 template<int N>
-void DataHandler<N>::writeDouble(double d, int amountAfterDot){
-	refWrapper.writeDouble(d, amountAfterDot);
+void DataHandler<N>::write(double d, int amountAfterDot){
+	refWrapper.write(d, amountAfterDot);
 }
 
 

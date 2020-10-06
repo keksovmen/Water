@@ -1,28 +1,28 @@
 #pragma once
 
-#include "BaseWriter.h"
+#include "BaseParameter.h"
 #include "Enums.h"
+#include "Clock.h"
 
 
 template<typename T>
-class Parameter
+class Parameter : public BaseParameter
 {
 	public:
-		Parameter(PARAMETER_TYPES type, int id);
+		Parameter(int id);
 		
 		
 		/**
 			@return length in characters: id + value
 		*/
 		
-		int getLength();
-		void handleWritingValue(BaseWriter& writer);
+		int getLength() override;
+		void handleWritingValue(BaseWriter& writer) override;
 		
 		int getId(){return id;}
 		T& getValue(){return value;}
 		
 	private:
-		const PARAMETER_TYPES type;
 		const int id;
 		
 		T value;
@@ -31,5 +31,6 @@ class Parameter
 
 
 // template class Parameter<int>;
-template class Parameter<double>;
+template class Parameter<PrimitivFloatParameter<double>>;
+// template class Parameter<Clock>;
 // template class Parameter<double>;

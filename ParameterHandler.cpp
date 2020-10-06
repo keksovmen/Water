@@ -7,13 +7,19 @@ int ParameterHandler::getLength(){
 
 void ParameterHandler::handleWritingValue(BaseWriter& writer){
 	//first write id then = then value then & repeat
-	writer.writeInt(temp.getId());
-	writer.writeChar('=');
+	writer.write(temp.getId());
+	writer.write('=');
 	temp.handleWritingValue(writer);
 	
-	writer.writeChar('&');
+	writer.write('&');
 	
-	writer.writeInt(press.getId());
-	writer.writeChar('=');
+	writer.write(press.getId());
+	writer.write('=');
 	press.handleWritingValue(writer);
+	
+	// writer.write('&');
+	
+	// writer.write(clock.getId());
+	// writer.write('=');
+	// clock.handleWritingValue(writer);
 }

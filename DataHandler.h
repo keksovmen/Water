@@ -27,10 +27,11 @@ class DataHandler : public BaseWriter
 		virtual bool send() = 0;
 		
 		
-		void writeString(const char* str) override;
-		void writeChar(char c) override;
-		void writeInt(int i) override;
-		void writeDouble(double d, int amountAfterDot) override;
+		void write(const char* str) override;
+		void write(char c) override;
+		void write(int i) override;
+		void write(long l) override;
+		void write(double d, int amountAfterDot) override;
 		
 		/**
 			Check if request was sended fully on server

@@ -11,7 +11,7 @@ GetDataHandler<N>::GetDataHandler(SimIOWrapper<N>& wrapper, SimResultParser<N>& 
 
 template<int N>
 bool GetDataHandler<N>::send(){
-	this->refWrapper.writeChar('"');
+	this->refWrapper.write('"');
 	this->refWrapper.writeEndOfCommand();
 			
 	if(!readAndExpectSuccess(this->refWrapper, this->refParser)){

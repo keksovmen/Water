@@ -21,11 +21,12 @@ SimHandler<BUFFER_SIZE> simHandler(sim);
 //Display
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
+ParameterHandler parameters;
+
 //Time
+// Clock& clk = parameters.getClock();
 Clock clk;
 
-
-ParameterHandler parameters;
 
 //For proper calculation of time
 unsigned long timeBefore;
@@ -147,7 +148,7 @@ void askForTime(){
 	
 	GetDataHandler<BUFFER_SIZE> getHandler = simHandler.sendGetRequest();
 	
-	getHandler.writeString("http://128.69.240.186/GetTime.php");
+	getHandler.write("http://128.69.240.186/GetTime.php");
 	
 	if(getHandler.send()){
 		if(!getHandler.isSended()){
@@ -222,8 +223,8 @@ void sendSensorData(){
 	dev.readResults();
 	double temp = dev.getTemperature();
 	double press = dev.getPressure();
-	parameters.getTemp().getValue() = temp;
-	parameters.getPressure().getValue() = press;
+	parameters.getTemp().getValue().getValue() = temp;
+	parameters.getPressure().getValue().getValue() = press;
 	
 	//TODO: made some class to monitor length
 	PostDataHandler<BUFFER_SIZE> postDataHandler = 
@@ -293,7 +294,7 @@ void askServerData(){
 	
 	GetDataHandler<BUFFER_SIZE> getHandler = simHandler.sendGetRequest();
 	
-	getHandler.writeString("http://128.69.240.186/ReadRaw.php");
+	getHandler.write("http://128.69.240.186/ReadRaw.php");
 	
 	if(getHandler.send()){
 		if(!getHandler.isSended()){

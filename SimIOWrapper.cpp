@@ -20,13 +20,13 @@ SimIOWrapper<N>::SimIOWrapper(SoftwareSerial& refSerial) :
 
 template<int N>
 void SimIOWrapper<N>::writeCommand(const char* cmd, bool clearBuffer){
-	writeString(cmd);
+	write(cmd);
 	writeEndOfCommand(clearBuffer);
 }
 
 
 template<int N>
-void SimIOWrapper<N>::writeString(const char* str){
+void SimIOWrapper<N>::write(const char* str){
 	// #ifdef ABS
 		Serial.print(str);
 	// #endif
@@ -35,7 +35,7 @@ void SimIOWrapper<N>::writeString(const char* str){
 
 
 template<int N>
-void SimIOWrapper<N>::writeChar(char c){
+void SimIOWrapper<N>::write(char c){
 	// #ifdef ABS
 		Serial.print(c);
 	// #endif
@@ -44,16 +44,24 @@ void SimIOWrapper<N>::writeChar(char c){
 
 
 template<int N>
-void SimIOWrapper<N>::writeInt(int i){
+void SimIOWrapper<N>::write(int i){
 	// #ifdef ABS
 		Serial.print(i);
 	// #endif
 	refPort.print(i);
 }
 
+template<int N>
+void SimIOWrapper<N>::write(long l){
+	// #ifdef ABS
+		Serial.print(l);
+	// #endif
+	refPort.print(l);
+}
+
 
 template<int N>
-void SimIOWrapper<N>::writeDouble(double d, int amountAfterDot){
+void SimIOWrapper<N>::write(double d, int amountAfterDot){
 	// #ifdef ABS
 		Serial.print(d, amountAfterDot);
 	// #endif

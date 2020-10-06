@@ -24,49 +24,49 @@ void SimCommandWriter<N>::writeCSQ(){
 
 template<int N>
 void SimCommandWriter<N>::writeEcho(bool turnOn){
-	wrapper.writeString("ATE");
-	wrapper.writeChar(turnOn ? '1' : '0');
-	wrapper.writeString("&W");
+	wrapper.write("ATE");
+	wrapper.write(turnOn ? '1' : '0');
+	wrapper.write("&W");
 	wrapper.writeEndOfCommand();
 }
 
 template<int N>
 void SimCommandWriter<N>::writeNumberFormat(bool turnOn){
-	wrapper.writeString("ATV");
-	wrapper.writeChar(turnOn ? '0' : '1');
-	wrapper.writeString("&W");
+	wrapper.write("ATV");
+	wrapper.write(turnOn ? '0' : '1');
+	wrapper.write("&W");
 	wrapper.writeEndOfCommand();
 }
 
 template<int N>
 void SimCommandWriter<N>::writeCallReady(bool turnOn){
-	wrapper.writeString("AT+CIURC=");
-	wrapper.writeChar(turnOn ? '1' : '0');
-	wrapper.writeString(";&W");
+	wrapper.write("AT+CIURC=");
+	wrapper.write(turnOn ? '1' : '0');
+	wrapper.write(";&W");
 	wrapper.writeEndOfCommand();
 }
 
 template<int N>
 void SimCommandWriter<N>::writeReportAsError(bool turnOn){
-	wrapper.writeString("AT+CMEE=");
-	wrapper.writeChar(turnOn ? '1' : '0');
-	wrapper.writeString(";&W");
+	wrapper.write("AT+CMEE=");
+	wrapper.write(turnOn ? '1' : '0');
+	wrapper.write(";&W");
 	wrapper.writeEndOfCommand();
 }
 
 
 template<int N>
 void SimCommandWriter<N>::writeSAPBR(SAPBR_COMMANDS cmd, const char* param, const char* value){
-	wrapper.writeString("AT+SAPBR=");
-	wrapper.writeInt(static_cast<int>(cmd));
-	wrapper.writeString(",1");
+	wrapper.write("AT+SAPBR=");
+	wrapper.write(static_cast<int>(cmd));
+	wrapper.write(",1");
 		
 	if((param) && (value)){
-		wrapper.writeString(",\"");
-		wrapper.writeString(param);
-		wrapper.writeString("\",\"");
-		wrapper.writeString(value);
-		wrapper.writeChar('"');
+		wrapper.write(",\"");
+		wrapper.write(param);
+		wrapper.write("\",\"");
+		wrapper.write(value);
+		wrapper.write('"');
 	}
 	
 	wrapper.writeEndOfCommand();
@@ -91,14 +91,14 @@ void SimCommandWriter<N>::writeHTPP(HTTP_COMMANDS cmd){
 template<int N>
 void SimCommandWriter<N>::writeHTPPSetParam(const char* param, const char* value){
 	//TODO: made separate header file with all comands as fields
-	wrapper.writeString("AT+HTTPPARA=");
-	wrapper.writeChar('"');
-	wrapper.writeString(param);
-	wrapper.writeString("\",\"");
+	wrapper.write("AT+HTTPPARA=");
+	wrapper.write('"');
+	wrapper.write(param);
+	wrapper.write("\",\"");
 		
 	if(value){
-		wrapper.writeString(value);
-		wrapper.writeChar('"');
+		wrapper.write(value);
+		wrapper.write('"');
 		wrapper.writeEndOfCommand();
 	}
 	//else will be written later through other methods of SimIOWrapper
@@ -107,27 +107,27 @@ void SimCommandWriter<N>::writeHTPPSetParam(const char* param, const char* value
 
 template<int N>
 void SimCommandWriter<N>::writeHTPPAction(HTTP_REQUESTS method){
-	wrapper.writeString("AT+HTTPACTION=");
-	wrapper.writeInt(static_cast<int>(method));
+	wrapper.write("AT+HTTPACTION=");
+	wrapper.write(static_cast<int>(method));
 	wrapper.writeEndOfCommand();
 	
 }
 
 template<int N>
 void SimCommandWriter<N>::writeHTPPData(int length){
-	wrapper.writeString("AT+HTTPDATA=");
-	wrapper.writeInt(length);
-	wrapper.writeChar(',');
-	wrapper.writeInt(5000);
+	wrapper.write("AT+HTTPDATA=");
+	wrapper.write(length);
+	wrapper.write(',');
+	wrapper.write(5000);
 	wrapper.writeEndOfCommand();
 }
 
 
 template<int N>
 void SimCommandWriter<N>::writeReadHTTP(int from, int amount){
-	wrapper.writeString("AT+HTTPREAD=");
-	wrapper.writeInt(from);
-	wrapper.writeChar(',');
-	wrapper.writeInt(amount);
+	wrapper.write("AT+HTTPREAD=");
+	wrapper.write(from);
+	wrapper.write(',');
+	wrapper.write(amount);
 	wrapper.writeEndOfCommand(false);
 }
