@@ -12,7 +12,7 @@ class ParameterHandler
 		
 		Parameter<PrimitivFloatParameter<double>>& getTemp(){return temp;}
 		Parameter<PrimitivFloatParameter<double>>& getPressure(){return press;}
-		// Parameter<Clock>& getClock(){return clock;}
+		Parameter<Clock>& getClock(){return clock;}
 		
 	private:
 		Parameter<PrimitivFloatParameter<double>> temp =
@@ -20,6 +20,7 @@ class ParameterHandler
 		
 		Parameter<PrimitivFloatParameter<double>> press = 
 			Parameter<PrimitivFloatParameter<double>>(1);
-		// Parameter<Clock> clock = Parameter<Clock>(PARAMETER_TYPES::PARAMETER_USER_DEFINED, 2);
+			
+		Parameter<Clock> clock = Parameter<Clock>(2);
 	
 };

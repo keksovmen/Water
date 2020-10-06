@@ -2,7 +2,8 @@
 
 
 int ParameterHandler::getLength(){
-	return temp.getLength() + press.getLength() + 3;	//3 for two = and one &
+	return temp.getLength() + press.getLength() +
+			clock.getLength() + 5;	//5: 3 = and 2 &
 }
 
 void ParameterHandler::handleWritingValue(BaseWriter& writer){
@@ -17,9 +18,9 @@ void ParameterHandler::handleWritingValue(BaseWriter& writer){
 	writer.write('=');
 	press.handleWritingValue(writer);
 	
-	// writer.write('&');
+	writer.write('&');
 	
-	// writer.write(clock.getId());
-	// writer.write('=');
-	// clock.handleWritingValue(writer);
+	writer.write(clock.getId());
+	writer.write('=');
+	clock.handleWritingValue(writer);
 }

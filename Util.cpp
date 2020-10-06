@@ -10,14 +10,14 @@ int characterToInt(char c){
 int findLongLength(long val){
 	long delimeter = 1000000000;
 	bool started = false;
-	int count = 0;
+	int count = 1;
 
 	if(val < 0){
 		val = abs(val);
 		count++;	//minus sign
 	}
 	
-	while(delimeter > 0){
+	while(delimeter > 1){
 		if ((val / delimeter) > 0){
 			started = true;
 			val -= delimeter;

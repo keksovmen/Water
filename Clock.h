@@ -1,6 +1,14 @@
 #pragma once
 
-class Clock
+#ifdef ARDUINO
+	#include "BaseParameter.h"
+#endif
+
+#ifdef ARDUINO
+	class Clock : public BaseParameter
+#else 
+	class Clock
+#endif
 {
 	public:
 		
@@ -21,6 +29,11 @@ class Clock
 		int getDays(){return days;};
 		int getMonths(){return months;};
 		int getYears(){return years;};
+		
+		#ifdef ARDUINO
+			int getLength() override;
+			void handleWritingValue(BaseWriter& writer) override;
+		#endif
 		
 	private:
 		int findMothDays(int month);

@@ -24,8 +24,8 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 ParameterHandler parameters;
 
 //Time
-// Clock& clk = parameters.getClock();
-Clock clk;
+Clock& clk = parameters.getClock().getValue();
+// Clock clk;
 
 
 //For proper calculation of time
@@ -106,11 +106,11 @@ void loop(){
 	}
 	
 	
-	//if button 8 pressed
-	// if(digitalRead(BUTTON_TIME) == LOW){
-		// printMessage("Asking time");
-		// askForTime();
-	// }
+	// if button 8 pressed
+	if(digitalRead(BUTTON_TIME) == LOW){
+		printMessage("Asking time");
+		askForTime();
+	}
 	
 	
 	//if button 9 pressed

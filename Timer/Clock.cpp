@@ -1,5 +1,6 @@
 #ifdef ARDUINO
 	#include <Arduino.h>
+	#include "Util.h"
 #else
 	#include <stdlib.h>
 	#include <cstring>
@@ -162,3 +163,32 @@ int Clock::findMothDays(int month){
 		default: return -1;
 	}
 }
+
+
+#ifdef ARDUINO
+
+int Clock::getLength(){
+	int digits = findLongLength(days) +
+					findLongLength(months) +
+					findLongLength(years) +
+					findLongLength(hours) +
+					findLongLength(minutes) +
+					findLongLength(seconds);
+	return digits + 5;	// 5 for delimiters
+}
+
+void Clock::handleWritingValue(BaseWriter& writer){
+	writer.write(days);
+	writer.write(':');
+	writer.write(months);
+	writer.write(':');
+	writer.write(years);
+	writer.write(':');
+	writer.write(hours);
+	writer.write(':');
+	writer.write(minutes);
+	writer.write(':');
+	writer.write(seconds);
+}
+
+#endif
