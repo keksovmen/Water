@@ -4,3 +4,5 @@
 			let user do whatever he want's during this time
 4	-	Supper important to check how much you read from UART when 
 			reading HTTPREAD, to prevent removing actual data
+			
+5	-	Length of id need to be calculated!

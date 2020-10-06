@@ -2,6 +2,7 @@
 #include "SimHandler.h"
 #include "Clock.h"
 #include "Device.h"
+#include "ParameterHandler.h"
 
 
 #define BUFFER_SIZE 128
@@ -23,6 +24,9 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 //Time
 Clock clk;
 
+
+ParameterHandler parameters;
+
 //For proper calculation of time
 unsigned long timeBefore;
 
@@ -32,9 +36,9 @@ void setup(){
 	sim.begin(9600);
 	
 	
-	Serial.println(sizeof(PostDataHandler<BUFFER_SIZE>));
-	Serial.println(sizeof(GetDataHandler<BUFFER_SIZE>));
-	Serial.println(sizeof(DataHandler<BUFFER_SIZE>));
+	// Serial.println(sizeof(PostDataHandler<BUFFER_SIZE>));
+	// Serial.println(sizeof(GetDataHandler<BUFFER_SIZE>));
+	// Serial.println(sizeof(DataHandler<BUFFER_SIZE>));
 	
 	//Buttons, as input
 	pinMode(BUTTON_TIME, INPUT);
@@ -102,10 +106,10 @@ void loop(){
 	
 	
 	//if button 8 pressed
-	if(digitalRead(BUTTON_TIME) == LOW){
-		printMessage("Asking time");
-		askForTime();
-	}
+	// if(digitalRead(BUTTON_TIME) == LOW){
+		// printMessage("Asking time");
+		// askForTime();
+	// }
 	
 	
 	//if button 9 pressed
@@ -116,10 +120,10 @@ void loop(){
 	
 	
 	//if button 10 pressed
-	if(digitalRead(BUTTON_SHOW) == LOW){
-		printMessage("Asking server");
-		askServerData();
-	}
+	// if(digitalRead(BUTTON_SHOW) == LOW){
+		// printMessage("Asking server");
+		// askServerData();
+	// }
 	
 	
 	//DEBUG
@@ -216,15 +220,20 @@ void sendSensorData(){
 	
 	
 	dev.readResults();
-	int temp = dev.getTemperature();
-	int press = dev.getPressure();
+	double temp = dev.getTemperature();
+	double press = dev.getPressure();
+	parameters.getTemp().getValue() = temp;
+	parameters.getPressure().getValue() = press;
 	
 	//TODO: made some class to monitor length
-	PostDataHandler<BUFFER_SIZE> postDataHandler = simHandler.sendPostRequest("http://128.69.240.186/Send.php", 28);
-	postDataHandler.writeString("temperature=");
-	postDataHandler.writeInt(temp);
-	postDataHandler.writeString("&pressure=");
-	postDataHandler.writeInt(press);
+	PostDataHandler<BUFFER_SIZE> postDataHandler = 
+		simHandler.sendPostRequest("http://128.69.240.186/Send.php", parameters.getLength());
+		
+	parameters.handleWritingValue(postDataHandler);
+	// postDataHandler.writeString("temperature=");
+	// postDataHandler.writeInt(temp);
+	// postDataHandler.writeString("&pressure=");
+	// postDataHandler.writeInt(press);
 	
 	if(postDataHandler.send()){
 		if(!postDataHandler.isSended()){

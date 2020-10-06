@@ -26,7 +26,7 @@ void DataHandler<N>::writeInt(int i){
 
 template<int N>
 void DataHandler<N>::writeDouble(double d, int amountAfterDot){
-	
+	refWrapper.writeDouble(d, amountAfterDot);
 }
 
 

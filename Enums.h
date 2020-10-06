@@ -134,3 +134,16 @@ enum HTTP_STATUS_CODES : int
 	HTTP_STATUS_SIM_MODULE_ERROR = 6,
 	
 };
+
+
+/**
+	Used by Parameter.h
+*/
+
+enum PARAMETER_TYPES : int
+{
+	PARAMETER_INT,
+	PARAMETER_DOUBLE,
+	PARAMETER_USER_DEFINED
+	
+};
