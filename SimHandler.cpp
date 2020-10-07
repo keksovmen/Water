@@ -1,7 +1,16 @@
 #include <Arduino.h>
+#include <New.h>
 #include "SimHandler.h"
 #include "Util.h"
 #include "HTTPHandler.h"
+#include "PostDataHandler.h"
+#include "GetDataHandler.h"
+
+
+//For new Post/GetDataHandler to return a pointer
+//Caution first check or calculate sizeof(Post/GetDataHandler)
+static char dynamicMemory[14];
+
 
 
 template<int N>
@@ -116,7 +125,7 @@ bool SimHandler<N>::disconnectFromGPRS(){
 
 
 template<int N>
-PostDataHandler<N> SimHandler<N>::sendPostRequest(const char* url, int dataLength){
+DataHandler<N>* SimHandler<N>::sendPostRequest(const char* url, int dataLength){
 	writer.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
 	//Add check if already init so you could close it
 	readAndExpectSuccess(wrapper, parser);
@@ -144,17 +153,17 @@ PostDataHandler<N> SimHandler<N>::sendPostRequest(const char* url, int dataLengt
 		}
 	}
 	
-	return PostDataHandler<N>(wrapper, parser, writer);
+	return new(dynamicMemory) PostDataHandler<N>(wrapper, parser, writer);
 }
 
 
 template<int N>
-GetDataHandler<N> SimHandler<N>::sendGetRequest(){
+DataHandler<N>* SimHandler<N>::sendGetRequest(){
 	writer.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
 	//Add check if already init so you could close it
 	readAndExpectSuccess(wrapper, parser);
 	
 	writer.writeHTPPSetParam("URL", nullptr);
 	
-	return GetDataHandler<N>(wrapper, parser, writer);
+	return new(dynamicMemory) GetDataHandler<N>(wrapper, parser, writer);
 }

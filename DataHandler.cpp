@@ -38,7 +38,7 @@ void DataHandler<N>::write(double d, int amountAfterDot){
 
 template<int N>
 bool DataHandler<N>::isSended(){
-	if(refWrapper.readToBufferTimeout(5000)){
+	if(refWrapper.readToBuffer()){
 		if(refParser.isHttpActionPresents()){
 			responceLength = refParser.fetchHttpResponceLength();
 			return true;

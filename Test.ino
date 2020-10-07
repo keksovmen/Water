@@ -146,43 +146,39 @@ void askForTime(){
 		return;
 	}
 	
-	GetDataHandler<BUFFER_SIZE> getHandler = simHandler.sendGetRequest();
+	DataHandler<BUFFER_SIZE>* getHandler = simHandler.sendGetRequest();
 	
-	getHandler.write("http://128.69.240.186/GetTime.php");
+	getHandler->write("http://128.69.240.186/GetTime.php");
 	
-	if(getHandler.send()){
-		if(!getHandler.isSended()){
-			if(!getHandler.isSended()){
-				Serial.println("Send already took 10 sec");
-				while(!getHandler.isSended()){
-					Serial.println("Send took another 5 sec");
-				}
-			}
+	if(getHandler->send()){
+		while(!getHandler->isSended()){
+			delay(1000);
+			Serial.println("Send took 1 sec");
 		}
 	}else{
 		Serial.println("SEND FAILED");
-		getHandler.finish();
+		getHandler->finish();
 		return;
 	}
 	
-	if(!getHandler.isSendedSuccesfully()){
+	if(!getHandler->isSendedSuccesfully()){
 		Serial.println("SEND FINISHED WITH NO SUCCESS CODE");
-		getHandler.finish();
+		getHandler->finish();
 		return;
 	}
 	
-	getHandler.getBuffer().clear();
-	if(getHandler.readResponce()){
-		auto& b = getHandler.getBuffer();
+	getHandler->getBuffer().clear();
+	if(getHandler->readResponce()){
+		auto& b = getHandler->getBuffer();
 		if(!clk.parse(b.begin())){
 			Serial.println("CLOCK PARSE FAILED MUST BE DATA CORRAPTION HERE IS BUFFER:");
 			Serial.println(b.begin());
-			getHandler.finish();
+			getHandler->finish();
 			return;
 		}
 	}
 	
-	getHandler.finish();
+	getHandler->finish();
 	
 	if(!simHandler.disconnectFromGPRS()){
 		Serial.println("Failed to close GPRS");
@@ -227,33 +223,29 @@ void sendSensorData(){
 	parameters.getPressure().getValue().getValue() = press;
 	
 	//TODO: made some class to monitor length
-	PostDataHandler<BUFFER_SIZE> postDataHandler = 
+	DataHandler<BUFFER_SIZE>* postDataHandler = 
 		simHandler.sendPostRequest("http://128.69.240.186/Send.php", parameters.getLength());
 		
-	parameters.handleWritingValue(postDataHandler);
+	parameters.handleWritingValue((*postDataHandler));
 	
-	if(postDataHandler.send()){
-		if(!postDataHandler.isSended()){
-			if(!postDataHandler.isSended()){
-				Serial.println("Send already took 10 sec");
-				while(!postDataHandler.isSended()){
-					Serial.println("Send took another 5 sec");
-				}
-			}
+	if(postDataHandler->send()){
+		while(!postDataHandler->isSended()){
+			delay(1000);
+			Serial.println("Send took 1 sec");
 		}
 	}else{
 		Serial.println("SEND FAILED");
-		postDataHandler.finish();
+		postDataHandler->finish();
 		return;
 	}
 	
-	if(!postDataHandler.isSendedSuccesfully()){
+	if(!postDataHandler->isSendedSuccesfully()){
 		Serial.println("SEND FINISHED WITH NO SUCCESS CODE");
-		postDataHandler.finish();
+		postDataHandler->finish();
 		return;
 	}
 	
-	postDataHandler.finish();
+	postDataHandler->finish();
 	
 	if(!simHandler.disconnectFromGPRS()){
 		Serial.println("Failed to close GPRS");
@@ -288,34 +280,30 @@ void askServerData(){
 		return;
 	}
 	
-	GetDataHandler<BUFFER_SIZE> getHandler = simHandler.sendGetRequest();
+	DataHandler<BUFFER_SIZE>* getHandler = simHandler.sendGetRequest();
 	
-	getHandler.write("http://128.69.240.186/ReadRaw.php");
+	getHandler->write("http://128.69.240.186/ReadRaw.php");
 	
-	if(getHandler.send()){
-		if(!getHandler.isSended()){
-			if(!getHandler.isSended()){
-				Serial.println("Send already took 10 sec");
-				while(!getHandler.isSended()){
-					Serial.println("Send took another 5 sec");
-				}
-			}
+	if(getHandler->send()){
+		while(!getHandler->isSended()){
+			delay(1000);
+			Serial.println("Send took 1 sec");
 		}
 	}else{
 		Serial.println("SEND FAILED");
-		getHandler.finish();
+		getHandler->finish();
 		return;
 	}
 	
-	if(!getHandler.isSendedSuccesfully()){
+	if(!getHandler->isSendedSuccesfully()){
 		Serial.println("SEND FINISHED WITH NO SUCCESS CODE");
-		getHandler.finish();
+		getHandler->finish();
 		return;
 	}
 	
-	getHandler.getBuffer().clear();
-	while(getHandler.readResponce()){
-		auto& b = getHandler.getBuffer();
+	getHandler->getBuffer().clear();
+	while(getHandler->readResponce()){
+		auto& b = getHandler->getBuffer();
 		
 		int index = b.indexOf("\n");
 		if(index == -1)
@@ -331,7 +319,7 @@ void askServerData(){
 		
 	}
 	
-	getHandler.finish();
+	getHandler->finish();
 	
 	if(!simHandler.disconnectFromGPRS()){
 		Serial.println("Failed to close GPRS");

@@ -1,8 +1,3 @@
-1	-	SimHandler 119 fix error with not containing download
 2	-	Create message handler before any message with callback
-3	-	Remove wait from all methods that ask for wait some time,
-			let user do whatever he want's during this time
 4	-	Supper important to check how much you read from UART when 
 			reading HTTPREAD, to prevent removing actual data
-			
-5	-	Length of id need to be calculated!

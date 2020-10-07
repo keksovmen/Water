@@ -6,8 +6,7 @@
 #include "SimResultParser.h"
 #include "Enums.h"
 #include "GPRSHandler.h"
-#include "PostDataHandler.h"
-#include "GetDataHandler.h"
+#include "DataHandler.h"
 
 
 /**
@@ -89,7 +88,7 @@ class SimHandler
 			@return post handler
 		*/
 		
-		PostDataHandler<N> sendPostRequest(const char* url, int dataLength);
+		DataHandler<N>* sendPostRequest(const char* url, int dataLength);
 		
 		
 		/**
@@ -100,7 +99,7 @@ class SimHandler
 			@return get handler
 		*/
 		
-		GetDataHandler<N> sendGetRequest();
+		DataHandler<N>* sendGetRequest();
 		
 	private:
 		SimIOWrapper<N> wrapper;
