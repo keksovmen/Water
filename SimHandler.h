@@ -7,6 +7,7 @@
 #include "Enums.h"
 #include "GPRSHandler.h"
 #include "DataHandler.h"
+#include "HTTPHandler.h"
 
 
 /**
@@ -106,6 +107,7 @@ class SimHandler
 		SimCommandWriter<N> writer;
 		SimResultParser<N> parser;
 		GPRSHandler<N> gprsHandler;
+		HTTPHandler<N> httpHandler;
 		
 };
 

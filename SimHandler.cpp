@@ -16,7 +16,8 @@ static char dynamicMemory[14];
 template<int N>
 SimHandler<N>::SimHandler(SoftwareSerial& refPort) :
 	wrapper(refPort), writer(wrapper),
-	parser(wrapper.getBuffer()), gprsHandler(wrapper, writer, parser)
+	parser(wrapper.getBuffer()), gprsHandler(wrapper, writer, parser),
+	httpHandler(wrapper, writer, parser)
 {
 	
 }
@@ -126,44 +127,19 @@ bool SimHandler<N>::disconnectFromGPRS(){
 
 template<int N>
 DataHandler<N>* SimHandler<N>::sendPostRequest(const char* url, int dataLength){
-	writer.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
-	//Add check if already init so you could close it
-	readAndExpectSuccess(wrapper, parser);
-	
-	writer.writeHTPPSetParam("URL", url);
-	readAndExpectSuccess(wrapper, parser);
-	
-	writer.writeHTPPSetParam("CONTENT", "application/x-www-form-urlencoded");
-	readAndExpectSuccess(wrapper, parser);
-	
-	writer.writeHTPPData(dataLength);
-	if(!wrapper.readToBuffer()){
-		Serial.println("Error with sendPostRequest() 1");
-		//error
+	if(httpHandler.initPostRequest(url, dataLength)){
+		return new(dynamicMemory) PostDataHandler<N>(wrapper, parser, writer);
 	}
 	
-	//error
-	//TODO: use HTTPHandler here
-	if(!parser.containDownload()){
-		if(!wrapper.readToBuffer()){
-			Serial.println("Error with sendPostRequest() 2");
-		}
-		if(!parser.containDownload()){
-			Serial.println("Error with sendPostRequest() 3");
-		}
-	}
-	
-	return new(dynamicMemory) PostDataHandler<N>(wrapper, parser, writer);
+	return nullptr;
 }
 
 
 template<int N>
 DataHandler<N>* SimHandler<N>::sendGetRequest(){
-	writer.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
-	//Add check if already init so you could close it
-	readAndExpectSuccess(wrapper, parser);
+	if(httpHandler.initGetRequest()){
+		return new(dynamicMemory) GetDataHandler<N>(wrapper, parser, writer);
+	}
 	
-	writer.writeHTPPSetParam("URL", nullptr);
-	
-	return new(dynamicMemory) GetDataHandler<N>(wrapper, parser, writer);
+	return nullptr;
 }

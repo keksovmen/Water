@@ -40,6 +40,7 @@ void setup(){
 	// Serial.println(sizeof(PostDataHandler<BUFFER_SIZE>));
 	// Serial.println(sizeof(GetDataHandler<BUFFER_SIZE>));
 	// Serial.println(sizeof(DataHandler<BUFFER_SIZE>));
+	// Serial.println(sizeof(HTTPHandler<BUFFER_SIZE>));
 	
 	//Buttons, as input
 	pinMode(BUTTON_TIME, INPUT);
@@ -148,6 +149,11 @@ void askForTime(){
 	
 	DataHandler<BUFFER_SIZE>* getHandler = simHandler.sendGetRequest();
 	
+	if(!getHandler){
+		Serial.println("Handler is nullptr");
+		return;
+	}
+	
 	getHandler->write("http://128.69.240.186/GetTime.php");
 	
 	if(getHandler->send()){
@@ -222,9 +228,13 @@ void sendSensorData(){
 	parameters.getTemp().getValue().getValue() = temp;
 	parameters.getPressure().getValue().getValue() = press;
 	
-	//TODO: made some class to monitor length
+	
 	DataHandler<BUFFER_SIZE>* postDataHandler = 
 		simHandler.sendPostRequest("http://128.69.240.186/Send.php", parameters.getLength());
+		
+	if(!postDataHandler){
+		Serial.println("Handler is nullptr");
+	}
 		
 	parameters.handleWritingValue((*postDataHandler));
 	
@@ -281,6 +291,11 @@ void askServerData(){
 	}
 	
 	DataHandler<BUFFER_SIZE>* getHandler = simHandler.sendGetRequest();
+	
+	if(!getHandler){
+		Serial.println("Handler is nullptr");
+		return;
+	}
 	
 	getHandler->write("http://128.69.240.186/ReadRaw.php");
 	

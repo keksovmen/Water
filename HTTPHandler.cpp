@@ -37,6 +37,7 @@ bool HTTPHandler<N>::initGetRequest(){
 	return false;
 }
 
+
 /**
 	Tries to init http session
 	if session is already open will terminate it
