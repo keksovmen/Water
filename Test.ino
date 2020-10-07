@@ -61,7 +61,7 @@ void setup(){
 	//Check if device is connected
 	if(!dev.init()){
 		Serial.println("Device is not connected");
-		while(1){};
+		// while(1){};
 	}
 	
 	
@@ -70,7 +70,7 @@ void setup(){
 		delay(5000);
 		if(!simHandler.isModuleUp()){
 			Serial.println("Module if offline");
-			while(1){};
+			// while(1){};
 		}
 	}
 	
@@ -78,14 +78,14 @@ void setup(){
 	//Check if module is working properly
 	if(!simHandler.isModuleAlive()){
 		Serial.println("Module is not alive");
-		while(1){};
+		// while(1){};
 	}
 	
 	
 	//Set default parameters
 	if(!simHandler.setDefaultParams()){
 		Serial.println("Defaults are not set");
-		while(1){};
+		// while(1){};
 	}
 	
 	
@@ -231,10 +231,6 @@ void sendSensorData(){
 		simHandler.sendPostRequest("http://128.69.240.186/Send.php", parameters.getLength());
 		
 	parameters.handleWritingValue(postDataHandler);
-	// postDataHandler.writeString("temperature=");
-	// postDataHandler.writeInt(temp);
-	// postDataHandler.writeString("&pressure=");
-	// postDataHandler.writeInt(press);
 	
 	if(postDataHandler.send()){
 		if(!postDataHandler.isSended()){

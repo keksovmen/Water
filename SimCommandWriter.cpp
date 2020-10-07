@@ -131,3 +131,12 @@ void SimCommandWriter<N>::writeReadHTTP(int from, int amount){
 	wrapper.write(amount);
 	wrapper.writeEndOfCommand(false);
 }
+
+
+template<int N>
+void SimCommandWriter<N>::writeIPR(long rate){
+	wrapper.write("AT+IPR=");
+	wrapper.write(rate);
+	wrapper.write(";&W");
+	wrapper.writeEndOfCommand();
+}

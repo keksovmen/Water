@@ -84,6 +84,10 @@ bool SimHandler<N>::setDefaultParams(){
 	if(!readAndExpectSuccess(wrapper, parser))
 		return false;
 	
+	writer.writeIPR(9600);
+	if(!readAndExpectSuccess(wrapper, parser))
+		return false;
+	
 	writer.writeAT();
 	if(!readAndExpectSuccess(wrapper, parser))
 		return false;
