@@ -22,13 +22,13 @@
 		bool addMonths(int month);
 		bool addYears(int year);
 		
-		int getMillis(){return millis;};
-		int getSeconds(){return seconds;};
-		int getMinutes(){return minutes;};
-		int getHours(){return hours;};
-		int getDays(){return days;};
-		int getMonths(){return months;};
-		int getYears(){return years;};
+		int getMillis() const {return millis;};
+		int getSeconds() const {return seconds;};
+		int getMinutes() const {return minutes;};
+		int getHours() const {return hours;};
+		int getDays() const {return days;};
+		int getMonths() const {return months;};
+		int getYears() const {return years;};
 		
 		#ifdef ARDUINO
 			int getLength() override;

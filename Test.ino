@@ -103,7 +103,7 @@ void loop(){
 	
 	//check if summ of millis exceeded 1 sec
 	if(clk.addMillis(timePassed)){
-		printTime();
+		printTime(clk);
 	}
 	
 	
@@ -122,10 +122,10 @@ void loop(){
 	
 	
 	//if button 10 pressed
-	// if(digitalRead(BUTTON_SHOW) == LOW){
-		// printMessage("Asking server");
-		// askServerData();
-	// }
+	if(digitalRead(BUTTON_SHOW) == LOW){
+		printMessage("Asking server");
+		askServerData();
+	}
 	
 	
 	//DEBUG
@@ -193,7 +193,7 @@ void askForTime(){
 
 
 //Pretty time format printing
-void printTime(){
+void printTime(const Clock& clk){
 	lcd.clear();
 	lcd.setCursor(0, 0);
 	lcd.print("Date: ");
@@ -323,12 +323,24 @@ void askServerData(){
 		int index = b.indexOf("\n");
 		if(index == -1)
 			continue;
-		int startIndex = b.indexOf("Temperature");
 		
-		int temp = atoi(&b[startIndex + 16]);
-		int pressure = atoi(&b[startIndex + 34]);
+		int startIndex = b.indexOf("Temperature");
+		int temp = atof(&b[startIndex + 17]);
+		
+		startIndex = b.indexOf("Pressure");
+		int pressure = atof(&b[startIndex + 15]);
 		
 		showEntry(temp, pressure);
+		
+		startIndex = b.indexOf("Time: ");
+		if(startIndex != -1){
+			Clock tmpClock;
+			if(tmpClock.parse(&b[startIndex + 6])){
+				printTime(tmpClock);
+				delay(1500);
+			}
+			
+		}
 		
 		b.substring(index + 1);
 		

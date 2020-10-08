@@ -70,7 +70,7 @@ void DataHandler<N>::finish(){
 	Basicly call in while loop, it will fill buffer
 	with 64 - some treshhold data length
 	
-	\r\n+HTTPREAD: <xx>\r\n - 17 garbage symbols
+	\r\n+HTTPREAD: <xx>\r\n - 15 garbage symbols + 1 for each <x>
 	dataOK\r\n - 3 garbage symbols
 	
 	So should ask for 64 - 20 = 44 bytes of data,
@@ -82,20 +82,33 @@ void DataHandler<N>::finish(){
 
 template<int N>
 bool DataHandler<N>::readResponce(){
-	if(refWrapper.getBuffer().remains() < 20){
+	if(readIndex >= responceLength){
+		return false;
+	}
+	
+	const int MIN_LENGTH = 19;
+	//if less than 19 symbols left return buffer full
+	if(refWrapper.getBuffer().remains() < MIN_LENGTH){
 		//TODO: made read to buffer return actual amount readed
 		//so you can fetch how much did you read
 		Serial.println("BUFFER OVERFLOW");
 		return true;
 	}
 
-	Serial.println(responceLength);
-	if(readIndex >= responceLength){
-		return false;
+	unsigned int readAmount = refWrapper.getBuffer().remains() - MIN_LENGTH;
+	//10 symbol fix
+	if(readAmount > responceLength){
+		readAmount = responceLength;
+		
+	}else if(readAmount == 10){
+		readAmount = 9;
+		
+	}else{
+		readAmount -= findLongLength(readAmount);
 	}
 	
-	refWriter.writeReadHTTP(readIndex, 44);
-	readIndex += 44;
+	refWriter.writeReadHTTP(readIndex, readAmount);
+	readIndex += readAmount;
 	
 	while(1){
 		refWrapper.readToBuffer();

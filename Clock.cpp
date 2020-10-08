@@ -168,26 +168,37 @@ int Clock::findMothDays(int month){
 #ifdef ARDUINO
 
 int Clock::getLength(){
-	int digits = findLongLength(days) +
-					findLongLength(months) +
-					findLongLength(years) +
-					findLongLength(hours) +
-					findLongLength(minutes) +
-					findLongLength(seconds);
-	return digits + 5;	// 5 for delimiters
+	return 17;	// 5 for delimiters, 2 for each value
 }
 
 void Clock::handleWritingValue(BaseWriter& writer){
+	if(days < 10)
+		writer.write(0);
 	writer.write(days);
 	writer.write(':');
+	
+	if(months < 10)
+		writer.write(0);
 	writer.write(months);
 	writer.write(':');
+	
+	if(years < 10)
+		writer.write(0);
 	writer.write(years);
 	writer.write(':');
+	
+	if(hours < 10)
+		writer.write(0);
 	writer.write(hours);
 	writer.write(':');
+	
+	if(minutes < 10)
+		writer.write(0);
 	writer.write(minutes);
 	writer.write(':');
+	
+	if(seconds < 10)
+		writer.write(0);
 	writer.write(seconds);
 }
 
