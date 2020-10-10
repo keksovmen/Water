@@ -53,6 +53,7 @@ bool HTTPHandler<N>::initSession(){
 			return true;
 		
 		case ERROR:
+		case UNDEFINED:
 			if(terminateSession()){
 				writer.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
 				return readAndExpectSuccess(wrapper, parser);

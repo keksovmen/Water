@@ -89,6 +89,8 @@ bool SimIOWrapper<N>::readToBuffer(){
 			
 		}
 			
+		//find some messages and indicate it somewhere
+		//don't forget to delet them from here
 		return true;
 	}
 	

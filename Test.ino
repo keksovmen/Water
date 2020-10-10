@@ -319,30 +319,34 @@ void askServerData(){
 	getHandler->getBuffer().clear();
 	while(getHandler->readResponce()){
 		auto& b = getHandler->getBuffer();
+		int index;
 		
-		int index = b.indexOf("\n");
-		if(index == -1)
-			continue;
-		
-		int startIndex = b.indexOf("Temperature");
-		int temp = atof(&b[startIndex + 17]);
-		
-		startIndex = b.indexOf("Pressure");
-		int pressure = atof(&b[startIndex + 15]);
-		
-		showEntry(temp, pressure);
-		
-		startIndex = b.indexOf("Time: ");
-		if(startIndex != -1){
-			Clock tmpClock;
-			if(tmpClock.parse(&b[startIndex + 6])){
-				printTime(tmpClock);
-				delay(1500);
+		while((index = b.indexOf("\n")) != -1){
+			if(index == -1)
+				continue;
+			
+			int startIndex = b.indexOf("Temperature");
+			int temp = atof(&b[startIndex + 17]);
+			
+			startIndex = b.indexOf("Pressure");
+			int pressure = atof(&b[startIndex + 15]);
+			
+			showEntry(temp, pressure);
+			
+			startIndex = b.indexOf("Time: ");
+			if(startIndex != -1){
+				Clock tmpClock;
+				if(tmpClock.parse(&b[startIndex + 6])){
+					printTime(tmpClock);
+					delay(1500);
+				}
+				
 			}
 			
+			b.substring(index);	//substring from /nTemperature of new line
+			b.remove(0, 1);	//delete /n symbol
+			
 		}
-		
-		b.substring(index + 1);
 		
 	}
 	
@@ -369,9 +373,11 @@ bool checkSimModuleReady(){
 			return false;
 	}
 	
-	if(!simHandler.isConnectedToNetwork()){
+	if(simHandler.isConnectedToNetwork() != 
+						NETWORK_CONNECTION::REGISTERED){
 		delay(5000);
-		if(!simHandler.isConnectedToNetwork()){
+		if(simHandler.isConnectedToNetwork() != 
+						NETWORK_CONNECTION::REGISTERED){
 			Serial.println("Module can't connect to network");
 			return false;
 		}

@@ -71,9 +71,9 @@ void DataHandler<N>::finish(){
 	with 64 - some treshhold data length
 	
 	\r\n+HTTPREAD: <xx>\r\n - 15 garbage symbols + 1 for each <x>
-	dataOK\r\n - 3 garbage symbols
+	data\r\nOK\r\n - 6 garbage symbols
 	
-	So should ask for 64 - 20 = 44 bytes of data,
+	So should ask for 64 - 21 = 41 bytes of data,
 	because of UART 64 bytes buffer
 	//TODO: there could be undervoltage and other shit messages
 	//handle it somehow
@@ -86,8 +86,8 @@ bool DataHandler<N>::readResponce(){
 		return false;
 	}
 	
-	const int MIN_LENGTH = 19;
-	//if less than 19 symbols left return buffer full
+	const int MIN_LENGTH = 22;
+	//if less than 22 symbols left return buffer full
 	if(refWrapper.getBuffer().remains() < MIN_LENGTH){
 		//TODO: made read to buffer return actual amount readed
 		//so you can fetch how much did you read
@@ -97,8 +97,8 @@ bool DataHandler<N>::readResponce(){
 
 	unsigned int readAmount = refWrapper.getBuffer().remains() - MIN_LENGTH;
 	//10 symbol fix
-	if(readAmount > responceLength){
-		readAmount = responceLength;
+	if(readAmount > 64){
+		readAmount = 64;
 		
 	}else if(readAmount == 10){
 		readAmount = 9;

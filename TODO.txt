@@ -1,3 +1,5 @@
 2	-	Create message handler before any message with callback
 4	-	Supper important to check how much you read from UART when 
 			reading HTTPREAD, to prevent removing actual data
+5	-	Made parameter for sim stuff to check if there will be 
+			digit or text mode

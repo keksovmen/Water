@@ -84,7 +84,7 @@ bool SimHandler<N>::setDefaultParams(){
 	if(!readAndExpectSuccess(wrapper, parser))
 		return false;
 	
-	writer.writeNumberFormat(true);
+	writer.writeNumberFormat(false);
 	if(!readAndExpectSuccess(wrapper, parser))
 		return false;
 	

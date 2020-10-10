@@ -38,14 +38,18 @@ SimResultParser<N>::SimResultParser(FixedBuffer<N>& refBuffer) :
 
 template<int N>
 bool SimResultParser<N>::isSimpleMessageReady(){
-	if(buffer.indexOfEnd(DIGIT_SUCCESS) != -1)
-		return true;
-	if(buffer.indexOfEnd(DIGIT_ERROR) != -1)
-		return true;
 	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return true;
+	
 	if(buffer.indexOfEnd(TEXT_ERROR) != -1)
 		return true;
+	
+	if(buffer.indexOfEnd(DIGIT_SUCCESS) != -1)
+		return true;
+	
+	if(buffer.indexOfEnd(DIGIT_ERROR) != -1)
+		return true;
+
 	
 	return false;
 }
@@ -65,14 +69,18 @@ bool SimResultParser<N>::isComplexMessageReady(){
 		return false;
 	}
 	
-	if(buffer.indexOfEnd(DIGIT_COMPLEX_SUCCESS) != -1)
-		return true;
-	if(buffer.indexOfEnd(DIGIT_COMPLEX_ERROR) != -1)
-		return true;
 	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return true;
+	
 	if(buffer.indexOfEnd(TEXT_ERROR) != -1)
 		return true;
+	
+	if(buffer.indexOfEnd(DIGIT_COMPLEX_SUCCESS) != -1)
+		return true;
+	
+	if(buffer.indexOfEnd(DIGIT_COMPLEX_ERROR) != -1)
+		return true;
+
 	
 	return false;
 }
@@ -126,18 +134,18 @@ bool SimResultParser<N>::isReadHttpMessageFull(){
 
 template<int N>
 int SimResultParser<N>::fetchResultCode(){
-	if(buffer.indexOfEnd(DIGIT_SUCCESS) != -1)
+		if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return ANWSER_CODES::OK;
-	
-	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
-		return ANWSER_CODES::OK;
-	
-	if(buffer.indexOfEnd(DIGIT_ERROR) != -1)
-		return ANWSER_CODES::ERROR;
 	
 	if(buffer.indexOfEnd(TEXT_ERROR) != -1)
 		return ANWSER_CODES::ERROR;
 	
+	if(buffer.indexOfEnd(DIGIT_SUCCESS) != -1)
+		return ANWSER_CODES::OK;
+	
+	if(buffer.indexOfEnd(DIGIT_ERROR) != -1)
+		return ANWSER_CODES::ERROR;
+
 	return ANWSER_CODES::UNDEFINED;
 }
 
@@ -235,8 +243,8 @@ void SimResultParser<N>::removeReadHttpGarbage(){
 	endIndex += 2;
 	buffer.remove(index, endIndex - index);
 	
-	index = buffer.indexOfEnd(DIGIT_SUCCESS);
-	buffer.remove(index, 3);
+	index = buffer.indexOfEnd(TEXT_SUCCESS);
+	buffer.remove(index, 6);
 }
 
 
