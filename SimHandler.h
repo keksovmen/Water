@@ -84,8 +84,6 @@ class SimHandler
 			@param url where to send
 			@param dataLength must match exactly amount you gonna write in
 			
-			//TODO: made return pointer to DataHandler as base class
-					or nullptr if there was an error
 			@return post handler
 		*/
 		
@@ -95,8 +93,6 @@ class SimHandler
 		/**
 			Initiates GET HTTP session and return handler of it
 			
-			//TODO: made return pointer to DataHandler as base class
-					or nullptr if there was an error
 			@return get handler
 		*/
 		

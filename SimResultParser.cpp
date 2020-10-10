@@ -238,3 +238,10 @@ void SimResultParser<N>::removeReadHttpGarbage(){
 	index = buffer.indexOfEnd(DIGIT_SUCCESS);
 	buffer.remove(index, 3);
 }
+
+
+template<int N>
+bool SimResultParser<N>::isPinRdy(){
+	int index = buffer.indexOf("+CPIN: READY\r\n");
+	return index != -1;
+}

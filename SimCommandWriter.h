@@ -31,6 +31,7 @@ class SimCommandWriter
 		void writeHTPPData(int length);
 		void writeReadHTTP(int from, int amount);
 		void writeIPR(long rate);
+		void writeCPIN();
 		
 	private:
 		SimIOWrapper<N>& wrapper;

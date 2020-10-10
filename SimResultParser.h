@@ -123,6 +123,21 @@ class SimResultParser
 		
 		void removeReadHttpGarbage();
 		
+		
+		
+		/**
+			Expects result from AT+CPIN?
+			+CPIN: <code>
+				code - READY
+						SIM PIN
+						SIM PUK
+						PH_SIM PIN
+						PH_SIM PUK
+						SIM PIN2
+		*/
+		
+		bool isPinRdy();
+		
 	private:
 		FixedBuffer<N>& buffer;
 		

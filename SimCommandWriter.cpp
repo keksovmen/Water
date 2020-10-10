@@ -140,3 +140,9 @@ void SimCommandWriter<N>::writeIPR(long rate){
 	wrapper.write(";&W");
 	wrapper.writeEndOfCommand();
 }
+
+
+template<int N>
+void SimCommandWriter<N>::writeCPIN(){
+	wrapper.writeCommand("AT+CPIN?");
+}

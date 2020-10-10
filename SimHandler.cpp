@@ -36,13 +36,15 @@ bool SimHandler<N>::isModuleUp(){
 
 template<int N>
 bool SimHandler<N>::isModuleAlive(){
-	for(int i = 0; i < 10; i ++){
-		if(!isModuleUp())
-			return false;
-		delay(300);
+	if(!isModuleUp())
+		return false;
+	
+	writer.writeCPIN();
+	if(!readAndExpectSuccess(wrapper, parser)){
+		return false;
 	}
 	
-	return true;
+	return parser.isPinRdy();
 }
 
 
