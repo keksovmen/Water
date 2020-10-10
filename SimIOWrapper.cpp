@@ -91,6 +91,7 @@ bool SimIOWrapper<N>::readToBuffer(){
 			
 		//find some messages and indicate it somewhere
 		//don't forget to delet them from here
+		checkBufferForUnexpected();
 		return true;
 	}
 	
@@ -154,3 +155,15 @@ bool SimIOWrapper<N>::tryReadToBuffer(){
 	return true;
 }
 
+
+template<int N>
+void SimIOWrapper<N>::checkBufferForUnexpected(){
+	int index = buffer.indexOf("\r\nRING\r\n");
+	if(index != -1){
+		buffer.remove(index, 8);
+	}
+	index = buffer.indexOf("UNDER-VOLTAGE WARNNING\r\n");
+	if(index != -1){
+		buffer.remove(index, 24);
+	}
+}

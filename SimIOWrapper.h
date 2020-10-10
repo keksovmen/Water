@@ -119,6 +119,16 @@ class SimIOWrapper : public BaseWriter
 		//Getter
 		FixedBuffer<N>& getBuffer(){return buffer;};
 		
+		
+		/**
+			Represents if there was some unexpected messages
+			such as: voltage, call, tcp incoming
+			
+			Digits as Power of 2, in binary form
+		*/
+		
+		int unexpectedMessages = 0;
+		
 	private:
 		
 		
@@ -130,6 +140,8 @@ class SimIOWrapper : public BaseWriter
 		*/
 		
 		bool tryReadToBuffer();
+		
+		void checkBufferForUnexpected();
 		
 		
 		//sim module here
