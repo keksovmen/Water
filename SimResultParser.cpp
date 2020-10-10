@@ -244,6 +244,8 @@ void SimResultParser<N>::removeReadHttpGarbage(){
 	buffer.remove(index, endIndex - index);
 	
 	index = buffer.indexOfEnd(TEXT_SUCCESS);
+	//will remove everything after actual message to the right
+	// buffer.substring(0, index);
 	buffer.remove(index, 6);
 }
 
