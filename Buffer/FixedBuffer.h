@@ -236,6 +236,25 @@ class FixedBuffer
 		
 		/**
 			Modifies this buffer
+			removes given string if such exists
+		
+			@param str to remove
+			
+			@return true if such string existed
+		*/
+		
+		bool remove(const char* str){
+			int index = indexOf(str);
+			if(index == -1)
+				return false;
+			
+			remove(index, strlen(str));
+			return true;
+		}
+		
+		
+		/**
+			Modifies this buffer
 			
 			@param from inclusive
 			@param to exclusive, may not present so 

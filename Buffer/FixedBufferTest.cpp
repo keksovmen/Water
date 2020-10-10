@@ -27,6 +27,8 @@ bool checkClear(const char* origin);
 
 bool checkTest();
 
+bool testRemove(const char* origin, const char* del, const char* expected);
+
 
 template<int N>
 void copyIntoBuffer(FixedBuffer<N>& buffer, const char* data);
@@ -97,6 +99,9 @@ int main()
 	assert (checkIndexOfEnd("0123456789", "54", -1));
 	
 	assert (checkTest());
+	
+	assert(testRemove("123_456_789", "_456_", "123789"));
+	assert(testRemove("123_456_789", "321", "123_456_789"));
 }
 
 bool checkLength(int divider){
@@ -216,6 +221,22 @@ bool checkTest(){
 	assert (buffer.getLength() == 40);
 	return strcmp(buffer.begin(), "") > 0;
 }
+
+bool testRemove(const char* origin, const char* del, const char* expected){
+	FixedBuffer<512> buffer;
+	
+	copyIntoBuffer(buffer, origin);
+	
+	buffer.remove(del);
+	
+	std::cout << buffer.begin() << "\t" << expected << std::endl;
+	
+	assert (buffer.getLength() == strlen(expected));
+	
+	return strcmp(buffer.begin(), expected) == 0;
+}
+
+
 
 template<int N>
 void copyIntoBuffer(FixedBuffer<N>& buffer, const char* data){
