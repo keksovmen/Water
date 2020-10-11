@@ -2,6 +2,7 @@
 #ifdef ARDUINO
 	#include <Arduino.h>
 #else
+	#define _CRT_SECURE_NO_WARNINGS
 	#include <string>
 #endif
 
@@ -165,7 +166,10 @@ class FixedBuffer
 				if(data[i_b] == str[i_m]){
 					i_m--;
 				}else{
-					i_m = wordLength;
+					if(i_m != wordLength){
+						i_m = wordLength;
+						i_b++;
+					}
 				}
 				
 				if(i_m < 0){

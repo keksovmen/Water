@@ -97,6 +97,14 @@ int main()
 	assert (checkIndexOfEnd("0123456789", "789", 7));
 	assert (checkIndexOfEnd("0123456789", "45", 4));
 	assert (checkIndexOfEnd("0123456789", "54", -1));
+	assert (checkIndexOfEnd("0123456789", "45", 4));
+	assert (checkIndexOfEnd("01234567890123", "45", 4));
+	assert (checkIndexOfEnd("01234567890123456", "45", 14));
+	assert (checkIndexOfEnd("\r\nOK\r\n", "\r\nOK\r\n", 0));
+	assert (checkIndexOfEnd("\r\nOK\r\n\r\nNO CARIER\r\n\r\nOK\r\n", "\r\nOK\r\n", 19));
+	assert (checkIndexOfEnd("\r\nOK\r\n\r\nNO CARIER\r\n", "\r\nOK\r\n", 0));
+	assert (checkIndexOfEnd("\r\nOK\r\n\r\nOK\r\n", "\r\nOK\r\n", 6));
+	assert (checkIndexOfEnd("\r\nOK\r\n\r\nOK\r\n\r\nOK\r\n", "\r\nOK\r\n", 12));
 	
 	assert (checkTest());
 	
