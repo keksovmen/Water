@@ -19,13 +19,6 @@ SimIOWrapper<N>::SimIOWrapper(SoftwareSerial& refSerial) :
 
 
 template<int N>
-void SimIOWrapper<N>::writeCommand(const char* cmd, bool clearBuffer){
-	write(cmd);
-	writeEndOfCommand(clearBuffer);
-}
-
-
-template<int N>
 void SimIOWrapper<N>::write(const char* str){
 	// #ifdef ABS
 		Serial.print(str);
@@ -72,9 +65,9 @@ void SimIOWrapper<N>::write(double d, int amountAfterDot){
 template<int N>
 void SimIOWrapper<N>::writeEndOfCommand(bool clearBuffer){
 	// #ifdef ABS
-		Serial.print("\r\n");
+		Serial.print("\r");
 	// #endif
-	refPort.print("\r\n");
+	refPort.print("\r");
 	
 	if(clearBuffer){
 		buffer.clear();
@@ -83,15 +76,12 @@ void SimIOWrapper<N>::writeEndOfCommand(bool clearBuffer){
 
 
 template<int N>
-bool SimIOWrapper<N>::readToBuffer(){
+bool SimIOWrapper<N>::read(){
 	if(tryReadToBuffer()){
 		while(tryReadToBuffer()){
 			
 		}
-			
-		//find some messages and indicate it somewhere
-		//don't forget to delet them from here
-		checkBufferForUnexpected();
+		
 		return true;
 	}
 	
@@ -100,8 +90,8 @@ bool SimIOWrapper<N>::readToBuffer(){
 
 
 template<int N>
-bool SimIOWrapper<N>::readToBufferTimeout(int millis){
-	while(millis > 0){
+bool SimIOWrapper<N>::readTimeout(unsigned long maxDelay){
+	while(maxDelay > 0){
 		if(tryReadToBuffer()){
 			while(tryReadToBuffer()){
 				
@@ -110,7 +100,7 @@ bool SimIOWrapper<N>::readToBufferTimeout(int millis){
 			return true;
 		}
 		
-		millis -= MIN_DELAY;
+		maxDelay -= MIN_DELAY;
 	}
 	
 	return false;
@@ -118,13 +108,7 @@ bool SimIOWrapper<N>::readToBufferTimeout(int millis){
 
 
 template<int N>
-bool SimIOWrapper<N>::tryReadToBuffer(){
-	//if there is no data wait
-	if(refPort.available() == 0){
-		delay(MIN_DELAY);
-	}
-	
-	//if there is still no data return
+bool SimIOWrapper<N>::lazyRead(){
 	if(refPort.available() == 0){
 		return false;
 	}
@@ -137,7 +121,7 @@ bool SimIOWrapper<N>::tryReadToBuffer(){
 		//to prevent from overfloving
 		if(buffer.isFull()){
 			// #ifdef ABS
-				Serial.println("Buffer is full");
+				Serial.println("Buffer is full at lazyRead()");
 			// #endif
 			
 			return true;
@@ -155,15 +139,15 @@ bool SimIOWrapper<N>::tryReadToBuffer(){
 	return true;
 }
 
-
 template<int N>
-void SimIOWrapper<N>::checkBufferForUnexpected(){
-	int index = buffer.indexOf("\r\nRING\r\n");
-	if(index != -1){
-		buffer.remove(index, 8);
+bool SimIOWrapper<N>::tryReadToBuffer(){
+	//if there is no data wait
+	if(!lazyRead()){
+		delay(MIN_DELAY);
+	}else{
+		return true;
 	}
-	index = buffer.indexOf("UNDER-VOLTAGE WARNNING\r\n");
-	if(index != -1){
-		buffer.remove(index, 24);
-	}
+	
+	return lazyRead();
 }
+

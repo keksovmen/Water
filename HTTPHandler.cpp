@@ -4,10 +4,10 @@
 
 
 template<int N>
-HTTPHandler<N>::HTTPHandler(SimIOWrapper<N>& refWrapper, 
-			SimCommandWriter<N>& refWriter, 
-			SimResultParser<N>& refParser) :
-	wrapper(refWrapper), writer(refWriter), parser(refParser)
+HTTPHandler<N>::HTTPHandler(BaseReader& reader, 
+			SimCommandWriter& writer, 
+			SimResultParser<N>& parser) :
+	refReader(reader), refWriter(writer), refParser(parser)
 {
 	
 	
@@ -46,8 +46,8 @@ bool HTTPHandler<N>::initGetRequest(){
 
 template<int N>
 bool HTTPHandler<N>::initSession(){
-	writer.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
-	ANWSER_CODES code = readAndGetCode(wrapper, parser);
+	refWriter.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
+	ANWSER_CODES code = readAndGetCode(refReader, refParser);
 	switch (code){
 		case OK:
 			return true;
@@ -55,8 +55,8 @@ bool HTTPHandler<N>::initSession(){
 		case ERROR:
 		case UNDEFINED:
 			if(terminateSession()){
-				writer.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
-				return readAndExpectSuccess(wrapper, parser);
+				refWriter.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
+				return readAndExpectSuccess(refReader, refParser);
 			}else{
 				return false;
 			}
@@ -69,33 +69,33 @@ bool HTTPHandler<N>::initSession(){
 
 template<int N>
 bool HTTPHandler<N>::setPostURL(const char* url){
-	writer.writeHTPPSetParam("URL", url);
-	return readAndExpectSuccess(wrapper, parser);
+	refWriter.writeHTPPSetParam("URL", url);
+	return readAndExpectSuccess(refReader, refParser);
 }
 
 template<int N>
 void HTTPHandler<N>::setGetURL(){
-	writer.writeHTPPSetParam("URL", nullptr);
+	refWriter.writeHTPPSetParam("URL", nullptr);
 }
 
 template<int N>
 bool HTTPHandler<N>::setContentForPHP(){
-	writer.writeHTPPSetParam("CONTENT", "application/x-www-form-urlencoded");
-	return readAndExpectSuccess(wrapper, parser);
+	refWriter.writeHTPPSetParam("CONTENT", "application/x-www-form-urlencoded");
+	return readAndExpectSuccess(refReader, refParser);
 }
 
 template<int N>
 bool HTTPHandler<N>::startDataTransmition(int dataLength){
-	writer.writeHTPPData(dataLength);
-	if(!wrapper.readToBuffer()){
+	refWriter.writeHTPPData(dataLength);
+	if(!refReader.read()){
 		return false;
 	}
 	
-	if(!parser.containDownload()){
-		if(!wrapper.readToBuffer()){
+	if(!refParser.containDownload()){
+		if(!refReader.read()){
 			return false;
 		}
-		if(!parser.containDownload()){
+		if(!refParser.containDownload()){
 			return false;
 		}
 	}
@@ -105,6 +105,6 @@ bool HTTPHandler<N>::startDataTransmition(int dataLength){
 
 template<int N>
 bool HTTPHandler<N>::terminateSession(){
-	writer.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
-	return readAndExpectSuccess(wrapper, parser);
+	refWriter.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
+	return readAndExpectSuccess(refReader, refParser);
 }

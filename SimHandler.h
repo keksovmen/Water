@@ -98,9 +98,11 @@ class SimHandler
 		
 		DataHandler<N>* sendGetRequest();
 		
+		void handleReading();
+		
 	private:
 		SimIOWrapper<N> wrapper;
-		SimCommandWriter<N> writer;
+		SimCommandWriter writer;
 		SimResultParser<N> parser;
 		GPRSHandler<N> gprsHandler;
 		HTTPHandler<N> httpHandler;

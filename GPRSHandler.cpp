@@ -4,11 +4,11 @@
 
 
 template<int N>
-GPRSHandler<N>::GPRSHandler(SimIOWrapper<N>& wrapper, 
-			SimCommandWriter<N>& writer,
+GPRSHandler<N>::GPRSHandler(BaseReader& reader, 
+			SimCommandWriter& writer,
 			SimResultParser<N>& parser
 			) : 
-refWrapper(wrapper), refWriter(writer), refParser(parser){
+refReader(reader), refWriter(writer), refParser(parser){
 	
 }
 
@@ -49,20 +49,20 @@ bool GPRSHandler<N>::connect(const char* apn){
 	refWriter.writeSAPBR(SET_PARAM_BEARER,
 						"Contype", "GPRS");
 	
-	if(!readAndExpectSuccess(refWrapper, refParser)){
+	if(!readAndExpectSuccess(refReader, refParser)){
 		return false;
 	}
 	
 	refWriter.writeSAPBR(SET_PARAM_BEARER,
 						"APN", apn);
 	
-	if(!readAndExpectSuccess(refWrapper, refParser)){
+	if(!readAndExpectSuccess(refReader, refParser)){
 		return false;
 	}
 	
 	refWriter.writeSAPBR(OPEN_BEARER);
 
-	if(!refWrapper.readToBufferTimeout(5000)){
+	if(!refReader.readTimeout(5000)){
 		return false;
 	}
 	
@@ -80,7 +80,7 @@ template<int N>
 bool GPRSHandler<N>::close(){
 	refWriter.writeSAPBR(SAPBR_COMMANDS::CLOSE_BEARER);
 	
-	if(!refWrapper.readToBufferTimeout(5000)){
+	if(!refReader.readTimeout(5000)){
 		return false;
 	}
 	
@@ -96,7 +96,7 @@ template<int N>
 int GPRSHandler<N>::retriveStatus(){
 	refWriter.writeSAPBR(SAPBR_COMMANDS::QUERY_BEARER);
 	
-	if(!readAndExpectSuccess(refWrapper, refParser, true)){
+	if(!readAndExpectSuccess(refReader, refParser, true)){
 		return -1;
 	}
 	

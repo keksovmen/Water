@@ -1,9 +1,10 @@
 #pragma once
 
-#include "SimIOWrapper.h"
-#include "SimCommandWriter.h"
+#include "CommandWriter.h"
 #include "SimResultParser.h"
-#include "BaseWriter.h"
+#include "SimCommandWriter.h"
+#include "BaseReader.h"
+#include "Buffer/FixedBuffer.h"
 
 
 /**
@@ -15,7 +16,11 @@ template<int N>
 class DataHandler : public BaseWriter
 {
 	public:
-		DataHandler(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, SimCommandWriter<N>& writer);
+		DataHandler(CommandWriter& wrapper, 
+						SimResultParser<N>& parser, 
+						SimCommandWriter& writer,
+						BaseReader& reader,
+						FixedBuffer<N>& buffer);
 		
 		
 		/**
@@ -33,10 +38,9 @@ class DataHandler : public BaseWriter
 		void write(long l) override;
 		void write(double d, int amountAfterDot) override;
 		
+		
 		/**
 			Check if request was sended fully on server
-			Currently consume time just for waiting!
-			//TODO: remove time consumtion and make as simple check
 			
 			@return true if send completed
 		*/
@@ -70,12 +74,14 @@ class DataHandler : public BaseWriter
 		
 		bool readResponce();
 		
-		FixedBuffer<N>& getBuffer(){ return refWrapper.getBuffer();};
+		FixedBuffer<N>& getBuffer(){ return refBuffer;};
 		
 	protected:
-		SimIOWrapper<N>& refWrapper;
+		CommandWriter& refWriteHandler;
 		SimResultParser<N>& refParser;
-		SimCommandWriter<N>& refWriter;
+		SimCommandWriter& refWriter;
+		BaseReader& refReader;
+		FixedBuffer<N>& refBuffer;
 		
 		unsigned int readIndex = 0;
 		

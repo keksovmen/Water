@@ -1,7 +1,7 @@
 #pragma once
 
 // #include <Arduino.h>
-#include "SimIOWrapper.h"
+#include "BaseReader.h"
 #include "SimResultParser.h"
 #include "Enums.h"
 
@@ -38,7 +38,7 @@ int findDoubleLength(double val, int afterDot);
 	Tries to read from buffer
 	and parse result anwser
 	
-	@param wrapper only for readToBuffer() method
+	@param wrapper only for read() method
 	@param parser to find if message is full and fetch code
 	@param isComplex for what type of message to expect
 	
@@ -47,8 +47,8 @@ int findDoubleLength(double val, int afterDot);
 */
 
 template<int N>
-bool readAndExpectSuccess(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, bool isComplex = false){
-	return readAndGetCode(wrapper, parser) == ANWSER_CODES::OK;
+bool readAndExpectSuccess(BaseReader& reader, SimResultParser<N>& parser, bool isComplex = false){
+	return readAndGetCode(reader, parser) == ANWSER_CODES::OK;
 }
 
 
@@ -56,7 +56,7 @@ bool readAndExpectSuccess(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, 
 	Tries to read from buffer
 	and parse result anwser
 	
-	@param wrapper only for readToBuffer() method
+	@param reader only for read() method
 	@param parser to find if message is full and fetch code
 	@param isComplex for what type of message to expect
 	
@@ -65,8 +65,8 @@ bool readAndExpectSuccess(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, 
 */
 
 template<int N>
-ANWSER_CODES readAndGetCode(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, bool isComplex = false){
-	if(!wrapper.readToBuffer()){
+ANWSER_CODES readAndGetCode(BaseReader& reader, SimResultParser<N>& parser, bool isComplex = false){
+	if(!reader.read()){
 		return ANWSER_CODES::UNDEFINED;
 	}
 	
@@ -79,7 +79,7 @@ ANWSER_CODES readAndGetCode(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser
 	}
 	
 	if(!rdy){
-		if(!wrapper.readToBuffer()){
+		if(!reader.read()){
 			return ANWSER_CODES::UNDEFINED;
 		}
 	}

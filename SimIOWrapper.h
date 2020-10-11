@@ -1,7 +1,8 @@
 #pragma once
 #include <SoftwareSerial.h>
 #include "Buffer/FixedBuffer.h"
-#include "BaseWriter.h"
+#include "CommandWriter.h"
+#include "BaseReader.h"
 
 /**
 	Handles the lowest IO operations
@@ -13,7 +14,7 @@
 
 
 template<int N>
-class SimIOWrapper : public BaseWriter
+class SimIOWrapper : public CommandWriter, public BaseReader
 {
 	public:
 	//Test instead of link use pointer???
@@ -29,7 +30,7 @@ class SimIOWrapper : public BaseWriter
 					flase used only in HTTPREAD to store data some time
 		*/
 		
-		void writeCommand(const char* cmd, bool clearBuffer = true);
+		void writeEndOfCommand(bool clearBuffer = true) override;
 		
 		
 		/**
@@ -59,7 +60,7 @@ class SimIOWrapper : public BaseWriter
 			@param i to send
 		*/
 		
-		virtual void write(int i) override;
+		void write(int i) override;
 		
 		/**
 			Writes n long into the serial port
@@ -83,16 +84,6 @@ class SimIOWrapper : public BaseWriter
 		
 		
 		/**
-			Writes a termination sequence into the serial port
-			
-			@param clearBuffer define need to clear buffer or not
-					flase used only in HTTPREAD to store data some time
-		*/
-		
-		void writeEndOfCommand(bool clearBuffer = true);
-		
-		
-		/**
 			Tries read to the buffer from UART port
 			Consumes some little time ~ 25 millis
 			
@@ -100,11 +91,11 @@ class SimIOWrapper : public BaseWriter
 					false if timed out
 		*/
 		
-		bool readToBuffer();
-		
+		bool read() override;
+
 		
 		/**
-			Same as readToBuffer() but will wait
+			Same as read() but will wait
 			requried time if there is no data,
 			and return as soon as possible if there is
 			at least 1 character read
@@ -113,7 +104,7 @@ class SimIOWrapper : public BaseWriter
 					false if timed out
 		*/
 		
-		bool readToBufferTimeout(int millis);
+		bool readTimeout(unsigned long maxDelay) override;
 		
 		
 		//Getter
@@ -121,16 +112,13 @@ class SimIOWrapper : public BaseWriter
 		
 		
 		/**
-			Represents if there was some unexpected messages
-			such as: voltage, call, tcp incoming
-			
-			Digits as Power of 2, in binary form
+			Tries to read without any delay
 		*/
 		
-		int unexpectedMessages = 0;
+		
+		bool lazyRead();
 		
 	private:
-		
 		
 		/**
 			Tris to read the buffer and return instanteniusly
@@ -140,8 +128,6 @@ class SimIOWrapper : public BaseWriter
 		*/
 		
 		bool tryReadToBuffer();
-		
-		void checkBufferForUnexpected();
 		
 		
 		//sim module here

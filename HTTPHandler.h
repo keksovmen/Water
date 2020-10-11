@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SimIOWrapper.h"
+#include "BaseReader.h"
 #include "SimCommandWriter.h"
 #include "SimResultParser.h"
 
@@ -18,7 +18,9 @@ template<int N>
 class HTTPHandler
 {
 	public:
-		HTTPHandler(SimIOWrapper<N>& refWrapper,SimCommandWriter<N>& refWriter, SimResultParser<N>& refParser);
+		HTTPHandler(BaseReader& reader, 
+						SimCommandWriter& writer, 
+						SimResultParser<N>& parser);
 		
 		/**
 			Tries to initiate POST session
@@ -45,9 +47,9 @@ class HTTPHandler
 		bool startDataTransmition(int dataLength);
 		bool terminateSession();
 		
-		SimIOWrapper<N>& wrapper;
-		SimCommandWriter<N>& writer;
-		SimResultParser<N>& parser;
+		BaseReader& refReader;
+		SimCommandWriter& refWriter;
+		SimResultParser<N>& refParser;
 	
 };
 

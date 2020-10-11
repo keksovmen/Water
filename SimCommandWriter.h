@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SimIOWrapper.h"
+#include "CommandWriter.h"
 #include "Enums.h"
 
 /**
@@ -11,11 +11,10 @@
 */
 
 
-template<int N>
 class SimCommandWriter
 {
 	public:
-		explicit SimCommandWriter(SimIOWrapper<N>& refWrapper);
+		explicit SimCommandWriter(CommandWriter& writer);
 	
 		void writeAT();
 		void writeCREG();
@@ -32,10 +31,9 @@ class SimCommandWriter
 		void writeReadHTTP(int from, int amount);
 		void writeIPR(long rate);
 		void writeCPIN();
+		void writeDenyCall();
 		
 	private:
-		SimIOWrapper<N>& wrapper;
+		CommandWriter& refWriter;
 		
 };
-
-template class SimCommandWriter<128>;

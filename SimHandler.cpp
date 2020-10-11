@@ -9,7 +9,7 @@
 
 //For new Post/GetDataHandler to return a pointer
 //Caution first check or calculate sizeof(Post/GetDataHandler)
-static char dynamicMemory[14];
+static char dynamicMemory[18];
 
 
 
@@ -130,7 +130,8 @@ bool SimHandler<N>::disconnectFromGPRS(){
 template<int N>
 DataHandler<N>* SimHandler<N>::sendPostRequest(const char* url, int dataLength){
 	if(httpHandler.initPostRequest(url, dataLength)){
-		return new(dynamicMemory) PostDataHandler<N>(wrapper, parser, writer);
+		return new(dynamicMemory) PostDataHandler<N>(wrapper, parser, writer, 
+													wrapper, wrapper.getBuffer());
 	}
 	
 	return nullptr;
@@ -140,8 +141,19 @@ DataHandler<N>* SimHandler<N>::sendPostRequest(const char* url, int dataLength){
 template<int N>
 DataHandler<N>* SimHandler<N>::sendGetRequest(){
 	if(httpHandler.initGetRequest()){
-		return new(dynamicMemory) GetDataHandler<N>(wrapper, parser, writer);
+		return new(dynamicMemory) GetDataHandler<N>(wrapper, parser, writer,
+													wrapper, wrapper.getBuffer());
 	}
 	
 	return nullptr;
+}
+
+
+template<int N>
+void SimHandler<N>::handleReading(){
+	if(!wrapper.lazyRead()){
+		return;
+	}
+	
+	//proceed
 }

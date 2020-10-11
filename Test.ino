@@ -127,6 +127,8 @@ void loop(){
 		askServerData();
 	}
 	
+	simHandler.handleReading();
+	
 	
 	//DEBUG
 	// if(Serial.available()){
@@ -177,7 +179,7 @@ void askForTime(){
 	if(getHandler->readResponce()){
 		auto& b = getHandler->getBuffer();
 		if(!clk.parse(b.begin())){
-			Serial.println("CLOCK PARSE FAILED MUST BE DATA CORRAPTION HERE IS BUFFER:");
+			Serial.println("CLOCK PARSE FAILED BUFFER:");
 			Serial.println(b.begin());
 			getHandler->finish();
 			return;

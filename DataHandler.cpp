@@ -3,42 +3,49 @@
 #include "Util.h"
 
 
+//TODO: made explicitly buffer reader and writer and parser
+
 template <int N>
-DataHandler<N>::DataHandler(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, SimCommandWriter<N>& writer) :
-	refWrapper (wrapper), refParser(parser), refWriter(writer){
+DataHandler<N>::DataHandler(CommandWriter& wrapper, 
+								SimResultParser<N>& parser, 
+								SimCommandWriter& writer,
+								BaseReader& reader,
+								FixedBuffer<N>& buffer) :
+	refWriteHandler (wrapper), refParser(parser), 
+	refWriter(writer), refReader(reader), refBuffer(buffer){
 		
 }
 
 template<int N>
 void DataHandler<N>::write(const char* str){
-	refWrapper.write(str);
+	refWriteHandler.write(str);
 }
 
 template<int N>
 void DataHandler<N>::write(char c){
-	refWrapper.write(c);
+	refWriteHandler.write(c);
 }
 
 template<int N>
 void DataHandler<N>::write(int i){
-	refWrapper.write(i);
+	refWriteHandler.write(i);
 }
 
 
 template<int N>
 void DataHandler<N>::write(long l){
-	refWrapper.write(l);
+	refWriteHandler.write(l);
 }
 
 template<int N>
 void DataHandler<N>::write(double d, int amountAfterDot){
-	refWrapper.write(d, amountAfterDot);
+	refWriteHandler.write(d, amountAfterDot);
 }
 
 
 template<int N>
 bool DataHandler<N>::isSended(){
-	if(refWrapper.readToBuffer()){
+	if(refReader.read()){
 		if(refParser.isHttpActionPresents()){
 			responceLength = refParser.fetchHttpResponceLength();
 			return true;
@@ -59,7 +66,7 @@ bool DataHandler<N>::isSendedSuccesfully(){
 template<int N>
 void DataHandler<N>::finish(){
 	refWriter.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
-	readAndExpectSuccess(refWrapper, refParser);
+	readAndExpectSuccess(refReader, refParser);
 }
 
 
@@ -88,14 +95,14 @@ bool DataHandler<N>::readResponce(){
 	
 	const int MIN_LENGTH = 22;
 	//if less than 22 symbols left return buffer full
-	if(refWrapper.getBuffer().remains() < MIN_LENGTH){
+	if(refBuffer.remains() < MIN_LENGTH){
 		//TODO: made read to buffer return actual amount readed
 		//so you can fetch how much did you read
 		Serial.println("BUFFER OVERFLOW");
 		return true;
 	}
 
-	unsigned int readAmount = refWrapper.getBuffer().remains() - MIN_LENGTH;
+	unsigned int readAmount = refBuffer.remains() - MIN_LENGTH;
 	//10 symbol fix
 	if(readAmount > 64){
 		readAmount = 64;
@@ -111,7 +118,7 @@ bool DataHandler<N>::readResponce(){
 	readIndex += readAmount;
 	
 	while(1){
-		refWrapper.readToBuffer();
+		refReader.read();
 		if(refParser.isReadHttpMessageFull()){
 			break;
 		}

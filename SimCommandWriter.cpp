@@ -1,86 +1,84 @@
 #include "SimCommandWriter.h"
 
 
-template<int N>
-SimCommandWriter<N>::SimCommandWriter(SimIOWrapper<N>& refWrapper) :
-	wrapper (refWrapper){
+SimCommandWriter::SimCommandWriter(CommandWriter& writer) :
+	refWriter (writer){
 	
 }
 
-template<int N>
-void SimCommandWriter<N>::writeAT(){
-	wrapper.writeCommand("AT");
-}
-
-template<int N>
-void SimCommandWriter<N>::writeCREG(){
-	wrapper.writeCommand("AT+CREG?");
-}
-
-template<int N>
-void SimCommandWriter<N>::writeCSQ(){
-	wrapper.writeCommand("AT+CSQ");
-}
-
-template<int N>
-void SimCommandWriter<N>::writeEcho(bool turnOn){
-	wrapper.write("ATE");
-	wrapper.write(turnOn ? '1' : '0');
-	wrapper.write("&W");
-	wrapper.writeEndOfCommand();
-}
-
-template<int N>
-void SimCommandWriter<N>::writeNumberFormat(bool turnOn){
-	wrapper.write("ATV");
-	wrapper.write(turnOn ? '0' : '1');
-	wrapper.write("&W");
-	wrapper.writeEndOfCommand();
-}
-
-template<int N>
-void SimCommandWriter<N>::writeCallReady(bool turnOn){
-	wrapper.write("AT+CIURC=");
-	wrapper.write(turnOn ? '1' : '0');
-	wrapper.write(";&W");
-	wrapper.writeEndOfCommand();
-}
-
-template<int N>
-void SimCommandWriter<N>::writeReportAsError(bool turnOn){
-	wrapper.write("AT+CMEE=");
-	wrapper.write(turnOn ? '1' : '0');
-	wrapper.write(";&W");
-	wrapper.writeEndOfCommand();
+void SimCommandWriter::writeAT(){
+	refWriter.writeCommand("AT");
 }
 
 
-template<int N>
-void SimCommandWriter<N>::writeSAPBR(SAPBR_COMMANDS cmd, const char* param, const char* value){
-	wrapper.write("AT+SAPBR=");
-	wrapper.write(static_cast<int>(cmd));
-	wrapper.write(",1");
+void SimCommandWriter::writeCREG(){
+	refWriter.writeCommand("AT+CREG?");
+}
+
+
+void SimCommandWriter::writeCSQ(){
+	refWriter.writeCommand("AT+CSQ");
+}
+
+
+void SimCommandWriter::writeEcho(bool turnOn){
+	refWriter.write("ATE");
+	refWriter.write(turnOn ? '1' : '0');
+	refWriter.write("&W");
+	refWriter.writeEndOfCommand();
+}
+
+
+void SimCommandWriter::writeNumberFormat(bool turnOn){
+	refWriter.write("ATV");
+	refWriter.write(turnOn ? '0' : '1');
+	refWriter.write("&W");
+	refWriter.writeEndOfCommand();
+}
+
+
+void SimCommandWriter::writeCallReady(bool turnOn){
+	refWriter.write("AT+CIURC=");
+	refWriter.write(turnOn ? '1' : '0');
+	refWriter.write(";&W");
+	refWriter.writeEndOfCommand();
+}
+
+
+void SimCommandWriter::writeReportAsError(bool turnOn){
+	refWriter.write("AT+CMEE=");
+	refWriter.write(turnOn ? '1' : '0');
+	refWriter.write(";&W");
+	refWriter.writeEndOfCommand();
+}
+
+
+
+void SimCommandWriter::writeSAPBR(SAPBR_COMMANDS cmd, const char* param, const char* value){
+	refWriter.write("AT+SAPBR=");
+	refWriter.write(static_cast<int>(cmd));
+	refWriter.write(",1");
 		
 	if((param) && (value)){
-		wrapper.write(",\"");
-		wrapper.write(param);
-		wrapper.write("\",\"");
-		wrapper.write(value);
-		wrapper.write('"');
+		refWriter.write(",\"");
+		refWriter.write(param);
+		refWriter.write("\",\"");
+		refWriter.write(value);
+		refWriter.write('"');
 	}
 	
-	wrapper.writeEndOfCommand();
+	refWriter.writeEndOfCommand();
 }
 
-template<int N>
-void SimCommandWriter<N>::writeHTPP(HTTP_COMMANDS cmd){
+
+void SimCommandWriter::writeHTPP(HTTP_COMMANDS cmd){
 	switch (cmd){
 		case HTTP_INIT:
-			wrapper.writeCommand("AT+HTTPINIT");
+			refWriter.writeCommand("AT+HTTPINIT");
 		break;
 		
 		case HTTP_TERM:
-			wrapper.writeCommand("AT+HTTPTERM");
+			refWriter.writeCommand("AT+HTTPTERM");
 		break;
 			
 		default: break;
@@ -88,61 +86,67 @@ void SimCommandWriter<N>::writeHTPP(HTTP_COMMANDS cmd){
 }
 
 
-template<int N>
-void SimCommandWriter<N>::writeHTPPSetParam(const char* param, const char* value){
+
+void SimCommandWriter::writeHTPPSetParam(const char* param, const char* value){
 	//TODO: made separate header file with all comands as fields
-	wrapper.write("AT+HTTPPARA=");
-	wrapper.write('"');
-	wrapper.write(param);
-	wrapper.write("\",\"");
+	refWriter.write("AT+HTTPPARA=");
+	refWriter.write('"');
+	refWriter.write(param);
+	refWriter.write("\",\"");
 		
 	if(value){
-		wrapper.write(value);
-		wrapper.write('"');
-		wrapper.writeEndOfCommand();
+		refWriter.write(value);
+		refWriter.write('"');
+		refWriter.writeEndOfCommand();
 	}
 	//else will be written later through other methods of SimIOWrapper
 }
 
 
-template<int N>
-void SimCommandWriter<N>::writeHTPPAction(HTTP_REQUESTS method){
-	wrapper.write("AT+HTTPACTION=");
-	wrapper.write(static_cast<int>(method));
-	wrapper.writeEndOfCommand();
+
+void SimCommandWriter::writeHTPPAction(HTTP_REQUESTS method){
+	refWriter.write("AT+HTTPACTION=");
+	refWriter.write(static_cast<int>(method));
+	refWriter.writeEndOfCommand();
 	
 }
 
-template<int N>
-void SimCommandWriter<N>::writeHTPPData(int length){
-	wrapper.write("AT+HTTPDATA=");
-	wrapper.write(length);
-	wrapper.write(',');
-	wrapper.write(5000);
-	wrapper.writeEndOfCommand();
+
+void SimCommandWriter::writeHTPPData(int length){
+	refWriter.write("AT+HTTPDATA=");
+	refWriter.write(length);
+	refWriter.write(',');
+	refWriter.write(5000);
+	refWriter.writeEndOfCommand();
 }
 
 
-template<int N>
-void SimCommandWriter<N>::writeReadHTTP(int from, int amount){
-	wrapper.write("AT+HTTPREAD=");
-	wrapper.write(from);
-	wrapper.write(',');
-	wrapper.write(amount);
-	wrapper.writeEndOfCommand(false);
+
+void SimCommandWriter::writeReadHTTP(int from, int amount){
+	refWriter.write("AT+HTTPREAD=");
+	refWriter.write(from);
+	refWriter.write(',');
+	refWriter.write(amount);
+	refWriter.writeEndOfCommand(false);
 }
 
 
-template<int N>
-void SimCommandWriter<N>::writeIPR(long rate){
-	wrapper.write("AT+IPR=");
-	wrapper.write(rate);
-	wrapper.write(";&W");
-	wrapper.writeEndOfCommand();
+
+void SimCommandWriter::writeIPR(long rate){
+	refWriter.write("AT+IPR=");
+	refWriter.write(rate);
+	refWriter.write(";&W");
+	refWriter.writeEndOfCommand();
 }
 
 
-template<int N>
-void SimCommandWriter<N>::writeCPIN(){
-	wrapper.writeCommand("AT+CPIN?");
+
+void SimCommandWriter::writeCPIN(){
+	refWriter.writeCommand("AT+CPIN?");
+}
+
+
+
+void SimCommandWriter::writeDenyCall(){
+	refWriter.writeCommand("ATH");
 }

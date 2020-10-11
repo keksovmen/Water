@@ -3,22 +3,26 @@
 
 
 template <int N>
-GetDataHandler<N>::GetDataHandler(SimIOWrapper<N>& wrapper, SimResultParser<N>& parser, SimCommandWriter<N>& writer) :
-	DataHandler<N>(wrapper, parser, writer){
+GetDataHandler<N>::GetDataHandler(CommandWriter& wrapper, 
+									SimResultParser<N>& parser, 
+									SimCommandWriter& writer,
+									BaseReader& reader,
+									FixedBuffer<N>& buffer) :
+	DataHandler<N>(wrapper, parser, writer, reader, buffer){
 		
 }
 
 
 template<int N>
 bool GetDataHandler<N>::send(){
-	this->refWrapper.write('"');
-	this->refWrapper.writeEndOfCommand();
+	this->refWriteHandler.write('"');
+	this->refWriteHandler.writeEndOfCommand();
 			
-	if(!readAndExpectSuccess(this->refWrapper, this->refParser)){
+	if(!readAndExpectSuccess(this->refReader, this->refParser)){
 		return false;
 	}
 		
 	this->refWriter.writeHTPPAction(HTTP_REQUESTS::HTTP_GET);
 	
-	return readAndExpectSuccess(this->refWrapper, this->refParser);
+	return readAndExpectSuccess(this->refReader, this->refParser);
 }
