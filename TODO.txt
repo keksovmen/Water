@@ -3,3 +3,5 @@
 			reading HTTPREAD, to prevent removing actual data
 5	-	Made parameter for sim stuff to check if there will be 
 			digit or text mode
+6	-	When you read just to find some messages buffer will 
+			eventyaly overflow need to clear it

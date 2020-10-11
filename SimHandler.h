@@ -8,6 +8,7 @@
 #include "GPRSHandler.h"
 #include "DataHandler.h"
 #include "HTTPHandler.h"
+#include "UnexpectedHandler.h"
 
 
 /**
@@ -104,6 +105,7 @@ class SimHandler
 		SimIOWrapper<N> wrapper;
 		SimCommandWriter writer;
 		SimResultParser<N> parser;
+		UnexpectedHandler<N> reader;
 		GPRSHandler<N> gprsHandler;
 		HTTPHandler<N> httpHandler;
 		

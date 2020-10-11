@@ -148,5 +148,5 @@ void SimCommandWriter::writeCPIN(){
 
 
 void SimCommandWriter::writeDenyCall(){
-	refWriter.writeCommand("ATH");
+	refWriter.writeCommand("ATH", false);
 }

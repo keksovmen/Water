@@ -100,16 +100,23 @@ int main()
 	assert (checkIndexOfEnd("0123456789", "45", 4));
 	assert (checkIndexOfEnd("01234567890123", "45", 4));
 	assert (checkIndexOfEnd("01234567890123456", "45", 14));
+	assert (checkIndexOfEnd("-1.0\r\nOK\r\n\r\nNO CARRIER\r\n", "\r\nOK\r\n", 4));
+	// assert (checkIndexOfEnd("\r\nOK\r\n\r\nNO CARRIER\r\n\r\nOK\r\n", "\r\nOK\r\n", ));
 	assert (checkIndexOfEnd("\r\nOK\r\n", "\r\nOK\r\n", 0));
+	assert (checkIndexOfEnd("\r\nNO CARIER\r\n\r\nOK\r\n", "\r\nOK\r\n", 13));
 	assert (checkIndexOfEnd("\r\nOK\r\n\r\nNO CARIER\r\n\r\nOK\r\n", "\r\nOK\r\n", 19));
 	assert (checkIndexOfEnd("\r\nOK\r\n\r\nNO CARIER\r\n", "\r\nOK\r\n", 0));
 	assert (checkIndexOfEnd("\r\nOK\r\n\r\nOK\r\n", "\r\nOK\r\n", 6));
 	assert (checkIndexOfEnd("\r\nOK\r\n\r\nOK\r\n\r\nOK\r\n", "\r\nOK\r\n", 12));
+	assert (checkIndexOfEnd("\r\nOK\r\n\r\nOK\r\n\r\nOK\r\n", "\r\nOK\r\n", 12));
 	
 	assert (checkTest());
 	
+	assert(testRemove("Temperature - C: 23.60	Pressure - \r\nRING\r\n\r\n+HTTPREAD: 64\r\nmb: 1017.66	Time: 08:10:20:19:01:25\nTemperature - C: 24.22	Pres\r\nOK\r\n", "\r\nRING\r\n", "Temperature - C: 23.60	Pressure - \r\n+HTTPREAD: 64\r\nmb: 1017.66	Time: 08:10:20:19:01:25\nTemperature - C: 24.22	Pres\r\nOK\r\n"));
 	assert(testRemove("123_456_789", "_456_", "123789"));
 	assert(testRemove("123_456_789", "321", "123_456_789"));
+	assert(testRemove("\r\nREAD\r\n\r\n+HTTPREAD: 64\r\n", "\r\nREAD\r\n", "\r\n+HTTPREAD: 64\r\n"));
+	assert(testRemove("Temp - C: Pres - \r\nRING\r\n\r\n+HTTPREAD: 64\r\nmb: 10", "\r\nRING\r\n", "Temp - C: Pres - \r\n+HTTPREAD: 64\r\nmb: 10"));
 }
 
 bool checkLength(int divider){
@@ -223,23 +230,25 @@ bool checkTest(){
 		int index = buffer.indexOf("\n");
 		index++;
 		buffer.substring(index);		
-		std::cout << buffer.begin() << std::endl;
-		std::cout << "INDEX = " << index << "\tLENGTH = "<< buffer.getLength() << std::endl;
+		// std::cout << buffer.begin() << std::endl;
+		// std::cout << "INDEX = " << index << "\tLENGTH = "<< buffer.getLength() << std::endl;
 	}
 	assert (buffer.getLength() == 40);
 	return strcmp(buffer.begin(), "") > 0;
 }
 
 bool testRemove(const char* origin, const char* del, const char* expected){
-	FixedBuffer<512> buffer;
+	FixedBuffer<130> buffer;
 	
 	copyIntoBuffer(buffer, origin);
 	
 	buffer.remove(del);
 	
-	std::cout << buffer.begin() << "\t" << expected << std::endl;
+	std::cout << "\nORIGIN:\n" << buffer.begin() << "\nEXPECTED:\n" << expected << std::endl;
 	
-	assert (buffer.getLength() == strlen(expected));
+	int length = strlen(expected);
+	std::cout << "ORIGIN LENGTH: " << buffer.getLength() << "\tEXPECTED LENGTH: " << length << std::endl;
+	assert (buffer.getLength() == length);
 	
 	return strcmp(buffer.begin(), expected) == 0;
 }
@@ -249,7 +258,8 @@ bool testRemove(const char* origin, const char* del, const char* expected){
 template<int N>
 void copyIntoBuffer(FixedBuffer<N>& buffer, const char* data){
 	int size = strlen(data);
-	assert(size < buffer.getSize());
+	std::cout << "BUFFER SIZE: " << buffer.getSize() << "\tDATA SIZE: " << size << std::endl;
+	assert(size <= buffer.getSize());
 	
 	for(int i = 0; i < size; i++){
 		buffer += data[i];

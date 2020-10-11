@@ -128,6 +128,7 @@ bool SimResultParser<N>::isReadHttpMessageFull(){
 		return false;
 	}
 	
+	//TODO: made 100% sure that it in text mode
 	return isSimpleMessageReady();
 }
 

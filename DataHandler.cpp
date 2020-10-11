@@ -119,7 +119,11 @@ bool DataHandler<N>::readResponce(){
 	
 	while(1){
 		refReader.read();
+		// Serial.println("<---->");
+		// Serial.println(refBuffer.begin());
+		// Serial.println("<---->");
 		if(refParser.isReadHttpMessageFull()){
+			// Serial.println("BREAK");
 			break;
 		}
 	}

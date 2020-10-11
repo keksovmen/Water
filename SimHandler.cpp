@@ -16,8 +16,10 @@ static char dynamicMemory[18];
 template<int N>
 SimHandler<N>::SimHandler(SoftwareSerial& refPort) :
 	wrapper(refPort), writer(wrapper),
-	parser(wrapper.getBuffer()), gprsHandler(wrapper, writer, parser),
-	httpHandler(wrapper, writer, parser)
+		parser(wrapper.getBuffer()), 
+		reader(wrapper, parser, writer),
+		gprsHandler(reader, writer, parser), 
+		httpHandler(reader, writer, parser)
 {
 	
 }
@@ -26,7 +28,7 @@ template<int N>
 bool SimHandler<N>::isModuleUp(){
 	writer.writeAT();
 	
-	if(!readAndExpectSuccess(wrapper, parser)){
+	if(!readAndExpectSuccess(reader, parser)){
 		return false;
 	}
 	
@@ -40,7 +42,7 @@ bool SimHandler<N>::isModuleAlive(){
 		return false;
 	
 	writer.writeCPIN();
-	if(!readAndExpectSuccess(wrapper, parser)){
+	if(!readAndExpectSuccess(reader, parser)){
 		return false;
 	}
 	
@@ -69,7 +71,7 @@ bool SimHandler<N>::isModuleAlive(){
 template<int N>
 NETWORK_CONNECTION SimHandler<N>::isConnectedToNetwork(){
 	writer.writeCREG();
-	if(!readAndExpectSuccess(wrapper, parser, true)){
+	if(!readAndExpectSuccess(reader, parser, true)){
 		//if minimum time has passed and there is still no anwser
 		return NETWORK_CONNECTION::UNKNOWN;
 	}
@@ -81,28 +83,30 @@ NETWORK_CONNECTION SimHandler<N>::isConnectedToNetwork(){
 template<int N>
 bool SimHandler<N>::setDefaultParams(){
 	writer.writeEcho(false);
-	if(!readAndExpectSuccess(wrapper, parser))
+	if(!readAndExpectSuccess(reader, parser))
 		return false;
 	
 	writer.writeNumberFormat(false);
-	if(!readAndExpectSuccess(wrapper, parser))
+	if(!readAndExpectSuccess(reader, parser))
 		return false;
 	
 	writer.writeCallReady(false);
-	if(!readAndExpectSuccess(wrapper, parser))
+	if(!readAndExpectSuccess(reader, parser))
 		return false;
 	
 	writer.writeReportAsError(true);
-	if(!readAndExpectSuccess(wrapper, parser))
+	if(!readAndExpectSuccess(reader, parser))
 		return false;
 	
 	writer.writeIPR(9600);
-	if(!readAndExpectSuccess(wrapper, parser))
+	if(!readAndExpectSuccess(reader, parser))
 		return false;
 	
 	writer.writeAT();
-	if(!readAndExpectSuccess(wrapper, parser))
+	if(!readAndExpectSuccess(reader, parser))
 		return false;
+	
+	// wrapper.getBuffer().clear();
 	
 	return true;
 }
@@ -131,7 +135,7 @@ template<int N>
 DataHandler<N>* SimHandler<N>::sendPostRequest(const char* url, int dataLength){
 	if(httpHandler.initPostRequest(url, dataLength)){
 		return new(dynamicMemory) PostDataHandler<N>(wrapper, parser, writer, 
-													wrapper, wrapper.getBuffer());
+													reader, wrapper.getBuffer());
 	}
 	
 	return nullptr;
@@ -142,7 +146,7 @@ template<int N>
 DataHandler<N>* SimHandler<N>::sendGetRequest(){
 	if(httpHandler.initGetRequest()){
 		return new(dynamicMemory) GetDataHandler<N>(wrapper, parser, writer,
-													wrapper, wrapper.getBuffer());
+													reader, wrapper.getBuffer());
 	}
 	
 	return nullptr;
@@ -154,6 +158,9 @@ void SimHandler<N>::handleReading(){
 	if(!wrapper.lazyRead()){
 		return;
 	}
+	
+	reader.handleSwitch();
+	// reader.read();
 	
 	//proceed
 }

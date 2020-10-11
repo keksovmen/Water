@@ -100,6 +100,10 @@ void loop(){
 	int timePassed = timeNow - timeBefore;
 	timeBefore = timeNow;
 	
+	// while(1){
+		// simHandler.connectToGPRS("internet");
+		// simHandler.disconnectFromGPRS();
+	// }
 	
 	//check if summ of millis exceeded 1 sec
 	if(clk.addMillis(timePassed)){
@@ -108,17 +112,17 @@ void loop(){
 	
 	
 	// if button 8 pressed
-	if(digitalRead(BUTTON_TIME) == LOW){
-		printMessage("Asking time");
-		askForTime();
-	}
+	// if(digitalRead(BUTTON_TIME) == LOW){
+		// printMessage("Asking time");
+		// askForTime();
+	// }
 	
 	
 	//if button 9 pressed
-	if(digitalRead(BUTTON_SEND) == LOW){
-		printMessage("Sending data");
-		sendSensorData();
-	}
+	// if(digitalRead(BUTTON_SEND) == LOW){
+		// printMessage("Sending data");
+		// sendSensorData();
+	// }
 	
 	
 	//if button 10 pressed
@@ -380,7 +384,7 @@ bool checkSimModuleReady(){
 		delay(5000);
 		if(simHandler.isConnectedToNetwork() != 
 						NETWORK_CONNECTION::REGISTERED){
-			Serial.println("Module can't connect to network");
+			Serial.println("Can't connect to network");
 			return false;
 		}
 	}
@@ -388,7 +392,7 @@ bool checkSimModuleReady(){
 	if(!simHandler.connectToGPRS("internet")){
 		delay(5000);
 		if(!simHandler.connectToGPRS("internet")){
-			Serial.println("Module can't connect to GPRS");
+			Serial.println("Can't connect to GPRS");
 			return false;
 		}
 	}

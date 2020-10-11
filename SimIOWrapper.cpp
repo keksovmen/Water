@@ -65,9 +65,9 @@ void SimIOWrapper<N>::write(double d, int amountAfterDot){
 template<int N>
 void SimIOWrapper<N>::writeEndOfCommand(bool clearBuffer){
 	// #ifdef ABS
-		Serial.print("\r");
+		Serial.print("\r\n");
 	// #endif
-	refPort.print("\r");
+	refPort.print("\r\n");
 	
 	if(clearBuffer){
 		buffer.clear();
@@ -119,7 +119,7 @@ bool SimIOWrapper<N>::lazyRead(){
 		//WARNING error place
 		//try to find optimal buffer size
 		//to prevent from overfloving
-		if(buffer.isFull()){
+		if(buffer.remains() == 0){
 			// #ifdef ABS
 				Serial.println("Buffer is full at lazyRead()");
 			// #endif

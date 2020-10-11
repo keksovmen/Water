@@ -32,6 +32,7 @@ class UnexpectedHandler : public BaseReader
 		
 		bool readTimeout(unsigned long maxDelay) override;
 		
+		void handleSwitch();
 		
 		/**
 			Represents if there was some unexpected messages
@@ -44,6 +45,8 @@ class UnexpectedHandler : public BaseReader
 		
 	private:
 		void handleIncomingCall();
+		
+		bool readRemovingGarbage();
 	
 		SimIOWrapper<N>& wrapper;
 		SimResultParser<N>& parser;
@@ -51,4 +54,7 @@ class UnexpectedHandler : public BaseReader
 		
 		
 };
+
+
+template class UnexpectedHandler<128>;
 
