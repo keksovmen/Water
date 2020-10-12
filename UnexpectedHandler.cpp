@@ -1,6 +1,7 @@
 #include "UnexpectedHandler.h"
 #include "Enums.h"
 #include "Util.h"
+#include "StringData.h"
 #include <Arduino.h>
 
 
@@ -47,23 +48,23 @@ void UnexpectedHandler<N>::handleSwitch(){
 	// Serial.println(buffer.begin());
 	// Serial.println("END");
 	
-	if(buffer.remove("\r\nRING\r\n")){
-		while(buffer.remove("\r\nRING\r\n")){}
+	if(buffer.remove(RING_STRING)){
+		while(buffer.remove(RING_STRING)){}
 		//change unexpectedMessages
 		handleIncomingCall();
 	}
 	
-	if(buffer.remove("\r\nNO CARRIER\r\n")){
+	if(buffer.remove(NO_CARRIER_STRING)){
 		
 	}
 	
-	if(buffer.remove("\r\nUNDER-VOLTAGE WARNNING\r\n")){
-		while(buffer.remove("\r\nUNDER-VOLTAGE WARNNING\r\n")){}
+	if(buffer.remove(UNDER_VOLTAGE_WARNING)){
+		while(buffer.remove(UNDER_VOLTAGE_WARNING)){}
 		
 	}
 	
-	if(buffer.remove("\r\nOVER-VOLTAGE WARNNING\r\n")){
-		while(buffer.remove("\r\nOVER-VOLTAGE WARNNING\r\n")){}
+	if(buffer.remove(OVER_VOLTAGE_WARNING)){
+		while(buffer.remove(OVER_VOLTAGE_WARNING)){}
 		
 	}
 
@@ -77,7 +78,7 @@ void UnexpectedHandler<N>::handleSwitch(){
 template<int N>
 void UnexpectedHandler<N>::handleIncomingCall(){
 	auto& buffer = wrapper.getBuffer();
-	int lastIndex = buffer.indexOfEnd("\r\nNO CARRIER\r\n");
+	int lastIndex = buffer.indexOfEnd(NO_CARRIER_STRING);
 	// int index = buffer.indexOfEnd("\r\nOK\r\n");
 	
 	// Serial.print(lastIndex);
@@ -92,11 +93,11 @@ void UnexpectedHandler<N>::handleIncomingCall(){
 			// count = 0;
 		// }
 		readRemovingGarbage();
-		lastIndex = buffer.indexOf("\r\nNO CARRIER\r\n");
+		lastIndex = buffer.indexOf(NO_CARRIER_STRING);
 		// count++;
 	}
 	
-	if(!buffer.remove("\r\nNO CARRIER\r\n")){
+	if(!buffer.remove(NO_CARRIER_STRING)){
 		Serial.println("FALSE REMOVE");
 	}
 	
@@ -134,24 +135,11 @@ bool UnexpectedHandler<N>::readRemovingGarbage(){
 		return false;
 	}
 	
-	if(buffer.remove("\r\nRING\r\n")){
-		while(buffer.remove("\r\nRING\r\n")){}
-		
-	}
+	while(buffer.remove(RING_STRING)){}
 	
-	// if(buffer.remove("\r\nNO CARRIER\r\n")){
-		
-	// }
+	while(buffer.remove(UNDER_VOLTAGE_WARNING)){}
 	
-	if(buffer.remove("\r\nUNDER-VOLTAGE WARNNING\r\n")){
-		while(buffer.remove("\r\nUNDER-VOLTAGE WARNNING\r\n")){}
-		
-	}
-	
-	if(buffer.remove("\r\nOVER-VOLTAGE WARNNING\r\n")){
-		while(buffer.remove("\r\nOVER-VOLTAGE WARNNING\r\n")){}
-		
-	}
+	while(buffer.remove(OVER_VOLTAGE_WARNING)){}
 	
 	return true;
 }

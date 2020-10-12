@@ -1,6 +1,7 @@
 #pragma once
 #include "Buffer/FixedBuffer.h"
-
+#include "ResultParserState.h"
+#include "Enums.h"
 
 /**
 	THE MAIN RULE:
@@ -17,6 +18,16 @@ class SimResultParser
 {
 	public:
 		explicit SimResultParser(FixedBuffer<N>& refBuffer);
+		
+		
+		/**
+			Changes state of some functions that depend on 
+			text ot digit format
+		
+			@param state to expect data in that format
+		*/
+		
+		void setState(PARSER_STATE state);
 		
 		
 		/**
@@ -139,7 +150,8 @@ class SimResultParser
 		bool isPinRdy();
 		
 	private:
-		FixedBuffer<N>& buffer;
+		FixedBuffer<N>& refBuffer;
+		ResultParserStateBase<N>* pState;
 		
 };
 

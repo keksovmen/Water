@@ -61,7 +61,7 @@ void setup(){
 	
 	//Check if device is connected
 	if(!dev.init()){
-		Serial.println("Device is not connected");
+		Serial.println("Device not connected");
 		// while(1){};
 	}
 	
@@ -70,7 +70,7 @@ void setup(){
 	if(!simHandler.isModuleUp()){
 		delay(5000);
 		if(!simHandler.isModuleUp()){
-			Serial.println("Module if offline");
+			Serial.println("Module offline");
 			// while(1){};
 		}
 	}
@@ -78,14 +78,14 @@ void setup(){
 	
 	//Check if module is working properly
 	if(!simHandler.isModuleAlive()){
-		Serial.println("Module is not alive");
+		Serial.println("Module not alive");
 		// while(1){};
 	}
 	
 	
 	//Set default parameters
 	if(!simHandler.setDefaultParams()){
-		Serial.println("Defaults are not set");
+		Serial.println("Defaults not set");
 		// while(1){};
 	}
 	
@@ -112,17 +112,17 @@ void loop(){
 	
 	
 	// if button 8 pressed
-	// if(digitalRead(BUTTON_TIME) == LOW){
-		// printMessage("Asking time");
-		// askForTime();
-	// }
+	if(digitalRead(BUTTON_TIME) == LOW){
+		printMessage("Asking time");
+		askForTime();
+	}
 	
 	
 	//if button 9 pressed
-	// if(digitalRead(BUTTON_SEND) == LOW){
-		// printMessage("Sending data");
-		// sendSensorData();
-	// }
+	if(digitalRead(BUTTON_SEND) == LOW){
+		printMessage("Sending data");
+		sendSensorData();
+	}
 	
 	
 	//if button 10 pressed
@@ -149,14 +149,14 @@ void loop(){
 //And update current clock
 void askForTime(){
 	if(!checkSimModuleReady()){
-		Serial.println("ASK FOR TIME FAILED!");
+		Serial.println("ASK TIME FAILED!");
 		return;
 	}
 	
 	DataHandler<BUFFER_SIZE>* getHandler = simHandler.sendGetRequest();
 	
 	if(!getHandler){
-		Serial.println("Handler is nullptr");
+		Serial.println("Handler is null");
 		return;
 	}
 	
@@ -174,7 +174,7 @@ void askForTime(){
 	}
 	
 	if(!getHandler->isSendedSuccesfully()){
-		Serial.println("SEND FINISHED WITH NO SUCCESS CODE");
+		Serial.println("SEND FINISHED NO SUCCESS CODE");
 		getHandler->finish();
 		return;
 	}
@@ -193,7 +193,7 @@ void askForTime(){
 	getHandler->finish();
 	
 	if(!simHandler.disconnectFromGPRS()){
-		Serial.println("Failed to close GPRS");
+		Serial.println("Failed close GPRS");
 	}
 }
 
@@ -223,7 +223,7 @@ void printTime(const Clock& clk){
 //to server, also displays what was send
 void sendSensorData(){
 	if(!checkSimModuleReady()){
-		Serial.println("SEND SENSOR DATA FAILED");
+		Serial.println("SEND DATA FAILED");
 		return;
 	}
 	
@@ -239,7 +239,7 @@ void sendSensorData(){
 		simHandler.sendPostRequest("http://128.69.240.186/Send.php", parameters.getLength());
 		
 	if(!postDataHandler){
-		Serial.println("Handler is nullptr");
+		Serial.println("Handler is null");
 	}
 		
 	parameters.handleWritingValue((*postDataHandler));
@@ -256,7 +256,7 @@ void sendSensorData(){
 	}
 	
 	if(!postDataHandler->isSendedSuccesfully()){
-		Serial.println("SEND FINISHED WITH NO SUCCESS CODE");
+		Serial.println("SEND FINISHED NO SUCCESS CODE");
 		postDataHandler->finish();
 		return;
 	}
@@ -264,7 +264,7 @@ void sendSensorData(){
 	postDataHandler->finish();
 	
 	if(!simHandler.disconnectFromGPRS()){
-		Serial.println("Failed to close GPRS");
+		Serial.println("Failed close GPRS");
 	}
 	
 	showEntry(temp, press);
@@ -292,14 +292,14 @@ void showEntry(int temp, int pressure){
 //Also displays it
 void askServerData(){
 	if(!checkSimModuleReady()){
-		Serial.println("ASK FOR DATA FAILED!");
+		Serial.println("ASK DATA FAILED!");
 		return;
 	}
 	
 	DataHandler<BUFFER_SIZE>* getHandler = simHandler.sendGetRequest();
 	
 	if(!getHandler){
-		Serial.println("Handler is nullptr");
+		Serial.println("Handler is null");
 		return;
 	}
 	
@@ -317,7 +317,7 @@ void askServerData(){
 	}
 	
 	if(!getHandler->isSendedSuccesfully()){
-		Serial.println("SEND FINISHED WITH NO SUCCESS CODE");
+		Serial.println("SEND FINISHED NO SUCCESS CODE");
 		getHandler->finish();
 		return;
 	}
@@ -359,7 +359,7 @@ void askServerData(){
 	getHandler->finish();
 	
 	if(!simHandler.disconnectFromGPRS()){
-		Serial.println("Failed to close GPRS");
+		Serial.println("Failed close GPRS");
 	}
 }
 
@@ -369,13 +369,13 @@ bool checkSimModuleReady(){
 	if(!simHandler.isModuleUp()){
 		delay(5000);
 		if(!simHandler.isModuleUp()){
-			Serial.println("Module if offline");
+			Serial.println("Module offline");
 			return false;
 		}
 	}
 	
 	if(!simHandler.isModuleAlive()){
-		Serial.println("Module is not alive");
+		Serial.println("Module not alive");
 			return false;
 	}
 	

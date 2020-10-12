@@ -1,4 +1,5 @@
 #include "SimIOWrapper.h"
+#include "StringData.h"
 
 // #ifdef ABS
 	// #warning definied
@@ -65,9 +66,9 @@ void SimIOWrapper<N>::write(double d, int amountAfterDot){
 template<int N>
 void SimIOWrapper<N>::writeEndOfCommand(bool clearBuffer){
 	// #ifdef ABS
-		Serial.print("\r\n");
+		Serial.print(END_LINE);
 	// #endif
-	refPort.print("\r\n");
+	refPort.print(END_LINE);
 	
 	if(clearBuffer){
 		buffer.clear();

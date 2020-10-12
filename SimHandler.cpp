@@ -90,6 +90,8 @@ bool SimHandler<N>::setDefaultParams(){
 	if(!readAndExpectSuccess(reader, parser))
 		return false;
 	
+	parser.setState(PARSER_STATE_TEXT);
+	
 	writer.writeCallReady(false);
 	if(!readAndExpectSuccess(reader, parser))
 		return false;
