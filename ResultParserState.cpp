@@ -6,6 +6,9 @@
 
 template<int N>
 bool ResultParserStateBase<N>::isSimpleMessageReady(FixedBuffer<N>& buffer){
+	if(checkError(buffer))
+		return true;
+
 	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return true;
 	
@@ -17,6 +20,7 @@ bool ResultParserStateBase<N>::isSimpleMessageReady(FixedBuffer<N>& buffer){
 	
 	if(buffer.indexOfEnd(DIGIT_ERROR) != -1)
 		return true;
+	
 
 	
 	return false;
@@ -28,6 +32,9 @@ bool ResultParserStateBase<N>::isComplexMessageReady(FixedBuffer<N>& buffer){
 	if(buffer.getLength() <= 3){
 		return false;
 	}
+	
+	if(checkError(buffer))
+		return true;
 	
 	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return true;
@@ -68,10 +75,23 @@ bool ResultParserStateBase<N>::isReadHttpMessageFull(FixedBuffer<N>& buffer){
 
 	return isReadEnded(buffer, lastIndexForRead + 1);
  }
+ 
+ 
+ template<int N>
+ bool ResultParserStateBase<N>::checkError(FixedBuffer<N>& buffer){
+	 if(buffer.indexOfFrom(buffer.indexOfEnd("+CME ERROR: "), END_LINE) != -1)
+		return true;
+	
+	
+	return false;
+ }
 
 
 template<int N>
 int ResultParserStateBase<N>::fetchResultCode(FixedBuffer<N>& buffer){
+	if(checkError(buffer))
+		return ANWSER_CODES::ERROR;
+
 	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return ANWSER_CODES::OK;
 	
@@ -153,6 +173,9 @@ bool ResultParserStateBase<N>::isReadEnded(FixedBuffer<N>& buffer, int index){
 
 template<int N>
 bool ResultParserStateText<N>::isSimpleMessageReady(FixedBuffer<N>& buffer){
+	if(checkError(buffer))
+		return true;
+
 	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return true;
 	
@@ -172,6 +195,9 @@ bool ResultParserStateText<N>::isComplexMessageReady(FixedBuffer<N>& buffer){
 
 template<int N>
 int ResultParserStateText<N>::fetchResultCode(FixedBuffer<N>& buffer){
+	if(checkError(buffer))
+		return ANWSER_CODES::ERROR;
+
 	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return ANWSER_CODES::OK;
 	
@@ -201,6 +227,9 @@ bool ResultParserStateText<N>::isReadEnded(FixedBuffer<N>& buffer, int index){
 
 template<int N>
 bool ResultParserStateDigit<N>::isSimpleMessageReady(FixedBuffer<N>& buffer){
+	if(checkError(buffer))
+		return true;
+
 	if(buffer.indexOfEnd(DIGIT_SUCCESS) != -1)
 		return true;
 	
@@ -218,6 +247,9 @@ bool ResultParserStateDigit<N>::isComplexMessageReady(FixedBuffer<N>& buffer){
 		return false;
 	}
 	
+	if(checkError(buffer))
+		return true;
+	
 	if(buffer.indexOfEnd(DIGIT_COMPLEX_SUCCESS) != -1)
 		return true;
 	
@@ -231,6 +263,9 @@ bool ResultParserStateDigit<N>::isComplexMessageReady(FixedBuffer<N>& buffer){
 
 template<int N>
 int ResultParserStateDigit<N>::fetchResultCode(FixedBuffer<N>& buffer){
+	if(checkError(buffer))
+		return ANWSER_CODES::ERROR;
+
 	if(buffer.indexOfEnd(DIGIT_SUCCESS) != -1)
 		return ANWSER_CODES::OK;
 	

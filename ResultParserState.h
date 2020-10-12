@@ -15,6 +15,7 @@ class ResultParserStateBase
 		virtual bool isSimpleMessageReady(FixedBuffer<N>& buffer);
 		virtual bool isComplexMessageReady(FixedBuffer<N>& buffer);
 		virtual bool isReadHttpMessageFull(FixedBuffer<N>& buffer);
+		virtual bool checkError(FixedBuffer<N>& buffer);
 		
 		virtual int fetchResultCode(FixedBuffer<N>& buffer);
 		
