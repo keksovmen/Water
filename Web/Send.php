@@ -1,15 +1,15 @@
 <?php
 
-//Params: temperature, pressure
+//Params: temperature, pressure, time
 
 //fetch data
-
-$temp = $_POST["temperature"];
-$pres = $_POST["pressure"];
+$temp = $_POST["0"];
+$pres = $_POST["1"];
+$time = $_POST["2"];
 
 //make as string
 
-$txtData = "Temperature - C: " . $temp . "\tPressure - mb: " . $pres . "\n";
+$txtData = "Temperature - C: " . $temp . "\tPressure - mb: " . $pres . "\tTime: " . $time . "\n";
 
 //open or create data file
 
