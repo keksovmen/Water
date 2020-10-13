@@ -98,7 +98,7 @@ bool DataHandler<N>::readResponce(){
 	if(refBuffer.remains() < MIN_LENGTH){
 		//TODO: made read to buffer return actual amount readed
 		//so you can fetch how much did you read
-		Serial.println("BUFFER readResponce()");
+		Serial.println("READ_RESPONCE");
 		return true;
 	}
 
@@ -125,6 +125,10 @@ bool DataHandler<N>::readResponce(){
 		if(refParser.isReadHttpMessageFull()){
 			// Serial.println("BREAK");
 			break;
+		}else{
+			if(refParser.checkError()){
+				return false;
+			}
 		}
 	}
 	

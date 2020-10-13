@@ -77,6 +77,9 @@ class SimResultParser
 		bool isReadHttpMessageFull();
 		
 		
+		bool checkError();
+		
+		
 		/**
 			Expect anthing but has to end with <code>\r\n
 		

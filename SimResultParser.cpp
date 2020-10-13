@@ -107,6 +107,12 @@ bool SimResultParser<N>::isReadHttpMessageFull(){
 
 
 template<int N>
+bool SimResultParser<N>::checkError(){
+	return pState->checkError(refBuffer);
+}
+
+
+template<int N>
 int SimResultParser<N>::fetchResultCode(){
 	return pState->fetchResultCode(refBuffer);
 }

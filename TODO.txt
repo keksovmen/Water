@@ -1,2 +1,6 @@
 6	-	When you read just to find some messages buffer will 
 			eventyaly overflow need to clear it
+7	-	Fucking moron why don't just delete RING and etc shit,
+			why the fuck you waiting until dude drops a call,
+			oh yes because after sending any command you won't
+			get shit!

@@ -74,11 +74,13 @@ void SimCommandWriter::writeSAPBR(SAPBR_COMMANDS cmd, const char* param, const c
 void SimCommandWriter::writeHTPP(HTTP_COMMANDS cmd){
 	switch (cmd){
 		case HTTP_INIT:
-			refWriter.writeCommand("AT+HTTPINIT");
+			refWriter.write("AT+HTTP");	//memory saving
+			refWriter.writeCommand("INIT");
 		break;
 		
 		case HTTP_TERM:
-			refWriter.writeCommand("AT+HTTPTERM");
+			refWriter.write("AT+HTTP");	//memory saving
+			refWriter.writeCommand("TERM");
 		break;
 			
 		default: break;
@@ -89,7 +91,8 @@ void SimCommandWriter::writeHTPP(HTTP_COMMANDS cmd){
 
 void SimCommandWriter::writeHTPPSetParam(const char* param, const char* value){
 	//TODO: made separate header file with all comands as fields
-	refWriter.write("AT+HTTPPARA=");
+	refWriter.write("AT+HTTP");	//memory saving
+	refWriter.write("PARA=");
 	refWriter.write('"');
 	refWriter.write(param);
 	refWriter.write("\",\"");
@@ -105,7 +108,8 @@ void SimCommandWriter::writeHTPPSetParam(const char* param, const char* value){
 
 
 void SimCommandWriter::writeHTPPAction(HTTP_REQUESTS method){
-	refWriter.write("AT+HTTPACTION=");
+	refWriter.write("AT+HTTP");	//memory saving
+	refWriter.write("ACTION=");
 	refWriter.write(static_cast<int>(method));
 	refWriter.writeEndOfCommand();
 	
@@ -113,7 +117,8 @@ void SimCommandWriter::writeHTPPAction(HTTP_REQUESTS method){
 
 
 void SimCommandWriter::writeHTPPData(int length){
-	refWriter.write("AT+HTTPDATA=");
+	refWriter.write("AT+HTTP");	//memory saving
+	refWriter.write("DATA=");
 	refWriter.write(length);
 	refWriter.write(',');
 	refWriter.write(5000);
@@ -123,7 +128,8 @@ void SimCommandWriter::writeHTPPData(int length){
 
 
 void SimCommandWriter::writeReadHTTP(int from, int amount){
-	refWriter.write("AT+HTTPREAD=");
+	refWriter.write("AT+HTTP");	//memory saving
+	refWriter.write("READ=");
 	refWriter.write(from);
 	refWriter.write(',');
 	refWriter.write(amount);

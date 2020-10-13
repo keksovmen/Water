@@ -121,10 +121,13 @@ void ResultParserStateBase<N>::removeReadHttpGarbage(FixedBuffer<N>& buffer){
 	//set on first character of real data
 	endIndex += 2;
 	
-	buffer.remove(index, endIndex - index);
-	
+	//remove from right to left cause everything will fuck up 
+	//the other way around!
 	buffer.remove(findLastIndexForRead(buffer)+ 1, 
 					getAmountToDeleteAfterRead());
+					
+	buffer.remove(index, endIndex - index);
+	
 }
 
 
