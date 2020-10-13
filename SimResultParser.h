@@ -77,6 +77,11 @@ class SimResultParser
 		bool isReadHttpMessageFull();
 		
 		
+		/**
+			@return true if there is +CME ERROR: <n>
+		*/
+		
+		
 		bool checkError();
 		
 		

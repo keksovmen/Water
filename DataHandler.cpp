@@ -3,7 +3,6 @@
 #include "Util.h"
 
 
-//TODO: made explicitly buffer reader and writer and parser
 
 template <int N>
 DataHandler<N>::DataHandler(CommandWriter& wrapper, 
