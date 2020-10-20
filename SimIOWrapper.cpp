@@ -24,7 +24,10 @@ void SimIOWrapper<N>::write(const char* str){
 	// #ifdef ABS
 		Serial.print(str);
 	// #endif
-	refPort.print(str);
+	int amount = refPort.print(str);
+	if(amount != strlen(str)){
+		Serial.println("Amount is missing");
+	}
 }
 
 

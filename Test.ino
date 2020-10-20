@@ -40,8 +40,8 @@ unsigned long timeBefore;
 
 
 void setup(){
-	Serial.begin(9600);
-	sim.begin(9600);
+	Serial.begin(115200);
+	sim.begin(115200);
 	
 	//Buttons, as input
 	pinMode(BUTTON_TIME, INPUT);

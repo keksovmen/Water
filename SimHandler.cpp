@@ -100,7 +100,7 @@ bool SimHandler<N>::setDefaultParams(){
 	if(!readAndExpectSuccess(reader, parser))
 		return false;
 	
-	writer.writeIPR(9600);
+	writer.writeIPR(115200);
 	if(!readAndExpectSuccess(reader, parser))
 		return false;
 	
