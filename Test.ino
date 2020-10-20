@@ -15,7 +15,12 @@
 Device dev;
 
 //Sim module
-SoftwareSerial sim (2, 3);
+#ifdef _AVR_ATMEGA328PB_H_INCLUDED
+	SoftwareSerial sim (2, 3);
+#elif defined (_AVR_IOM2560_H_)
+	SoftwareSerial sim (10, 3);
+#endif
+
 SimHandler<BUFFER_SIZE> simHandler(sim);
 
 //Display
@@ -80,7 +85,7 @@ void setup(){
 	//Set default parameters
 	if(!simHandler.setDefaultParams()){
 		Serial.println("Defaults not set");
-		// while(1){};
+		while(1){};
 	}
 	
 	
