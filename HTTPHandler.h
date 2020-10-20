@@ -1,5 +1,6 @@
 #pragma once
 
+#include <IPAddress.h>
 #include "BaseReader.h"
 #include "SimCommandWriter.h"
 #include "SimResultParser.h"
@@ -28,7 +29,7 @@ class HTTPHandler
 			@return true if succeed
 		*/
 		
-		bool initPostRequest(const char* url, int dataLength);
+		bool initPostRequest(IPAddress& address, const char* url, int dataLength);
 		
 		
 		/**
@@ -41,7 +42,7 @@ class HTTPHandler
 	
 	private:
 		bool initSession();
-		bool setPostURL(const char* url);
+		bool setPostURL(IPAddress& address, const char* url);
 		void setGetURL();
 		bool setContentForPHP();
 		bool startDataTransmition(int dataLength);

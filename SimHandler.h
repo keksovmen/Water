@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Stream.h>
+#include <IPAddress.h>
 #include "SimIOWrapper.h"
 #include "SimCommandWriter.h"
 #include "SimResultParser.h"
@@ -82,13 +83,14 @@ class SimHandler
 		/**
 			Initiates POST HTTP session and return handler of it
 			
-			@param url where to send
+			@param address ip address
+			@param url file path without first / character
 			@param dataLength must match exactly amount you gonna write in
 			
 			@return post handler
 		*/
 		
-		DataHandler<N>* sendPostRequest(const char* url, int dataLength);
+		DataHandler<N>* sendPostRequest(IPAddress& address, const char* url, int dataLength);
 		
 		
 		/**

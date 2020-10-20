@@ -13,6 +13,7 @@ class ParameterHandler
 		Parameter<PrimitivFloatParameter<double>>& getTemp(){return temp;}
 		Parameter<PrimitivFloatParameter<double>>& getPressure(){return press;}
 		Parameter<Clock>& getClock(){return clock;}
+		Parameter<IPAddressParam>& getAddress(){return address;}
 		
 	private:
 		Parameter<PrimitivFloatParameter<double>> temp =
@@ -22,5 +23,6 @@ class ParameterHandler
 			Parameter<PrimitivFloatParameter<double>>(1);
 			
 		Parameter<Clock> clock = Parameter<Clock>(2);
+		Parameter<IPAddressParam> address = Parameter<IPAddressParam>(3);
 	
 };

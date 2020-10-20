@@ -1,5 +1,6 @@
 #pragma once
 
+#include <IPAddress.h>
 #include "CommandWriter.h"
 #include "Enums.h"
 
@@ -25,6 +26,7 @@ class SimCommandWriter
 		void writeReportAsError(bool turnOn);
 		void writeSAPBR(SAPBR_COMMANDS cmd, const char* param = nullptr, const char* value = nullptr);
 		void writeHTPP(HTTP_COMMANDS cmd);
+		void writeHTTPURL(IPAddress& address, const char* url);
 		void writeHTPPSetParam(const char* param, const char* value);
 		void writeHTPPAction(HTTP_REQUESTS method);
 		void writeHTPPData(int length);

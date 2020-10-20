@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IPAddressParam.h"
 #include "BaseParameter.h"
 #include "Enums.h"
 #include "Clock.h"
@@ -33,5 +34,6 @@ class Parameter : public BaseParameter
 // template class Parameter<int>;
 template class Parameter<PrimitivFloatParameter<double>>;
 template class Parameter<Clock>;
+template class Parameter<IPAddressParam>;
 // template class Parameter<Clock>;
 // template class Parameter<double>;

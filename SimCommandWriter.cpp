@@ -88,6 +88,25 @@ void SimCommandWriter::writeHTPP(HTTP_COMMANDS cmd){
 }
 
 
+void SimCommandWriter::writeHTTPURL(IPAddress& address, const char* url){
+	refWriter.write("AT+HTTP");	//memory saving
+	refWriter.write("PARA=");
+	refWriter.write('"');
+	refWriter.write("URL");
+	refWriter.write("\",\"http://");
+	refWriter.write(address[0]);
+	refWriter.write('.');
+	refWriter.write(address[1]);
+	refWriter.write('.');
+	refWriter.write(address[2]);
+	refWriter.write('.');
+	refWriter.write(address[3]);
+	refWriter.write('/');
+	refWriter.write(url);
+	refWriter.write('"');
+	refWriter.writeEndOfCommand();
+}
+
 
 void SimCommandWriter::writeHTPPSetParam(const char* param, const char* value){
 	//TODO: made separate header file with all comands as fields

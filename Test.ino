@@ -77,6 +77,9 @@ void setup(){
 	
 	//update time
 	timeBefore = millis();
+	
+	//set IP
+	parameters.getAddress().getValue().fromString("128.69.240.186");
 }
 
 void loop(){

@@ -134,8 +134,8 @@ bool SimHandler<N>::disconnectFromGPRS(){
 
 
 template<int N>
-DataHandler<N>* SimHandler<N>::sendPostRequest(const char* url, int dataLength){
-	if(httpHandler.initPostRequest(url, dataLength)){
+DataHandler<N>* SimHandler<N>::sendPostRequest(IPAddress& address, const char* url, int dataLength){
+	if(httpHandler.initPostRequest(address, url, dataLength)){
 		return new(dynamicMemory) PostDataHandler<N>(wrapper, parser, writer, 
 													reader, wrapper.getBuffer());
 	}

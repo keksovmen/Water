@@ -15,9 +15,9 @@ HTTPHandler<N>::HTTPHandler(BaseReader& reader,
 
 
 template<int N>
-bool HTTPHandler<N>::initPostRequest(const char* url, int dataLength){
+bool HTTPHandler<N>::initPostRequest(IPAddress& address, const char* url, int dataLength){
 	if(initSession() 		&&
-		setPostURL(url) 	&&
+		setPostURL(address, url) 	&&
 		setContentForPHP() 	&&
 		startDataTransmition(dataLength))
 	{
@@ -68,8 +68,8 @@ bool HTTPHandler<N>::initSession(){
 }
 
 template<int N>
-bool HTTPHandler<N>::setPostURL(const char* url){
-	refWriter.writeHTPPSetParam("URL", url);
+bool HTTPHandler<N>::setPostURL(IPAddress& address, const char* url){
+	refWriter.writeHTTPURL(address, url);
 	return readAndExpectSuccess(refReader, refParser);
 }
 

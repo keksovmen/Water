@@ -49,7 +49,8 @@ bool SimHandlerHelper<N>::sendParams(ParameterHandler& params){
 	
 	
 	auto* dataHandler = handler.sendPostRequest(
-			"http://128.69.240.186/Send.php", 
+			params.getAddress().getValue(),
+			"Send.php", 
 			params.getLength()
 		);
 	
@@ -83,24 +84,25 @@ bool SimHandlerHelper<N>::sendVolume(int volume){
 	}
 	
 	
-	auto* dataHandler = handler.sendPostRequest(
-			"http://128.69.240.186/SendVolume.php", 
-			10
-		);
+	// auto* dataHandler = handler.sendPostRequest(
+			// "http://128.69.240.186/SendVolume.php", 
+			// 10
+		// );
 	
-	if(!dataHandler){
-		return false;
-	}
+	
+	// if(!dataHandler){
+		// return false;
+	// }
 	
 	
 	// params.handleWritingValue(*dataHandler);
 	
 	bool result = false;
-	if(handleSendRootine(dataHandler)){
-		result = true;
-	}
+	// if(handleSendRootine(dataHandler)){
+		// result = true;
+	// }
 	
-	dataHandler->finish();
+	// dataHandler->finish();
 	
 	return result;
 }

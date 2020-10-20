@@ -11,3 +11,4 @@
 			default one
 11	-	Add function that will return CME ERROR code and
 			use it when connection to GPRS cause droping error 100
+12	-	Buffer overflow is real pain, fix it somehow
