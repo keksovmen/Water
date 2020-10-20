@@ -16,9 +16,11 @@ Device dev;
 
 //Sim module
 #ifdef _AVR_ATMEGA328PB_H_INCLUDED
+	#include <SoftwareSerial.h>
 	SoftwareSerial sim (2, 3);
 #elif defined (_AVR_IOM2560_H_)
-	SoftwareSerial sim (10, 3);
+	#include <HardwareSerial.h>
+	HardwareSerial& sim = Serial1;
 #endif
 
 SimHandler<BUFFER_SIZE> simHandler(sim);

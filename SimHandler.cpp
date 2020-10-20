@@ -14,7 +14,7 @@ static char dynamicMemory[18];
 
 
 template<int N>
-SimHandler<N>::SimHandler(SoftwareSerial& refPort) :
+SimHandler<N>::SimHandler(Stream& refPort) :
 	wrapper(refPort), writer(wrapper),
 		parser(wrapper.getBuffer()), 
 		reader(wrapper, parser, writer),

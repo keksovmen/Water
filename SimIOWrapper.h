@@ -1,5 +1,5 @@
 #pragma once
-#include <SoftwareSerial.h>
+#include <Stream.h>
 #include "Buffer/FixedBuffer.h"
 #include "CommandWriter.h"
 #include "BaseReader.h"
@@ -17,8 +17,7 @@ template<int N>
 class SimIOWrapper : public CommandWriter, public BaseReader
 {
 	public:
-	//Test instead of link use pointer???
-		explicit SimIOWrapper(SoftwareSerial& refSerial);
+		explicit SimIOWrapper(Stream& refSerial);
 		
 		
 		/**
@@ -131,7 +130,7 @@ class SimIOWrapper : public CommandWriter, public BaseReader
 		
 		
 		//sim module here
-		SoftwareSerial& refPort;
+		Stream& refPort;
 		
 		FixedBuffer<N> buffer;
 		

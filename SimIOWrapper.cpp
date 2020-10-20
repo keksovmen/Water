@@ -13,7 +13,7 @@ const static unsigned int MIN_DELAY = 25;
 
 
 template<int N>
-SimIOWrapper<N>::SimIOWrapper(SoftwareSerial& refSerial) : 
+SimIOWrapper<N>::SimIOWrapper(Stream& refSerial) : 
 	refPort(refSerial){
 		
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SoftwareSerial.h>
+#include <Stream.h>
 #include "SimIOWrapper.h"
 #include "SimCommandWriter.h"
 #include "SimResultParser.h"
@@ -23,7 +23,7 @@ template<int N>
 class SimHandler
 {
 	public:
-		SimHandler(SoftwareSerial& refPort);
+		SimHandler(Stream& refPort);
 		
 		/**
 			@return true if module can anwser
