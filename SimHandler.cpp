@@ -38,8 +38,8 @@ bool SimHandler<N>::isModuleUp(){
 
 template<int N>
 bool SimHandler<N>::isModuleAlive(){
-	if(!isModuleUp())
-		return false;
+	// if(!isModuleUp())
+		// return false;
 	
 	writer.writeCPIN();
 	if(!readAndExpectSuccess(reader, parser)){

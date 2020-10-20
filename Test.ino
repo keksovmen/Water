@@ -1,5 +1,6 @@
 #include <LiquidCrystal_I2C.h>
 #include "SimHandler.h"
+#include "SimHandlerHelper.h"
 #include "Clock.h"
 #include "Device.h"
 #include "ParameterHandler.h"
@@ -24,6 +25,7 @@ Device dev;
 #endif
 
 SimHandler<BUFFER_SIZE> simHandler(sim);
+SimHandlerHelper<BUFFER_SIZE> simHelper(sim);
 
 //Display
 LiquidCrystal_I2C lcd(0x27, 16, 2);
@@ -66,30 +68,12 @@ void setup(){
 		// while(1){};
 	}
 	
-	
-	//Check if module is anwserying at least
-	if(!simHandler.isModuleUp()){
-		delay(5000);
-		if(!simHandler.isModuleUp()){
-			Serial.println("Module offline");
-			// while(1){};
+	if(!simHelper.init()){
+		delay(3000);
+		if(!simHelper.init()){
+			while(1){}
 		}
 	}
-	
-	
-	//Check if module is working properly
-	if(!simHandler.isModuleAlive()){
-		Serial.println("Module not alive");
-		// while(1){};
-	}
-	
-	
-	//Set default parameters
-	if(!simHandler.setDefaultParams()){
-		Serial.println("Defaults not set");
-		while(1){};
-	}
-	
 	
 	//update time
 	timeBefore = millis();
@@ -113,10 +97,10 @@ void loop(){
 	
 	
 	// if button 8 pressed
-	if(digitalRead(BUTTON_TIME) == LOW){
-		printMessage("Asking time");
-		askForTime();
-	}
+	// if(digitalRead(BUTTON_TIME) == LOW){
+		// printMessage("Asking time");
+		// askForTime();
+	// }
 	
 	
 	//if button 9 pressed
@@ -127,21 +111,12 @@ void loop(){
 	
 	
 	//if button 10 pressed
-	if(digitalRead(BUTTON_SHOW) == LOW){
-		printMessage("Asking server");
-		askServerData();
-	}
+	// if(digitalRead(BUTTON_SHOW) == LOW){
+		// printMessage("Asking server");
+		// askServerData();
+	// }
 	
 	simHandler.handleReading();
-	
-	
-	//DEBUG
-	// if(Serial.available()){
-		// sim.write(Serial.read());
-	// }
-	// if(sim.available()){	
-		// Serial.write(sim.read());
-	// }
 	
 }
 
@@ -223,52 +198,13 @@ void printTime(const Clock& clk){
 //Tries to send temperature and pressure
 //to server, also displays what was send
 void sendSensorData(){
-	if(!checkSimModuleReady()){
-		Serial.println("SEND DATA FAILED");
-		return;
-	}
+	updateParams();
+	simHelper.sendParams(parameters);
 	
-	
-	dev.readResults();
-	double temp = dev.getTemperature();
-	double press = dev.getPressure();
-	parameters.getTemp().getValue().getValue() = temp;
-	parameters.getPressure().getValue().getValue() = press;
-	
-	
-	DataHandler<BUFFER_SIZE>* postDataHandler = 
-		simHandler.sendPostRequest("http://128.69.240.186/Send.php", parameters.getLength());
-		
-	if(!postDataHandler){
-		Serial.println("Handler is null");
-	}
-		
-	parameters.handleWritingValue((*postDataHandler));
-	
-	if(postDataHandler->send()){
-		while(!postDataHandler->isSended()){
-			delay(1000);
-			Serial.println("Send took 1 sec");
-		}
-	}else{
-		Serial.println("SEND FAILED");
-		postDataHandler->finish();
-		return;
-	}
-	
-	if(!postDataHandler->isSendedSuccesfully()){
-		Serial.println("SEND FINISHED NO SUCCESS CODE");
-		postDataHandler->finish();
-		return;
-	}
-	
-	postDataHandler->finish();
-	
-	if(!simHandler.disconnectFromGPRS()){
-		Serial.println("Failed close GPRS");
-	}
-	
-	showEntry(temp, press);
+	showEntry(
+		parameters.getTemp().getValue().getValue(),
+		parameters.getPressure().getValue().getValue()
+		);
 }
 
 
@@ -407,4 +343,12 @@ void printMessage(const char* str){
 	lcd.clear();
 	lcd.setCursor(0, 0);
 	lcd.print(str);
+}
+
+void updateParams(){
+	dev.readResults();
+	double temp = dev.getTemperature();
+	double press = dev.getPressure();
+	parameters.getTemp().getValue().getValue() = temp;
+	parameters.getPressure().getValue().getValue() = press;
 }
