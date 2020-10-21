@@ -87,6 +87,8 @@ class DataHandler : public BaseWriter
 		
 		unsigned long responceLength = 0;
 		
+		bool firstRead = true;
+		
 	
 };
 

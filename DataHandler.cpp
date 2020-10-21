@@ -66,6 +66,7 @@ template<int N>
 void DataHandler<N>::finish(){
 	refWriter.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
 	readAndExpectSuccess(refReader, refParser);
+	refBuffer.clear();
 }
 
 
@@ -88,6 +89,11 @@ void DataHandler<N>::finish(){
 
 template<int N>
 bool DataHandler<N>::readResponce(){
+	if(firstRead){
+		refBuffer.clear();
+		firstRead = false;
+	}
+	
 	if(readIndex >= responceLength){
 		return false;
 	}
@@ -102,10 +108,10 @@ bool DataHandler<N>::readResponce(){
 	}
 
 	unsigned int readAmount = refBuffer.remains() - MIN_LENGTH;
-	//10 symbol fix
 	if(readAmount > 64){
 		readAmount = 64;
 		
+	//10 symbol fix
 	}else if(readAmount == 10){
 		readAmount = 9;
 		
@@ -118,11 +124,7 @@ bool DataHandler<N>::readResponce(){
 	
 	while(1){
 		refReader.read();
-		// Serial.println("<---->");
-		// Serial.println(refBuffer.begin());
-		// Serial.println("<---->");
 		if(refParser.isReadHttpMessageFull()){
-			// Serial.println("BREAK");
 			break;
 		}else{
 			if(refParser.checkError()){

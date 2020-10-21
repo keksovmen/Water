@@ -9,7 +9,7 @@
 
 //For new Post/GetDataHandler to return a pointer
 //Caution first check or calculate sizeof(Post/GetDataHandler)
-static char dynamicMemory[18];
+static char dynamicMemory[19];
 
 
 
@@ -28,25 +28,25 @@ template<int N>
 bool SimHandler<N>::isModuleUp(){
 	writer.writeAT();
 	
-	if(!readAndExpectSuccess(reader, parser)){
-		return false;
-	}
+	bool result = readAndExpectSuccess(reader, parser);
+	wrapper.getBuffer().clear();
 	
-	return true;
+	return result;
 }
 
 
 template<int N>
 bool SimHandler<N>::isModuleAlive(){
-	// if(!isModuleUp())
-		// return false;
-	
 	writer.writeCPIN();
-	if(!readAndExpectSuccess(reader, parser)){
-		return false;
+	
+	bool result = readAndExpectSuccess(reader, parser);
+	if(result){
+		result = parser.isPinRdy();
 	}
 	
-	return parser.isPinRdy();
+	wrapper.getBuffer().clear();
+	
+	return result;
 }
 
 
@@ -71,44 +71,60 @@ bool SimHandler<N>::isModuleAlive(){
 template<int N>
 NETWORK_CONNECTION SimHandler<N>::isConnectedToNetwork(){
 	writer.writeCREG();
-	if(!readAndExpectSuccess(reader, parser, true)){
+	
+	NETWORK_CONNECTION status = NETWORK_CONNECTION::UNKNOWN;
+	if(readAndExpectSuccess(reader, parser, true)){
 		//if minimum time has passed and there is still no anwser
-		return NETWORK_CONNECTION::UNKNOWN;
+		status = static_cast<NETWORK_CONNECTION>(parser.fetchNetworkRegistration());
 	}
 	
-	return static_cast<NETWORK_CONNECTION>(parser.fetchNetworkRegistration());
+	wrapper.getBuffer().clear();
+	
+	return status;
 }
 
 
 template<int N>
 bool SimHandler<N>::setDefaultParams(){
 	writer.writeEcho(false);
-	if(!readAndExpectSuccess(reader, parser))
+	if(!readAndExpectSuccess(reader, parser)){
+		wrapper.getBuffer().clear();
 		return false;
+	}
 	
 	writer.writeNumberFormat(false);
-	if(!readAndExpectSuccess(reader, parser))
+	if(!readAndExpectSuccess(reader, parser)){
+		wrapper.getBuffer().clear();
 		return false;
+	}
 	
 	parser.setState(PARSER_STATE_TEXT);
 	
 	writer.writeCallReady(false);
-	if(!readAndExpectSuccess(reader, parser))
+	if(!readAndExpectSuccess(reader, parser)){
+		wrapper.getBuffer().clear();
 		return false;
+	}
 	
 	writer.writeReportAsError(true);
-	if(!readAndExpectSuccess(reader, parser))
+	if(!readAndExpectSuccess(reader, parser)){
+		wrapper.getBuffer().clear();
 		return false;
+	}
 	
 	writer.writeIPR(115200);
-	if(!readAndExpectSuccess(reader, parser))
+	if(!readAndExpectSuccess(reader, parser)){
+		wrapper.getBuffer().clear();
 		return false;
+	}
 	
 	writer.writeAT();
-	if(!readAndExpectSuccess(reader, parser))
+	if(!readAndExpectSuccess(reader, parser)){
+		wrapper.getBuffer().clear();
 		return false;
+	}
 	
-	// wrapper.getBuffer().clear();
+	wrapper.getBuffer().clear();
 	
 	return true;
 }
@@ -116,29 +132,38 @@ bool SimHandler<N>::setDefaultParams(){
 
 template<int N>
 bool SimHandler<N>::connectToGPRS(const char* apn){
-	if(gprsHandler.isConnected()){
-		return true;
+	bool result = gprsHandler.isConnected();
+	if(!result){
+		result = gprsHandler.connect(apn);
 	}
 	
-	return gprsHandler.connect(apn);
+	wrapper.getBuffer().clear();
+	
+	return result;
 }
 
 template<int N>
 bool SimHandler<N>::disconnectFromGPRS(){
-	if(!gprsHandler.isConnected()){
-		return true;
+	bool result = gprsHandler.isConnected();
+	if(result){
+		result = gprsHandler.close();
 	}
 	
-	return gprsHandler.close();
+	wrapper.getBuffer().clear();
+	
+	return result;
 }
 
 
 template<int N>
 DataHandler<N>* SimHandler<N>::sendPostRequest(IPAddress& address, const char* url, int dataLength){
 	if(httpHandler.initPostRequest(address, url, dataLength)){
+		wrapper.getBuffer().clear();
 		return new(dynamicMemory) PostDataHandler<N>(wrapper, parser, writer, 
 													reader, wrapper.getBuffer());
 	}
+	
+	wrapper.getBuffer().clear();
 	
 	return nullptr;
 }
@@ -147,9 +172,12 @@ DataHandler<N>* SimHandler<N>::sendPostRequest(IPAddress& address, const char* u
 template<int N>
 DataHandler<N>* SimHandler<N>::sendGetRequest(){
 	if(httpHandler.initGetRequest()){
+		wrapper.getBuffer().clear();
 		return new(dynamicMemory) GetDataHandler<N>(wrapper, parser, writer,
 													reader, wrapper.getBuffer());
 	}
+	
+	wrapper.getBuffer().clear();
 	
 	return nullptr;
 }
