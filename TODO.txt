@@ -12,3 +12,7 @@
 11	-	Add function that will return CME ERROR code and
 			use it when connection to GPRS cause droping error 100
 12	-	Buffer overflow is real pain, fix it somehow
+13	-	Made remove from buffer dara that starts with \r\n and 
+			ends with \r\n in free time
+14	-	Clear buffer after you finish with it
+15	-	Maybe made SimResultParser child class of ResultParserState

@@ -21,10 +21,22 @@ class ResultParserStateBase
 		
 		virtual void removeReadHttpGarbage(FixedBuffer<N>& buffer);
 		
+		
+		/**
+			@return error code from CME ERROR: <n>
+		*/
+		
+		int getLastError(){return lastErrorCode;}
+		
 	protected:
 		int findLastIndexForRead(FixedBuffer<N>& buffer);
 		virtual int getAmountToDeleteAfterRead();
 		virtual bool isReadEnded(FixedBuffer<N>& buffer, int index);
+		
+		
+		//Indicate last error,
+		//-1 is no error 
+		int lastErrorCode = -1;
 		
 };
 

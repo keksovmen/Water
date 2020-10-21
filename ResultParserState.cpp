@@ -78,13 +78,16 @@ bool ResultParserStateBase<N>::isReadHttpMessageFull(FixedBuffer<N>& buffer){
  
  
  template<int N>
- bool ResultParserStateBase<N>::checkError(FixedBuffer<N>& buffer){
-	 if(buffer.indexOfFrom(buffer.indexOfEnd("+CME ERROR: "), END_LINE) != -1)
+bool ResultParserStateBase<N>::checkError(FixedBuffer<N>& buffer){
+	int index = buffer.indexOfEnd("+CME ERROR: ");
+	if(buffer.indexOfFrom(index, END_LINE) != -1){
+		lastErrorCode = atoi(buffer[index + 11]);
 		return true;
+	}
 	
-	
+	lastErrorCode = -1;
 	return false;
- }
+}
 
 
 template<int N>

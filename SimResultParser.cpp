@@ -5,7 +5,7 @@
 
 
 
-static char dynamicMemory[2];
+static char dynamicMemory[4];
 
 
 
