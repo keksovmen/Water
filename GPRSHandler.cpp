@@ -97,6 +97,16 @@ int GPRSHandler<N>::retriveStatus(){
 	refWriter.writeSAPBR(SAPBR_COMMANDS::QUERY_BEARER);
 	
 	if(!readAndExpectSuccess(refReader, refParser, true)){
+		if(refParser.getLastError() == CME_ERROR_UNKNOWN){
+			for(int i = 0; i < 3; i++){
+				delay(300);
+				refWriter.writeSAPBR(SAPBR_COMMANDS::QUERY_BEARER);
+				
+				if(readAndExpectSuccess(refReader, refParser, true)){
+					return refParser.fetchGPRSStatus();
+				}
+			}
+		}
 		return -1;
 	}
 	

@@ -9,8 +9,6 @@
 9	-	Add as default parameter AT+CFUN=1
 10	-	Add as default when reading you can select max delay, and 
 			default one
-11	-	Add function that will return CME ERROR code and
-			use it when connection to GPRS cause droping error 100
 12	-	Buffer overflow is real pain, fix it somehow
 13	-	Made remove from buffer dara that starts with \r\n and 
 			ends with \r\n in free time
