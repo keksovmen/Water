@@ -14,7 +14,7 @@
 
 
 template<int N>
-class SimResultParser
+class SimResultParser : public ResultParserStateBase<N>
 {
 	public:
 		explicit SimResultParser(FixedBuffer<N>& refBuffer);
@@ -38,7 +38,16 @@ class SimResultParser
 			@return true if arrived
 		*/
 		
-		bool isSimpleMessageReady();
+		bool isSimpleMessageReady() override;
+		
+		
+		/**
+			Check if message contain CME ERROR:
+			
+			@return true if there is such error
+		*/
+		
+		bool checkError() override;
 		
 		
 		/**
@@ -50,7 +59,34 @@ class SimResultParser
 			@return true if arrived
 		*/
 		
-		bool isComplexMessageReady();
+		bool isComplexMessageReady() override;
+		
+		
+		/**
+			@return true if AT+HTTPREAD presents as whole string
+				+HTTPREAD: <length>\r\nDATA...<code>\r\n
+		
+		*/
+		
+		bool isReadHttpMessageFull() override;
+		
+		
+		/**
+			Expect anthing but has to end with <code>\r\n
+		
+			@return result code one of ANWSER_CODES
+		*/
+		
+		int fetchResultCode() override;
+		
+		
+		/**
+			Modifies buffer removing from it
+			garbare such as \r\nHTTPREAD: <length>\r\n 
+				and status code at the end
+		*/
+		
+		void removeReadHttpGarbage() override;
 		
 		
 		/**
@@ -66,32 +102,6 @@ class SimResultParser
 		*/
 		
 		bool isHttpActionPresents();
-		
-		
-		/**
-			@return true if AT+HTTPREAD presents as whole string
-				+HTTPREAD: <length>\r\nDATA...<code>\r\n
-		
-		*/
-		
-		bool isReadHttpMessageFull();
-		
-		
-		/**
-			@return true if there is +CME ERROR: <n>
-		*/
-		
-		
-		bool checkError();
-		
-		
-		/**
-			Expect anthing but has to end with <code>\r\n
-		
-			@return result code one of ANWSER_CODES
-		*/
-		
-		int fetchResultCode();
 		
 		
 		/**
@@ -134,13 +144,7 @@ class SimResultParser
 		unsigned long fetchHttpResponceLength();
 		
 		
-		/**
-			Modifies buffer removing from it
-			garbare such as \r\nHTTPREAD: <length>\r\n 
-				and status code at the end
-		*/
-		
-		void removeReadHttpGarbage();
+
 		
 		
 		
@@ -158,7 +162,6 @@ class SimResultParser
 		bool isPinRdy();
 		
 	private:
-		FixedBuffer<N>& refBuffer;
 		ResultParserStateBase<N>* pState;
 		
 };

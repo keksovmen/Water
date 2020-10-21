@@ -5,15 +5,15 @@
 
 
 
-static char dynamicMemory[4];
+static char dynamicMemory[6];
 
 
 
 template<int N>
 SimResultParser<N>::SimResultParser(FixedBuffer<N>& refBuffer) :
-	refBuffer(refBuffer)
+	ResultParserStateBase<N>(refBuffer)
 {
-	pState = new(dynamicMemory) ResultParserStateBase<N>();
+	pState = new(dynamicMemory) ResultParserStateBase<N>(refBuffer);
 	
 }
 
@@ -22,15 +22,15 @@ template<int N>
 void SimResultParser<N>::setState(PARSER_STATE state){
 	switch(state){
 		case PARSER_STATE_TEXT:
-			pState = new (dynamicMemory) ResultParserStateText<N>();
+			pState = new (dynamicMemory) ResultParserStateText<N>(this->refBuffer);
 			break;
 			
 		case PARSER_STATE_DIGIT:
-			pState = new (dynamicMemory) ResultParserStateDigit<N>();
+			pState = new (dynamicMemory) ResultParserStateDigit<N>(this->refBuffer);
 			break;
 			
 		case PARSER_STATE_BOTH:
-			pState = new (dynamicMemory) ResultParserStateBase<N>();
+			pState = new (dynamicMemory) ResultParserStateBase<N>(this->refBuffer);
 			break;
 	}
 }
@@ -53,7 +53,7 @@ void SimResultParser<N>::setState(PARSER_STATE state){
 
 template<int N>
 bool SimResultParser<N>::isSimpleMessageReady(){
-	return pState->isSimpleMessageReady(refBuffer);
+	return pState->isSimpleMessageReady();
 }
 
 
@@ -67,30 +67,7 @@ bool SimResultParser<N>::isSimpleMessageReady(){
 
 template<int N>
 bool SimResultParser<N>::isComplexMessageReady(){
-	return pState->isComplexMessageReady(refBuffer);
-}
-
-
-template<int N>
-bool SimResultParser<N>::containDownload(){
-	if(refBuffer.indexOf("DOWNLOAD\r\n") != -1)
-		return true;
-	
-	return false;
-}
-
-
-template<int N>
-bool SimResultParser<N>::isHttpActionPresents(){
-	int index = refBuffer.indexOf("+HTTPACTION: ");
-	if(index == -1)
-		return false;
-	
-	int terminatorIndex = refBuffer.indexOfFrom(index + 11, END_LINE);
-	if(terminatorIndex == -1)
-		return false;
-	
-	return true;
+	return pState->isComplexMessageReady();
 }
 
 
@@ -102,34 +79,69 @@ bool SimResultParser<N>::isHttpActionPresents(){
 
 template<int N>
 bool SimResultParser<N>::isReadHttpMessageFull(){
-	return pState->isReadHttpMessageFull(refBuffer);
-}
-
-
-template<int N>
-bool SimResultParser<N>::checkError(){
-	return pState->checkError(refBuffer);
+	return pState->isReadHttpMessageFull();
 }
 
 
 template<int N>
 int SimResultParser<N>::fetchResultCode(){
-	return pState->fetchResultCode(refBuffer);
+	return pState->fetchResultCode();
 }
 
 
+template<int N>
+void SimResultParser<N>::removeReadHttpGarbage(){
+	pState->removeReadHttpGarbage();
+}
+
+
+template<int N>
+bool SimResultParser<N>::containDownload(){
+	if(this->refBuffer.indexOf("DOWNLOAD\r\n") != -1)
+		return true;
+	
+	return false;
+}
+
+
+template<int N>
+bool SimResultParser<N>::isHttpActionPresents(){
+	int index = this->refBuffer.indexOf("+HTTPACTION: ");
+	if(index == -1)
+		return false;
+	
+	int terminatorIndex = this->refBuffer.indexOfFrom(index + 11, END_LINE);
+	if(terminatorIndex == -1)
+		return false;
+	
+	return true;
+}
+
+
+
+
+
+template<int N>
+bool SimResultParser<N>::checkError(){
+	return pState->checkError();
+}
+
+
+
+
+
 /**
-	Expects refBuffer as +CREG: <n>,<stat>\r\n
+	Expects this->refBuffer as +CREG: <n>,<stat>\r\n
 		<n> = 0...2
 		<stat> = 0...5
 */
 
 template<int N>
 int SimResultParser<N>::fetchNetworkRegistration(){
-	int index = refBuffer.indexOf("+CREG: ");
+	int index = this->refBuffer.indexOf("+CREG: ");
 	index += 9;	//move on <stat> position
 	
-	return characterToInt(refBuffer[index]);
+	return characterToInt(this->refBuffer[index]);
 }
 
 
@@ -148,10 +160,10 @@ int SimResultParser<N>::fetchNetworkRegistration(){
 
 template<int N>
 int SimResultParser<N>::fetchGPRSStatus(){
-	int index = refBuffer.indexOf("+SAPBR: ");
+	int index = this->refBuffer.indexOf("+SAPBR: ");
 	index += 10;
 	
-	return characterToInt(refBuffer[index]);
+	return characterToInt(this->refBuffer[index]);
 }
 
 
@@ -167,10 +179,10 @@ int SimResultParser<N>::fetchGPRSStatus(){
 
 template<int N>
 int SimResultParser<N>::fetchHTTPStatus(){
-	int index = refBuffer.indexOf("+HTTPACTION: ");
+	int index = this->refBuffer.indexOf("+HTTPACTION: ");
 	index += 15;	//index will be on first character of status
 	
-	return characterToInt(refBuffer[index]);
+	return characterToInt(this->refBuffer[index]);
 }
 
 
@@ -187,15 +199,15 @@ int SimResultParser<N>::fetchHTTPStatus(){
 
 template<int N>
 unsigned long SimResultParser<N>::fetchHttpResponceLength(){
-	int index = refBuffer.indexOf("+HTTPACTION: ");	
+	int index = this->refBuffer.indexOf("+HTTPACTION: ");	
 	index += 19;	//on first char of <data length>
 	
-	int endIndex = refBuffer.indexOfFrom(index, "\r\n");
+	int endIndex = this->refBuffer.indexOfFrom(index, "\r\n");
 	
 	int j = 0;
 	char storage[7];	//max length is 6 char and 7th for \0
 	for(int i = index; i < endIndex; i++, j++){
-		storage[j] = refBuffer[i];
+		storage[j] = this->refBuffer[i];
 	}
 	
 	storage[j] = '\0';
@@ -204,14 +216,11 @@ unsigned long SimResultParser<N>::fetchHttpResponceLength(){
 }
 
 
-template<int N>
-void SimResultParser<N>::removeReadHttpGarbage(){
-	pState->removeReadHttpGarbage(refBuffer);
-}
+
 
 
 template<int N>
 bool SimResultParser<N>::isPinRdy(){
-	int index = refBuffer.indexOf("+CPIN: READY\r\n");
+	int index = this->refBuffer.indexOf("+CPIN: READY\r\n");
 	return index != -1;
 }

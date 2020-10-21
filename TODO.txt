@@ -15,4 +15,3 @@
 13	-	Made remove from buffer dara that starts with \r\n and 
 			ends with \r\n in free time
 14	-	Clear buffer after you finish with it
-15	-	Maybe made SimResultParser child class of ResultParserState

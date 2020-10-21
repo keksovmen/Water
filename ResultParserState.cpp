@@ -5,20 +5,20 @@
 
 
 template<int N>
-bool ResultParserStateBase<N>::isSimpleMessageReady(FixedBuffer<N>& buffer){
-	if(checkError(buffer))
+bool ResultParserStateBase<N>::isSimpleMessageReady(){
+	if(checkError())
 		return true;
 
-	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
+	if(this->refBuffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return true;
 	
-	if(buffer.indexOfEnd(TEXT_ERROR) != -1)
+	if(this->refBuffer.indexOfEnd(TEXT_ERROR) != -1)
 		return true;
 	
-	if(buffer.indexOfEnd(DIGIT_SUCCESS) != -1)
+	if(this->refBuffer.indexOfEnd(DIGIT_SUCCESS) != -1)
 		return true;
 	
-	if(buffer.indexOfEnd(DIGIT_ERROR) != -1)
+	if(this->refBuffer.indexOfEnd(DIGIT_ERROR) != -1)
 		return true;
 	
 
@@ -28,24 +28,24 @@ bool ResultParserStateBase<N>::isSimpleMessageReady(FixedBuffer<N>& buffer){
 
 
 template<int N>
-bool ResultParserStateBase<N>::isComplexMessageReady(FixedBuffer<N>& buffer){
-	if(buffer.getLength() <= 3){
+bool ResultParserStateBase<N>::isComplexMessageReady(){
+	if(this->refBuffer.getLength() <= 3){
 		return false;
 	}
 	
-	if(checkError(buffer))
+	if(checkError())
 		return true;
 	
-	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
+	if(this->refBuffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return true;
 	
-	if(buffer.indexOfEnd(TEXT_ERROR) != -1)
+	if(this->refBuffer.indexOfEnd(TEXT_ERROR) != -1)
 		return true;
 	
-	if(buffer.indexOfEnd(DIGIT_COMPLEX_SUCCESS) != -1)
+	if(this->refBuffer.indexOfEnd(DIGIT_COMPLEX_SUCCESS) != -1)
 		return true;
 	
-	if(buffer.indexOfEnd(DIGIT_COMPLEX_ERROR) != -1)
+	if(this->refBuffer.indexOfEnd(DIGIT_COMPLEX_ERROR) != -1)
 		return true;
 
 	
@@ -62,26 +62,26 @@ bool ResultParserStateBase<N>::isComplexMessageReady(FixedBuffer<N>& buffer){
 */
 
 template<int N>
-bool ResultParserStateBase<N>::isReadHttpMessageFull(FixedBuffer<N>& buffer){
-	int lastIndexForRead = findLastIndexForRead(buffer);
+bool ResultParserStateBase<N>::isReadHttpMessageFull(){
+	int lastIndexForRead = findLastIndexForRead();
 	if(lastIndexForRead == -1){
 		return false;
 	}
 	
-	if(buffer.getLength() < lastIndexForRead + getAmountToDeleteAfterRead()){
+	if(this->refBuffer.getLength() < lastIndexForRead + getAmountToDeleteAfterRead()){
 		return false;
 	}
 	
 
-	return isReadEnded(buffer, lastIndexForRead + 1);
+	return isReadEnded(lastIndexForRead + 1);
  }
  
  
  template<int N>
-bool ResultParserStateBase<N>::checkError(FixedBuffer<N>& buffer){
-	int index = buffer.indexOfEnd("+CME ERROR: ");
-	if(buffer.indexOfFrom(index, END_LINE) != -1){
-		lastErrorCode = atoi(buffer[index + 11]);
+bool ResultParserStateBase<N>::checkError(){
+	int index = this->refBuffer.indexOfEnd("+CME ERROR: ");
+	if(this->refBuffer.indexOfFrom(index, END_LINE) != -1){
+		lastErrorCode = atoi(this->refBuffer[index + 11]);
 		return true;
 	}
 	
@@ -91,20 +91,20 @@ bool ResultParserStateBase<N>::checkError(FixedBuffer<N>& buffer){
 
 
 template<int N>
-int ResultParserStateBase<N>::fetchResultCode(FixedBuffer<N>& buffer){
-	if(checkError(buffer))
+int ResultParserStateBase<N>::fetchResultCode(){
+	if(checkError())
 		return ANWSER_CODES::ERROR;
 
-	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
+	if(this->refBuffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return ANWSER_CODES::OK;
 	
-	if(buffer.indexOfEnd(TEXT_ERROR) != -1)
+	if(this->refBuffer.indexOfEnd(TEXT_ERROR) != -1)
 		return ANWSER_CODES::ERROR;
 	
-	if(buffer.indexOfEnd(DIGIT_SUCCESS) != -1)
+	if(this->refBuffer.indexOfEnd(DIGIT_SUCCESS) != -1)
 		return ANWSER_CODES::OK;
 	
-	if(buffer.indexOfEnd(DIGIT_ERROR) != -1)
+	if(this->refBuffer.indexOfEnd(DIGIT_ERROR) != -1)
 		return ANWSER_CODES::ERROR;
 
 
@@ -118,39 +118,39 @@ int ResultParserStateBase<N>::fetchResultCode(FixedBuffer<N>& buffer){
 */
 
 template<int N>
-void ResultParserStateBase<N>::removeReadHttpGarbage(FixedBuffer<N>& buffer){
-	int index = buffer.indexOf("\r\n+HTTPREAD: ");
-	int endIndex = buffer.indexOfFrom(index + 12, END_LINE);
+void ResultParserStateBase<N>::removeReadHttpGarbage(){
+	int index = this->refBuffer.indexOf("\r\n+HTTPREAD: ");
+	int endIndex = this->refBuffer.indexOfFrom(index + 12, END_LINE);
 	//set on first character of real data
 	endIndex += 2;
 	
 	//remove from right to left cause everything will fuck up 
 	//the other way around!
-	buffer.remove(findLastIndexForRead(buffer)+ 1, 
+	this->refBuffer.remove(findLastIndexForRead()+ 1, 
 					getAmountToDeleteAfterRead());
 					
-	buffer.remove(index, endIndex - index);
+	this->refBuffer.remove(index, endIndex - index);
 	
 }
 
 
 template<int N>
-int ResultParserStateBase<N>::findLastIndexForRead(FixedBuffer<N>& buffer){
-	int index = buffer.indexOf("\r\n+HTTPREAD: ");
+int ResultParserStateBase<N>::findLastIndexForRead(){
+	int index = this->refBuffer.indexOf("\r\n+HTTPREAD: ");
 	if(index == -1)
 		return -1;
 	
 	//set position on to space character
 	index += 12;
 	
-	int endIndex = buffer.indexOfFrom(index, END_LINE);
+	int endIndex = this->refBuffer.indexOfFrom(index, END_LINE);
 	if(endIndex == -1)
 		return -1;
 	
 	//set position on last character of end line
 	endIndex += (strlen(END_LINE) - 1);
 	
-	int dataLength = atoi(&buffer[index]);
+	int dataLength = atoi(&this->refBuffer[index]);
 	
 	return endIndex + dataLength;
 }
@@ -171,7 +171,7 @@ int ResultParserStateBase<N>::getAmountToDeleteAfterRead(){
 */
 
 template<int N>
-bool ResultParserStateBase<N>::isReadEnded(FixedBuffer<N>& buffer, int index){
+bool ResultParserStateBase<N>::isReadEnded(int index){
 	return false;
 }
 
@@ -179,14 +179,14 @@ bool ResultParserStateBase<N>::isReadEnded(FixedBuffer<N>& buffer, int index){
 //TEXT VERSION
 
 template<int N>
-bool ResultParserStateText<N>::isSimpleMessageReady(FixedBuffer<N>& buffer){
-	if(this->checkError(buffer))
+bool ResultParserStateText<N>::isSimpleMessageReady(){
+	if(this->checkError())
 		return true;
 
-	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
+	if(this->refBuffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return true;
 	
-	if(buffer.indexOfEnd(TEXT_ERROR) != -1)
+	if(this->refBuffer.indexOfEnd(TEXT_ERROR) != -1)
 		return true;
 
 	
@@ -195,20 +195,20 @@ bool ResultParserStateText<N>::isSimpleMessageReady(FixedBuffer<N>& buffer){
 
 
 template<int N>
-bool ResultParserStateText<N>::isComplexMessageReady(FixedBuffer<N>& buffer){
-	return isSimpleMessageReady(buffer);
+bool ResultParserStateText<N>::isComplexMessageReady(){
+	return isSimpleMessageReady();
 }
 
 
 template<int N>
-int ResultParserStateText<N>::fetchResultCode(FixedBuffer<N>& buffer){
-	if(this->checkError(buffer))
+int ResultParserStateText<N>::fetchResultCode(){
+	if(this->checkError())
 		return ANWSER_CODES::ERROR;
 
-	if(buffer.indexOfEnd(TEXT_SUCCESS) != -1)
+	if(this->refBuffer.indexOfEnd(TEXT_SUCCESS) != -1)
 		return ANWSER_CODES::OK;
 	
-	if(buffer.indexOfEnd(TEXT_ERROR) != -1)
+	if(this->refBuffer.indexOfEnd(TEXT_ERROR) != -1)
 		return ANWSER_CODES::ERROR;
 
 	
@@ -223,8 +223,8 @@ int ResultParserStateText<N>::getAmountToDeleteAfterRead(){
 
 
 template<int N>
-bool ResultParserStateText<N>::isReadEnded(FixedBuffer<N>& buffer, int index){
-	return buffer.indexOfFrom(index, TEXT_SUCCESS);
+bool ResultParserStateText<N>::isReadEnded(int index){
+	return this->refBuffer.indexOfFrom(index, TEXT_SUCCESS);
 }
 
 
@@ -233,14 +233,14 @@ bool ResultParserStateText<N>::isReadEnded(FixedBuffer<N>& buffer, int index){
 //NUMBER VERSION
 
 template<int N>
-bool ResultParserStateDigit<N>::isSimpleMessageReady(FixedBuffer<N>& buffer){
-	if(this->checkError(buffer))
+bool ResultParserStateDigit<N>::isSimpleMessageReady(){
+	if(this->checkError())
 		return true;
 
-	if(buffer.indexOfEnd(DIGIT_SUCCESS) != -1)
+	if(this->refBuffer.indexOfEnd(DIGIT_SUCCESS) != -1)
 		return true;
 	
-	if(buffer.indexOfEnd(DIGIT_ERROR) != -1)
+	if(this->refBuffer.indexOfEnd(DIGIT_ERROR) != -1)
 		return true;
 
 
@@ -249,18 +249,18 @@ bool ResultParserStateDigit<N>::isSimpleMessageReady(FixedBuffer<N>& buffer){
 
 
 template<int N>
-bool ResultParserStateDigit<N>::isComplexMessageReady(FixedBuffer<N>& buffer){
-	if(buffer.getLength() <= 3){
+bool ResultParserStateDigit<N>::isComplexMessageReady(){
+	if(this->refBuffer.getLength() <= 3){
 		return false;
 	}
 	
-	if(this->checkError(buffer))
+	if(this->checkError())
 		return true;
 	
-	if(buffer.indexOfEnd(DIGIT_COMPLEX_SUCCESS) != -1)
+	if(this->refBuffer.indexOfEnd(DIGIT_COMPLEX_SUCCESS) != -1)
 		return true;
 	
-	if(buffer.indexOfEnd(DIGIT_COMPLEX_ERROR) != -1)
+	if(this->refBuffer.indexOfEnd(DIGIT_COMPLEX_ERROR) != -1)
 		return true;
 	
 	
@@ -269,14 +269,14 @@ bool ResultParserStateDigit<N>::isComplexMessageReady(FixedBuffer<N>& buffer){
 
 
 template<int N>
-int ResultParserStateDigit<N>::fetchResultCode(FixedBuffer<N>& buffer){
-	if(this->checkError(buffer))
+int ResultParserStateDigit<N>::fetchResultCode(){
+	if(this->checkError())
 		return ANWSER_CODES::ERROR;
 
-	if(buffer.indexOfEnd(DIGIT_SUCCESS) != -1)
+	if(this->refBuffer.indexOfEnd(DIGIT_SUCCESS) != -1)
 		return ANWSER_CODES::OK;
 	
-	if(buffer.indexOfEnd(DIGIT_ERROR) != -1)
+	if(this->refBuffer.indexOfEnd(DIGIT_ERROR) != -1)
 		return ANWSER_CODES::ERROR;
 
 
@@ -291,6 +291,6 @@ int ResultParserStateDigit<N>::getAmountToDeleteAfterRead(){
 
 
 template<int N>
-bool ResultParserStateDigit<N>::isReadEnded(FixedBuffer<N>& buffer, int index){
-	return buffer.indexOfFrom(index, DIGIT_SUCCESS);
+bool ResultParserStateDigit<N>::isReadEnded(int index){
+	return this->refBuffer.indexOfFrom(index, DIGIT_SUCCESS);
 }

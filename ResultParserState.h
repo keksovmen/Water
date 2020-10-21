@@ -12,14 +12,16 @@ template<int N>
 class ResultParserStateBase
 {
 	public:
-		virtual bool isSimpleMessageReady(FixedBuffer<N>& buffer);
-		virtual bool isComplexMessageReady(FixedBuffer<N>& buffer);
-		virtual bool isReadHttpMessageFull(FixedBuffer<N>& buffer);
-		virtual bool checkError(FixedBuffer<N>& buffer);
+		explicit ResultParserStateBase(FixedBuffer<N>& refBuffer) : refBuffer(refBuffer){}
+	
+		virtual bool isSimpleMessageReady();
+		virtual bool isComplexMessageReady();
+		virtual bool isReadHttpMessageFull();
+		virtual bool checkError();
 		
-		virtual int fetchResultCode(FixedBuffer<N>& buffer);
+		virtual int fetchResultCode();
 		
-		virtual void removeReadHttpGarbage(FixedBuffer<N>& buffer);
+		virtual void removeReadHttpGarbage();
 		
 		
 		/**
@@ -29,14 +31,16 @@ class ResultParserStateBase
 		int getLastError(){return lastErrorCode;}
 		
 	protected:
-		int findLastIndexForRead(FixedBuffer<N>& buffer);
+		int findLastIndexForRead();
 		virtual int getAmountToDeleteAfterRead();
-		virtual bool isReadEnded(FixedBuffer<N>& buffer, int index);
+		virtual bool isReadEnded(int index);
 		
 		
 		//Indicate last error,
 		//-1 is no error 
 		int lastErrorCode = -1;
+		
+		FixedBuffer<N>& refBuffer;
 		
 };
 
@@ -45,29 +49,35 @@ template<int N>
 class ResultParserStateText : public ResultParserStateBase<N>
 {
 	public:
-		bool isSimpleMessageReady(FixedBuffer<N>& buffer) override;
-		bool isComplexMessageReady(FixedBuffer<N>& buffer) override;
+		explicit ResultParserStateText(FixedBuffer<N>& refBuffer) : ResultParserStateBase<N>(refBuffer){}
 		
-		int fetchResultCode(FixedBuffer<N>& buffer) override;
+		bool isSimpleMessageReady() override;
+		bool isComplexMessageReady() override;
+		
+		int fetchResultCode() override;
 		
 	protected:
 		int getAmountToDeleteAfterRead() override;
-		bool isReadEnded(FixedBuffer<N>& buffer, int index) override;
+		bool isReadEnded(int index) override;
 };
 
+
+//NOT TESTED WITH HTTPREAD
 
 template<int N>
 class ResultParserStateDigit : public ResultParserStateBase<N>
 {
 	public:
-		bool isSimpleMessageReady(FixedBuffer<N>& buffer) override;
-		bool isComplexMessageReady(FixedBuffer<N>& buffer) override;
+		explicit ResultParserStateDigit(FixedBuffer<N>& refBuffer) : ResultParserStateBase<N>(refBuffer){}
+	
+		bool isSimpleMessageReady() override;
+		bool isComplexMessageReady() override;
 		
-		int fetchResultCode(FixedBuffer<N>& buffer) override;
+		int fetchResultCode() override;
 		
 	protected:
 		int getAmountToDeleteAfterRead() override;
-		bool isReadEnded(FixedBuffer<N>& buffer, int index) override;
+		bool isReadEnded(int index) override;
 };
 
 

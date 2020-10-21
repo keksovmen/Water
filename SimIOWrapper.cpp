@@ -71,7 +71,8 @@ void SimIOWrapper<N>::writeEndOfCommand(bool clearBuffer){
 	// #ifdef ABS
 		Serial.print(END_LINE);
 	// #endif
-	refPort.print(END_LINE);
+	//Just for test purposes to see the difference
+	refPort.print('\r');
 	
 	if(clearBuffer){
 		buffer.clear();
