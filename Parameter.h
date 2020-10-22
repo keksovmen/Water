@@ -35,5 +35,6 @@ class Parameter : public BaseParameter
 template class Parameter<PrimitivFloatParameter<double>>;
 template class Parameter<Clock>;
 template class Parameter<IPAddressParam>;
+template class Parameter<PrimitivIntParameter<int>>;
 // template class Parameter<Clock>;
 // template class Parameter<double>;
