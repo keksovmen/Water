@@ -4,6 +4,7 @@
 #include "BaseReader.h"
 #include "SimResultParser.h"
 #include "Enums.h"
+#include "Constants.h"
 
 
 /**
@@ -41,14 +42,15 @@ int findDoubleLength(double val, int afterDot);
 	@param wrapper only for read() method
 	@param parser to find if message is full and fetch code
 	@param isComplex for what type of message to expect
+	@param timeout how long wait for result
 	
 	@return true if result is present and success
 
 */
 
 template<int N>
-bool readAndExpectSuccess(BaseReader& reader, SimResultParser<N>& parser, bool isComplex = false){
-	return readAndGetCode(reader, parser) == ANWSER_CODES::OK;
+bool readAndExpectSuccess(BaseReader& reader, SimResultParser<N>& parser, bool isComplex = false, int timeout = WRAPPER_MIN_DELAY){
+	return readAndGetCode(reader, parser, isComplex, timeout) == ANWSER_CODES::OK;
 }
 
 
@@ -59,14 +61,15 @@ bool readAndExpectSuccess(BaseReader& reader, SimResultParser<N>& parser, bool i
 	@param reader only for read() method
 	@param parser to find if message is full and fetch code
 	@param isComplex for what type of message to expect
+	@param timeout how long wait for result
 	
 	@return ANWSER_CODES if success or mine UNDEFINED if failed
 
 */
 
 template<int N>
-ANWSER_CODES readAndGetCode(BaseReader& reader, SimResultParser<N>& parser, bool isComplex = false){
-	if(!reader.read()){
+ANWSER_CODES readAndGetCode(BaseReader& reader, SimResultParser<N>& parser, bool isComplex = false, int timeout = WRAPPER_MIN_DELAY){
+	if(!reader.readTimeout(timeout)){
 		return ANWSER_CODES::UNDEFINED;
 	}
 	

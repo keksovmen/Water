@@ -62,7 +62,7 @@ bool GPRSHandler<N>::connect(const char* apn){
 	
 	refWriter.writeSAPBR(OPEN_BEARER);
 
-	if(!refReader.readTimeout(5000)){
+	if(!readAndExpectSuccess(refReader, refParser, false, 5000)){
 		return false;
 	}
 	
@@ -80,7 +80,7 @@ template<int N>
 bool GPRSHandler<N>::close(){
 	refWriter.writeSAPBR(SAPBR_COMMANDS::CLOSE_BEARER);
 	
-	if(!refReader.readTimeout(5000)){
+	if(!readAndExpectSuccess(refReader, refParser, false, 5000)){
 		return false;
 	}
 	
