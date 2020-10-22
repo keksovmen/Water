@@ -29,6 +29,8 @@ bool checkTest();
 
 bool testRemove(const char* origin, const char* del, const char* expected);
 
+bool testRemains();
+
 
 template<int N>
 void copyIntoBuffer(FixedBuffer<N>& buffer, const char* data);
@@ -117,6 +119,8 @@ int main()
 	assert(testRemove("123_456_789", "321", "123_456_789"));
 	assert(testRemove("\r\nREAD\r\n\r\n+HTTPREAD: 64\r\n", "\r\nREAD\r\n", "\r\n+HTTPREAD: 64\r\n"));
 	assert(testRemove("Temp - C: Pres - \r\nRING\r\n\r\n+HTTPREAD: 64\r\nmb: 10", "\r\nRING\r\n", "Temp - C: Pres - \r\n+HTTPREAD: 64\r\nmb: 10"));
+	
+	assert(testRemains());
 }
 
 bool checkLength(int divider){
@@ -251,6 +255,45 @@ bool testRemove(const char* origin, const char* del, const char* expected){
 	assert (buffer.getLength() == length);
 	
 	return strcmp(buffer.begin(), expected) == 0;
+}
+
+
+bool testRemains(){
+	FixedBuffer<128> buffer;
+	
+	for(int i = 0; i < 6; i++){
+		buffer += 'a';
+	}
+	
+	std::cout << "REMAINS: " << buffer.remains() << std::endl;
+	std::cout << "Length: " << buffer.getLength() << std::endl;
+	std::cout << "Size: " << buffer.getSize() << std::endl;
+	assert(buffer.remains() == 121);
+	
+	buffer.remove(0, 6);
+	assert(buffer.remains() == 127);
+	
+	std::cout << "REMAINS: " << buffer.remains() << std::endl;
+	std::cout << "Length: " << buffer.getLength() << std::endl;
+	std::cout << "Size: " << buffer.getSize() << std::endl;
+	
+	for(int i = 0; i < 127; i++){
+		buffer += 'a';
+	}
+	
+	std::cout << "REMAINS: " << buffer.remains() << std::endl;
+	std::cout << "Length: " << buffer.getLength() << std::endl;
+	std::cout << "Size: " << buffer.getSize() << std::endl;
+	assert(buffer.remains() == 0);
+	
+	buffer.clear();
+	assert(buffer.remains() == 127);
+	
+	copyIntoBuffer(buffer, "\r\nOK\r\n");
+	buffer.remove(0, 6);
+	assert(buffer.remains() == 127);
+	
+	return true;
 }
 
 
