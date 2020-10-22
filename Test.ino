@@ -129,8 +129,11 @@ void loop(){
 	simHandler.handleReading();
 	
 	if(cardReader.readCard()){
-		Serial.print("Counter: ");
-		Serial.println(cardReader.getCounter());
+		// Serial.print("Counter: ");
+		// Serial.println(cardReader.getCounter());
+		Parameter<PrimitivIntParameter<int>> volume(4);
+		volume.getValue().getValue() = cardReader.getCounter();
+		simHelper.sendVolume(volume, parameters);
 	}
 	
 }

@@ -46,3 +46,4 @@ class PrimitivFloatParameter : public BaseParameter
 
 
 template class PrimitivFloatParameter<double>;
+template class PrimitivIntParameter<int>;

@@ -2,6 +2,7 @@
 #include <Stream.h>
 #include "SimHandler.h"
 #include "ParameterHandler.h"
+#include "Parameter.h"
 #include "Constants.h"
 
 
@@ -13,7 +14,7 @@ class SimHandlerHelper
 		SimHandlerHelper(Stream& connection);
 		bool init();
 		bool sendParams(ParameterHandler& params);
-		bool sendVolume(int volume);
+		bool sendVolume(Parameter<PrimitivIntParameter<int>>& volume, ParameterHandler& params);
 		
 		
 	private:

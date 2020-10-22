@@ -74,7 +74,7 @@ bool SimHandlerHelper<N>::sendParams(ParameterHandler& params){
 
 //TODO: finish it made volume as local param with id and so on
 template<int N>
-bool SimHandlerHelper<N>::sendVolume(int volume){
+bool SimHandlerHelper<N>::sendVolume(Parameter<PrimitivIntParameter<int>>& volume, ParameterHandler& params){
 	if(!initRotine()){
 		return false;
 	}
@@ -83,26 +83,31 @@ bool SimHandlerHelper<N>::sendVolume(int volume){
 		return false;
 	}
 	
+	int length = volume.getLength() + 
+					params.getClock().getLength() + 1;
 	
-	// auto* dataHandler = handler.sendPostRequest(
-			// "http://128.69.240.186/SendVolume.php", 
-			// 10
-		// );
+	auto* dataHandler = handler.sendPostRequest(
+			params.getAddress().getValue(),
+			"SendVolume.php", 
+			length
+		);
 	
+	if(!dataHandler){
+		return false;
+	}
 	
-	// if(!dataHandler){
-		// return false;
-	// }
-	
+	params.getClock().handleWritingValue(*dataHandler);
+	dataHandler->write('&');
+	volume.handleWritingValue(*dataHandler);
 	
 	// params.handleWritingValue(*dataHandler);
 	
 	bool result = false;
-	// if(handleSendRootine(dataHandler)){
-		// result = true;
-	// }
+	if(handleSendRootine(dataHandler)){
+		result = true;
+	}
 	
-	// dataHandler->finish();
+	dataHandler->finish();
 	
 	return result;
 }
