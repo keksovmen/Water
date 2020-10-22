@@ -86,45 +86,27 @@ NETWORK_CONNECTION SimHandler<N>::isConnectedToNetwork(){
 
 template<int N>
 bool SimHandler<N>::setDefaultParams(){
-	writer.writeEcho(false);
-	if(!readAndExpectSuccess(reader, parser)){
-		wrapper.getBuffer().clear();
+	if(!tryToSetDefaultParam(0)){
 		return false;
 	}
 	
-	writer.writeNumberFormat(false);
-	if(!readAndExpectSuccess(reader, parser)){
-		wrapper.getBuffer().clear();
+	if(!tryToSetDefaultParam(1)){
 		return false;
 	}
-	
 	parser.setState(PARSER_STATE_TEXT);
 	
-	writer.writeCallReady(false);
-	if(!readAndExpectSuccess(reader, parser)){
-		wrapper.getBuffer().clear();
+	if(!tryToSetDefaultParam(2)){
 		return false;
 	}
 	
-	writer.writeReportAsError(true);
-	if(!readAndExpectSuccess(reader, parser)){
-		wrapper.getBuffer().clear();
+	if(!tryToSetDefaultParam(3)){
 		return false;
 	}
 	
-	writer.writeIPR(115200);
-	if(!readAndExpectSuccess(reader, parser)){
-		wrapper.getBuffer().clear();
+	if(!tryToSetDefaultParam(4)){
 		return false;
 	}
 	
-	writer.writeAT();
-	if(!readAndExpectSuccess(reader, parser)){
-		wrapper.getBuffer().clear();
-		return false;
-	}
-	
-	wrapper.getBuffer().clear();
 	
 	return true;
 }
@@ -199,4 +181,44 @@ void SimHandler<N>::handleReading(){
 	
 	//clear possible garbage
 	wrapper.getBuffer().clear();
+}
+
+
+template<int N>
+void SimHandler<N>::writeDefaultParam(int id){
+	switch(id){
+		case 0:
+			writer.writeEcho(false);
+			break;
+		case 1:
+			writer.writeNumberFormat(false);
+			break;
+		case 2:
+			writer.writeCallReady(false);
+			break;
+		case 3:
+			writer.writeReportAsError(true);
+			break;
+		case 4:
+			writer.writeIPR(115200);
+			break;
+		
+		default : Serial.println("MISSID ID");
+	}
+}
+
+
+template<int N>
+bool SimHandler<N>::tryToSetDefaultParam(int id){
+	bool result = true;
+	
+	writeDefaultParam(id);
+	if(readAndGetCode(reader, parser) == ANWSER_CODES::UNDEFINED){
+		writeDefaultParam(id);
+		result = readAndExpectSuccess(reader, parser);
+	}
+	
+	
+	wrapper.getBuffer().clear();
+	return result;
 }

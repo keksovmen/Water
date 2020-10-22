@@ -105,6 +105,10 @@ class SimHandler
 		void handleReading();
 		
 	private:
+		void writeDefaultParam(int id);
+		bool tryToSetDefaultParam(int id);
+	
+	
 		SimIOWrapper<N> wrapper;
 		SimCommandWriter writer;
 		SimResultParser<N> parser;
