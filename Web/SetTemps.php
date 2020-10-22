@@ -17,5 +17,8 @@
 <div>
 	<?php require_once 'PrintDataStamps.php';?>
 </div>
+<div>
+	<?php require_once 'PrintVolumeStamps.php';?>
+</div>
 </body>
 </html>
