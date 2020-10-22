@@ -7,9 +7,6 @@
 // #endif
 
 
-//in millis
-const static unsigned int MIN_DELAY = 25;
-
 
 
 template<int N>
@@ -105,7 +102,7 @@ bool SimIOWrapper<N>::readTimeout(unsigned long maxDelay){
 			return true;
 		}
 		
-		maxDelay -= MIN_DELAY;
+		maxDelay -= WRAPPER_MIN_DELAY;
 	}
 	
 	return false;
@@ -148,7 +145,7 @@ template<int N>
 bool SimIOWrapper<N>::tryReadToBuffer(){
 	//if there is no data wait
 	if(!lazyRead()){
-		delay(MIN_DELAY);
+		delay(WRAPPER_MIN_DELAY);
 	}else{
 		return true;
 	}

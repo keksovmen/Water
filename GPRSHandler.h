@@ -3,6 +3,7 @@
 #include "SimCommandWriter.h"
 #include "SimResultParser.h"
 #include "BaseReader.h"
+#include "Constants.h"
 
 
 /**
@@ -62,4 +63,4 @@ class GPRSHandler
 		
 };
 
-template class GPRSHandler<128>;
+template class GPRSHandler<FIXED_BUFFER_SIZE>;

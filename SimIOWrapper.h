@@ -3,6 +3,7 @@
 #include "Buffer/FixedBuffer.h"
 #include "CommandWriter.h"
 #include "BaseReader.h"
+#include "Constants.h"
 
 /**
 	Handles the lowest IO operations
@@ -136,4 +137,4 @@ class SimIOWrapper : public CommandWriter, public BaseReader
 		
 };
 
-template class SimIOWrapper<128>;
+template class SimIOWrapper<FIXED_BUFFER_SIZE>;

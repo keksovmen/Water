@@ -2,6 +2,8 @@
 #include "Buffer/FixedBuffer.h"
 #include "ResultParserState.h"
 #include "Enums.h"
+#include "Constants.h"
+
 
 /**
 	THE MAIN RULE:
@@ -173,4 +175,4 @@ class SimResultParser : public ResultParserStateBase<N>
 };
 
 
-template class SimResultParser<128>;
+template class SimResultParser<FIXED_BUFFER_SIZE>;

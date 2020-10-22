@@ -5,6 +5,7 @@
 #include "SimCommandWriter.h"
 #include "BaseReader.h"
 #include "Buffer/FixedBuffer.h"
+#include "Constants.h"
 
 
 /**
@@ -92,4 +93,4 @@ class DataHandler : public BaseWriter
 	
 };
 
-template class DataHandler<128>;
+template class DataHandler<FIXED_BUFFER_SIZE>;

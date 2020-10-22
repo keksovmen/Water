@@ -10,6 +10,7 @@
 #include "DataHandler.h"
 #include "HTTPHandler.h"
 #include "UnexpectedHandler.h"
+#include "Constants.h"
 
 
 /**
@@ -113,7 +114,7 @@ class SimHandler
 		
 };
 
-template class SimHandler<128>;
+template class SimHandler<FIXED_BUFFER_SIZE>;
 
 
 

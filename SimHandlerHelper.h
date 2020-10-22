@@ -2,6 +2,7 @@
 #include <Stream.h>
 #include "SimHandler.h"
 #include "ParameterHandler.h"
+#include "Constants.h"
 
 
 
@@ -64,4 +65,4 @@ class SimHandlerHelper
 };
 
 
-template class SimHandlerHelper<128>;
+template class SimHandlerHelper<FIXED_BUFFER_SIZE>;

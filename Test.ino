@@ -4,9 +4,8 @@
 #include "Clock.h"
 #include "Device.h"
 #include "ParameterHandler.h"
+#include "Constants.h"
 
-
-#define BUFFER_SIZE 128
 
 #define BUTTON_TIME 8
 #define BUTTON_SEND 9
@@ -24,8 +23,8 @@ Device dev;
 	HardwareSerial& sim = Serial1;
 #endif
 
-SimHandler<BUFFER_SIZE> simHandler(sim);
-SimHandlerHelper<BUFFER_SIZE> simHelper(sim);
+SimHandler<FIXED_BUFFER_SIZE> simHandler(sim);
+SimHandlerHelper<FIXED_BUFFER_SIZE> simHelper(sim);
 
 //Display
 LiquidCrystal_I2C lcd(0x27, 16, 2);
@@ -132,7 +131,7 @@ void askForTime(){
 		return;
 	}
 	
-	DataHandler<BUFFER_SIZE>* getHandler = simHandler.sendGetRequest();
+	DataHandler<FIXED_BUFFER_SIZE>* getHandler = simHandler.sendGetRequest();
 	
 	if(!getHandler){
 		Serial.println("Handler is null");
@@ -236,7 +235,7 @@ void askServerData(){
 		return;
 	}
 	
-	DataHandler<BUFFER_SIZE>* getHandler = simHandler.sendGetRequest();
+	DataHandler<FIXED_BUFFER_SIZE>* getHandler = simHandler.sendGetRequest();
 	
 	if(!getHandler){
 		Serial.println("Handler is null");

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Buffer/FixedBuffer.h"
+#include "Constants.h"
 
 
 /**
@@ -82,6 +83,6 @@ class ResultParserStateDigit : public ResultParserStateBase<N>
 
 
 
-template class ResultParserStateBase<128>;
-template class ResultParserStateText<128>;
-template class ResultParserStateDigit<128>;
+template class ResultParserStateBase<FIXED_BUFFER_SIZE>;
+template class ResultParserStateText<FIXED_BUFFER_SIZE>;
+template class ResultParserStateDigit<FIXED_BUFFER_SIZE>;

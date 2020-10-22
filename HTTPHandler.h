@@ -4,6 +4,7 @@
 #include "BaseReader.h"
 #include "SimCommandWriter.h"
 #include "SimResultParser.h"
+#include "Constants.h"
 
 
 /**
@@ -55,4 +56,4 @@ class HTTPHandler
 };
 
 
-template class HTTPHandler<128>;
+template class HTTPHandler<FIXED_BUFFER_SIZE>;
