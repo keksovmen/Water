@@ -115,6 +115,11 @@ bool SimIOWrapper<N>::lazyRead(){
 		return false;
 	}
 	
+	//prevent from looping if buffer full
+	if(buffer.remains() == 0){
+		return false;
+	}
+	
 	//read as much as possible
 	while(refPort.available()){
 		
@@ -122,10 +127,6 @@ bool SimIOWrapper<N>::lazyRead(){
 		//try to find optimal buffer size
 		//to prevent from overfloving
 		if(buffer.remains() == 0){
-			// #ifdef ABS
-				Serial.println("Buffer is full at lazyRead()");
-			// #endif
-			
 			return true;
 		}
 		
