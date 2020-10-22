@@ -71,7 +71,7 @@ void setup(){
 	if(!simHelper.init()){
 		delay(3000);
 		if(!simHelper.init()){
-			while(1){}
+			// while(1){}
 		}
 	}
 	

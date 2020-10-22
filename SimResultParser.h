@@ -144,10 +144,6 @@ class SimResultParser : public ResultParserStateBase<N>
 		unsigned long fetchHttpResponceLength();
 		
 		
-
-		
-		
-		
 		/**
 			Expects result from AT+CPIN?
 			+CPIN: <code>
@@ -160,6 +156,16 @@ class SimResultParser : public ResultParserStateBase<N>
 		*/
 		
 		bool isPinRdy();
+		
+		
+		/**
+			Check variants at which message could presents
+			in buffer
+			
+			@return true if there could be a message full or not undefinied
+		*/
+		
+		bool isPossibleMessage();
 		
 	private:
 		ResultParserStateBase<N>* pState;

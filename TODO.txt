@@ -1,5 +1,3 @@
-6	-	When you read just to find some messages buffer will 
-			eventyaly overflow need to clear it
 7	-	Fucking moron why don't just delete RING and etc shit,
 			why the fuck you waiting until dude drops a call,
 			oh yes because after sending any command you won't
@@ -10,7 +8,4 @@
 10	-	Add as default when reading you can select max delay, and 
 			default one
 12	-	Buffer overflow is real pain, fix it somehow
-13	-	Made remove from buffer dara that starts with \r\n and 
-			ends with \r\n in free time
-14	-	Clear buffer after you finish with it
 15	-	Made APN as a parameter for ParameterHandler

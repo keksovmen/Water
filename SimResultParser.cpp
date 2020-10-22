@@ -224,3 +224,10 @@ bool SimResultParser<N>::isPinRdy(){
 	int index = this->refBuffer.indexOf("+CPIN: READY\r\n");
 	return index != -1;
 }
+
+
+template<int N>
+bool SimResultParser<N>::isPossibleMessage(){
+	return (this->refBuffer.indexOfEnd(END_LINE) != -1) ||
+			this->refBuffer.getLength() > 3;
+}

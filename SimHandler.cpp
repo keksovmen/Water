@@ -190,7 +190,13 @@ void SimHandler<N>::handleReading(){
 	}
 	
 	reader.handleSwitch();
-	// reader.read();
 	
-	//proceed
+	//if will contain a message try to read and parse
+	//through UnexpectedHandler
+	if(parser.isPossibleMessage()){
+		reader.read();
+	}
+	
+	//clear possible garbage
+	wrapper.getBuffer().clear();
 }
