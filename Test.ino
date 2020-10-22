@@ -5,6 +5,7 @@
 #include "Device.h"
 #include "ParameterHandler.h"
 #include "Constants.h"
+#include "CardReader.h"
 
 
 #define BUTTON_TIME 8
@@ -33,7 +34,10 @@ ParameterHandler parameters;
 
 //Time
 Clock& clk = parameters.getClock().getValue();
-// Clock clk;
+
+
+//NFC
+CardReader cardReader(3, Serial2, lcd);
 
 
 //For proper calculation of time
@@ -65,6 +69,10 @@ void setup(){
 	if(!dev.init()){
 		Serial.println("Device not connected");
 		// while(1){};
+	}
+	
+	if(!cardReader.init()){
+		Serial.println("NFC not connected");
 	}
 	
 	if(!simHelper.init()){
@@ -119,6 +127,11 @@ void loop(){
 	// }
 	
 	simHandler.handleReading();
+	
+	if(cardReader.readCard()){
+		Serial.print("Counter: ");
+		Serial.println(cardReader.getCounter());
+	}
 	
 }
 

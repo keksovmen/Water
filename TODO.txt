@@ -5,7 +5,5 @@
 8	-	Check what will hapen when you print(double, 2) and double = 0.0
 			Could be problems with data length when sending to server
 9	-	Add as default parameter AT+CFUN=1
-10	-	Add as default when reading you can select max delay, and 
-			default one
 12	-	Buffer overflow is real pain, fix it somehow
 15	-	Made APN as a parameter for ParameterHandler
