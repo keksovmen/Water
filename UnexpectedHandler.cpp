@@ -8,10 +8,19 @@
 template<int N>
 UnexpectedHandler<N>::UnexpectedHandler(SimIOWrapper<N>& wrapper, 
 							SimResultParser<N>& parser,
-							SimCommandWriter& writer) :
-	wrapper(wrapper), parser(parser), writer(writer)
+							SimCommandWriter& writer
+							) :
+	wrapper(wrapper), parser(parser), 
+	writer(writer)
 {
 
+}
+
+
+
+template<int N>
+void UnexpectedHandler<N>::init(TCPHandler<N>* tcpHandler){
+	this->tcpHandler = tcpHandler;
 }
 
 
@@ -66,6 +75,18 @@ void UnexpectedHandler<N>::handleSwitch(){
 	if(buffer.remove(OVER_VOLTAGE_WARNING)){
 		while(buffer.remove(OVER_VOLTAGE_WARNING)){}
 		
+	}
+	
+	if(buffer.remove(CONNECTE_OK)){
+		tcpHandler->connectedSuccessfully();
+	}
+	
+	// if(buffer.remove(ALREADY_CONNECTE)){
+		// tcpHandler->connectedSuccessfully();
+	// }
+	
+	if(buffer.remove(CONNECT_FAIL)){
+		tcpHandler->connectionFaild();
 	}
 
 	

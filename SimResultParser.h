@@ -169,6 +169,26 @@ class SimResultParser : public ResultParserStateBase<N>
 		
 		bool isPossibleMessage();
 		
+		
+		/**
+			Check after AT+CGATT? call
+			retrive status id and trunsfer it to bool
+			
+			@return true if status id is 1
+		*/
+		
+		bool isAttachedToGPRSServices();
+		
+		
+		/**
+			Check and return status from AT+CIPSTATUS
+			Params are:
+				CIPMUX=0
+				MODULE AS CLIENT
+		*/
+		
+		TCP_STATE fetchTCPState();
+		
 	private:
 		ResultParserStateBase<N>* pState;
 		

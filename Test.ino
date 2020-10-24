@@ -24,8 +24,6 @@ Device dev;
 	HardwareSerial& sim = Serial1;
 #endif
 
-SimHandler<FIXED_BUFFER_SIZE> simHandler(sim);
-SimHandlerHelper<FIXED_BUFFER_SIZE> simHelper(sim);
 
 //Display
 LiquidCrystal_I2C lcd(0x27, 16, 2);
@@ -42,6 +40,13 @@ CardReader cardReader(3, Serial2, lcd);
 
 //For proper calculation of time
 unsigned long timeBefore;
+
+
+// SimHandler<FIXED_BUFFER_SIZE> simHandler(sim, parameters);
+SimHandlerHelper<FIXED_BUFFER_SIZE> simHelper(sim, parameters);
+ SimHandler<FIXED_BUFFER_SIZE>& simHandler = simHelper.getHandler();
+
+
 
 
 void setup(){

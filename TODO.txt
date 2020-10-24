@@ -7,3 +7,18 @@
 9	-	Add as default parameter AT+CFUN=1
 12	-	Buffer overflow is real pain, fix it somehow
 15	-	Made APN as a parameter for ParameterHandler
+
+
+0	-	AT+CIPRXGET=1
+1	-	AT+CGATT?
+		AT+CGATT=1							TIME
+2	-	AT+CSTT="APN"
+3	-	AT+CIICR							TIME
+4	-	AT+CIPSTART="TCP","IP","PORT"		TIME
+			CONNECT OK
+5	-	AT+CIPRXGET=4
+6	-	AT+CIPRXGET=2,<length>
+7	-	AT+CIPSTATUS
+			STATE: CONNECT OK
+8	-	AT+CIPSHUT
+			SHUT OK

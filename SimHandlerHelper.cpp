@@ -4,8 +4,8 @@
 
 
 template<int N>
-SimHandlerHelper<N>::SimHandlerHelper(Stream& connection) :
-	handler(connection){
+SimHandlerHelper<N>::SimHandlerHelper(Stream& connection, ParameterHandler& parameters) :
+	handler(connection, parameters){
 	
 }
 

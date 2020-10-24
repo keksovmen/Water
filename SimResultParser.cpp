@@ -231,3 +231,62 @@ bool SimResultParser<N>::isPossibleMessage(){
 	return (this->refBuffer.indexOfEnd(END_LINE) != -1) ||
 			this->refBuffer.getLength() > 3;
 }
+
+
+template<int N>
+bool SimResultParser<N>::isAttachedToGPRSServices(){
+	int index = this->refBuffer.indexOf("+CGATT: ");
+	return characterToInt(this->refBuffer[index + 8]) == 1 
+			? true : false;
+}
+
+
+template<int N>
+TCP_STATE SimResultParser<N>::fetchTCPState(){
+	int index = this->refBuffer.indexOf("STATE: ");
+	index += 7;		//move index on first letter of actual state
+	
+	if(this->refBuffer.indexOfFrom(index, "INITIAL")){
+		return TCP_STATE::TCP_STATE_INITIAL;
+	}
+	
+	if(this->refBuffer.indexOfFrom(index, "START")){
+		return TCP_STATE::TCP_STATE_IP_START;
+	}
+	
+	if(this->refBuffer.indexOfFrom(index, "CONFIG")){
+		return TCP_STATE::TCP_STATE_IP_CONFIG;
+	}
+	
+	if(this->refBuffer.indexOfFrom(index, "GPRSACT")){
+		return TCP_STATE::TCP_STATE_IP_GPRS_ACT;
+	}
+	
+	if(this->refBuffer.indexOfFrom(index, "STATUS")){
+		return TCP_STATE::TCP_STATE_IP_STATUS;
+	}
+	
+	if(this->refBuffer.indexOfFrom(index, "CONNECTING")){
+		return TCP_STATE::TCP_STATE_CONNECTING;
+	}
+	
+	if(this->refBuffer.indexOfFrom(index, "CONNECT OK")){
+		return TCP_STATE::TCP_STATE_CONNECTED;
+	}
+	
+	if(this->refBuffer.indexOfFrom(index, "CLOSING")){
+		return TCP_STATE::TCP_STATE_CLOSING;
+	}
+	
+	if(this->refBuffer.indexOfFrom(index, "CLOSED")){
+		return TCP_STATE::TCP_STATE_CLOSED;
+	}
+	
+	if(this->refBuffer.indexOfFrom(index, "PDP DEACT")){
+		return TCP_STATE::TCP_STATE_PDP_DEACT;
+	}
+	
+	return TCP_STATE::TCP_STATE_UNDEFINIED;
+}
+
+

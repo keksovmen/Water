@@ -14,14 +14,15 @@ static char dynamicMemory[19];
 
 
 template<int N>
-SimHandler<N>::SimHandler(Stream& refPort) :
+SimHandler<N>::SimHandler(Stream& refPort, ParameterHandler& parameters) :
 	wrapper(refPort), writer(wrapper),
 		parser(wrapper.getBuffer()), 
 		reader(wrapper, parser, writer),
+		tcpHandler(writer, parser, reader, parameters),
 		gprsHandler(reader, writer, parser), 
 		httpHandler(reader, writer, parser)
 {
-	
+	reader.init(&tcpHandler);
 }
 
 template<int N>
@@ -167,6 +168,10 @@ DataHandler<N>* SimHandler<N>::sendGetRequest(){
 
 template<int N>
 void SimHandler<N>::handleReading(){
+	if(!tcpHandler.isConnected()){
+		tcpHandler.connect();
+	}
+	
 	if(!wrapper.lazyRead()){
 		return;
 	}

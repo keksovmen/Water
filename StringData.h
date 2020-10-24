@@ -17,3 +17,7 @@ const static char* RING_STRING = "\r\nRING\r\n";
 const static char* NO_CARRIER_STRING = "\r\nNO CARRIER\r\n";
 const static char* UNDER_VOLTAGE_WARNING = "\r\nUNDER-VOLTAGE WARNNING\r\n";
 const static char* OVER_VOLTAGE_WARNING = "\r\nOVER-VOLTAGE WARNNING\r\n";
+
+const static char* CONNECTE_OK = "\r\nCONNECT OK\r\n";
+const static char* ALREADY_CONNECTE = "\r\ALREADY CONNECT\r\n";
+const static char* CONNECT_FAIL = "\r\CONNECT FAIL\r\n";

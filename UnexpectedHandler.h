@@ -4,6 +4,7 @@
 #include "SimIOWrapper.h"
 #include "SimResultParser.h"
 #include "SimCommandWriter.h"
+#include "TCPHandler.h"
 
 
 /**
@@ -19,10 +20,11 @@ class UnexpectedHandler : public BaseReader
 	public:
 		UnexpectedHandler(SimIOWrapper<N>& wrapper, 
 							SimResultParser<N>& parser,
-							SimCommandWriter& writer);
+							SimCommandWriter& writer
+							);
 		
 		
-		
+		void init(TCPHandler<N>* tcpHandler);
 		
 		/**
 			@return same as SimIOWrapper
@@ -51,6 +53,7 @@ class UnexpectedHandler : public BaseReader
 		SimIOWrapper<N>& wrapper;
 		SimResultParser<N>& parser;
 		SimCommandWriter& writer;
+		TCPHandler<N>* tcpHandler;
 		
 		
 };

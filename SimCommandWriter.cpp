@@ -175,3 +175,79 @@ void SimCommandWriter::writeCPIN(){
 void SimCommandWriter::writeDenyCall(){
 	refWriter.writeCommand("ATH", false);
 }
+
+
+void SimCommandWriter::writeCIPRXGET(CIPRXGET_COMMAND cmd, int arg){
+	refWriter.write("AT+CIPRXGET=");
+	refWriter.write(cmd);
+	switch(cmd){
+		case CIPRXGET_COMMAND_GET_NORMAL :
+		case CIPRXGET_COMMAND_GET_HEX :
+			refWriter.write(',');
+			refWriter.write(arg);
+			break;
+	}
+	
+	refWriter.writeEndOfCommand();
+}
+
+
+void SimCommandWriter::writeCGATT(bool askForStatus, bool turnOn = true){
+	refWriter.write("AT+CGATT");
+	
+	if(askForStatus){
+		refWriter.write('?');
+		refWriter.writeEndOfCommand();
+		return;
+	}
+	
+	refWriter.write('=');
+	refWriter.write(turnOn ? 1 : 0);
+	refWriter.writeEndOfCommand();
+}
+
+
+void SimCommandWriter::writeCSTT(const char* apn){
+	refWriter.write("AT+CSTT=\"");
+	refWriter.write(apn);
+	refWriter.write('"');
+	refWriter.writeEndOfCommand();
+}
+
+
+void SimCommandWriter::writeCIICR(){
+	refWriter.writeCommand("AT+CIICR");
+}
+
+
+void SimCommandWriter::writeCIPSTATUS(){
+	refWriter.writeCommand("AT+CIPSTATUS");
+}
+
+
+void SimCommandWriter::writeCIPSTART(IPAddress& address, long port){
+	refWriter.write("AT+CIPSTART=");
+	refWriter.write('"');
+	refWriter.write("TCP");
+	refWriter.write('"');
+	refWriter.write(',');
+	refWriter.write('"');
+	refWriter.write(address[0]);
+	refWriter.write('.');
+	refWriter.write(address[1]);
+	refWriter.write('.');
+	refWriter.write(address[2]);
+	refWriter.write('.');
+	refWriter.write(address[3]);
+	refWriter.write('"');
+	refWriter.write(',');
+	refWriter.write('"');
+	refWriter.write(port);
+	refWriter.write('"');
+	refWriter.writeEndOfCommand();
+}
+
+
+void SimCommandWriter::writeGetIpTCP(){
+	refWriter.writeCommand("AT+CIFSR");
+}

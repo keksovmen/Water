@@ -11,6 +11,9 @@
 #include "HTTPHandler.h"
 #include "UnexpectedHandler.h"
 #include "Constants.h"
+#include "TCPHandler.h"
+#include "ParameterHandler.h"
+
 
 
 /**
@@ -25,7 +28,7 @@ template<int N>
 class SimHandler
 {
 	public:
-		SimHandler(Stream& refPort);
+		SimHandler(Stream& refPort, ParameterHandler& parameters);
 		
 		/**
 			@return true if module can anwser
@@ -112,6 +115,7 @@ class SimHandler
 		SimIOWrapper<N> wrapper;
 		SimCommandWriter writer;
 		SimResultParser<N> parser;
+		TCPHandler<N> tcpHandler;
 		UnexpectedHandler<N> reader;
 		GPRSHandler<N> gprsHandler;
 		HTTPHandler<N> httpHandler;

@@ -4,6 +4,7 @@
 #include "ParameterHandler.h"
 #include "Parameter.h"
 #include "Constants.h"
+#include "TCPHandler.h"
 
 
 
@@ -11,11 +12,13 @@ template<int N>
 class SimHandlerHelper
 {
 	public:
-		SimHandlerHelper(Stream& connection);
+		SimHandlerHelper(Stream& connection, ParameterHandler& parameters);
 		bool init();
 		bool sendParams(ParameterHandler& params);
 		bool sendVolume(Parameter<PrimitivIntParameter<int>>& volume, ParameterHandler& params);
 		
+		
+		SimHandler<N>& getHandler(){return handler;}
 		
 	private:
 		
@@ -58,6 +61,8 @@ class SimHandlerHelper
 	
 	
 		SimHandler<N> handler;
+		// TCPHandler<N> tcpHandler;
+		ParameterHandler& parameters;
 		
 		bool isInit = false;
 		
