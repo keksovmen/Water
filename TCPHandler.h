@@ -29,6 +29,8 @@ class TCPHandler
 		void reset();
 		void connectedSuccessfully();
 		void connectionFaild();
+		void shutOk();
+		void closedConnection();
 		
 		void updateState();
 		
@@ -39,12 +41,14 @@ class TCPHandler
 		bool connectToGPRS();
 		bool getMyIp();
 		bool connecToServer();
+		bool tryToShutConenction();
 		
 		bool connectToCGATT();
 		int waitForCGATT();
 		
 		bool askCGATTStatus();
 		bool askStatus();
+		void tryUpdateState();
 		
 	
 		TCP_STATE state = TCP_STATE::TCP_STATE_WRITING_DEFAULTS;

@@ -24,3 +24,6 @@
 			SHUT OK
 			
 bool lazyRead() as super class method ???
+
+16	-	Add check for RDY statement and when you recieve it
+			made global error to restart

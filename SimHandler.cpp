@@ -179,7 +179,11 @@ DataHandler<N>* SimHandler<N>::sendGetRequest(){
 template<int N>
 void SimHandler<N>::handleReading(){
 	if(!tcpHandler.isConnected()){
-		tcpHandler.connect();
+		if(isModuleAlive()){
+			tcpHandler.connect();
+		}else{
+			tcpHandler.reset();
+		}
 	}
 	
 	if(!wrapper.lazyRead()){

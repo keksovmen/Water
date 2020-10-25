@@ -209,8 +209,18 @@ void SimCommandWriter::writeDenyCall(){
 
 
 void SimCommandWriter::writeCIPRXGET(CIPRXGET_COMMAND cmd, int arg){
-	refWriter.write("AT+CIPRXGET=");
+	refWriter.write("AT+CIPRXGET");
+	
+	if(cmd == CIPRXGET_COMMAND::CIPRXGET_COMMAND_MODE){
+		refWriter.write('?');
+		refWriter.writeEndOfCommand();
+		
+		return;
+	}
+	
+	refWriter.write('=');
 	refWriter.write(cmd);
+	
 	switch(cmd){
 		case CIPRXGET_COMMAND_GET_NORMAL :
 		case CIPRXGET_COMMAND_GET_HEX :
@@ -283,4 +293,9 @@ void SimCommandWriter::writeCIPSTART(IPAddress& address, long port){
 
 void SimCommandWriter::writeGetIpTCP(){
 	refWriter.writeCommand("AT+CIFSR");
+}
+
+
+void SimCommandWriter::writeCIPSHUT(){
+	refWriter.writeCommand("AT+CIPSHUT");
 }

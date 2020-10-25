@@ -25,21 +25,29 @@ bool TCPHandler<N>::isConnected(){
 
 template<int N>
 bool TCPHandler<N>::connect(){
-	if(isConnected())
+	// if(state != TCP_STATE::TCP_STATE_WRITING_DEFAULTS){
+		// tryUpdateState();
+	// }
+	
+	if(isConnected()){
 		return true;
+	}
 	
 	
 	switch(state){
 		case TCP_STATE_WRITING_DEFAULTS:
-			if(writeDefaults())
+			if(writeDefaults()){
 				state = TCP_STATE::TCP_STATE_INITIAL;
+			}else{
+				tryUpdateState();
+			}
 			break;
 		
 		case TCP_STATE_INITIAL :
 			if(setAPN()){
 				state = TCP_STATE::TCP_STATE_IP_START;
 			}else{
-				reset();
+				tryUpdateState();
 			}
 			
 			break;
@@ -54,11 +62,7 @@ bool TCPHandler<N>::connect(){
 			break;
 			
 		case TCP_STATE_IP_CONFIG:
-			if(askStatus()){
-				updateState();
-			}else{
-				Serial.println("NO ANWSER FOR STATUS");
-			}
+			tryUpdateState();
 			break;
 			
 		case TCP_STATE_IP_GPRS_ACT: 
@@ -66,33 +70,26 @@ bool TCPHandler<N>::connect(){
 				state = TCP_STATE::TCP_STATE_IP_STATUS;
 				
 			}else{
-				if(askStatus()){
-					updateState();
-				}else{
-					Serial.println("NO ANWSER FOR STATUS");
-				}
+				tryUpdateState();
 			}
 			break;
 			
 		case TCP_STATE_IP_STATUS:
 			if(connecToServer()){
 				//fix when UnexpectedHandler sets state of greater power
-				if(state == TCP_STATE::TCP_STATE_CONNECTED){
-					break;
-				}
+				// if(state == TCP_STATE::TCP_STATE_CONNECTED){
+					// break;
+				// }
 				
 				state = TCP_STATE::TCP_STATE_CONNECTING;
 			}else{
-				if(askStatus()){
-					updateState();
-				}else{
-					Serial.println("NO ANWSER FOR STATUS");
-				}
+				tryUpdateState();
 			}
 			break;
 			
 		case TCP_STATE_CONNECTING:
 			//just wair until status will be changed
+			tryUpdateState();
 			break;
 			
 		case TCP_STATE_CONNECTED:
@@ -100,20 +97,23 @@ bool TCPHandler<N>::connect(){
 			break;
 			
 		case TCP_STATE_CLOSING:
-			if(askStatus()){
-					updateState();
-				}else{
-					Serial.println("NO ANWSER FOR STATUS");
-				}
+			tryUpdateState();
 			break;
 		
 		case TCP_STATE_CLOSED:
-			//TODO: add AT+CIPSHUT here
+			state = TCP_STATE::TCP_STATE_IP_STATUS;
 			break;
 			
 		case TCP_STATE_PDP_DEACT:
+			if(tryToShutConenction()){
+				state = TCP_STATE::TCP_STATE_INITIAL;
+			}
+			break;
 			
-			break;	
+		case TCP_STATE_UNDEFINIED:
+			Serial.println("UNDEFINED");
+			while(1){}
+			break;
 	}
 	
 	return false;
@@ -140,6 +140,18 @@ void TCPHandler<N>::connectionFaild(){
 
 
 template<int N>
+void TCPHandler<N>::shutOk(){
+	state = TCP_STATE::TCP_STATE_INITIAL;
+}
+
+
+template<int N>
+void TCPHandler<N>::closedConnection(){
+	state = TCP_STATE::TCP_STATE_CLOSED;
+}
+
+
+template<int N>
 void TCPHandler<N>::updateState(){
 	state = refParser.fetchTCPState();
 	if(state == TCP_STATE::TCP_STATE_UNDEFINIED){
@@ -151,10 +163,18 @@ void TCPHandler<N>::updateState(){
 
 template<int N>
 bool TCPHandler<N>::writeDefaults(){
-	//TODO: try to write APN SETTING HERE
-	//TODO: check if OK or ERROR becuase ERROR means you have to AT+CIPSHUT
 	refPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_ON);
-	return readAndExpectSuccess(refPort, refParser);
+	
+	if(readAndExpectSuccess(refPort, refParser)){
+		return true;
+	}
+	
+	refPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_MODE);
+	if(readAndExpectSuccess(refPort, refParser)){
+		return refParser.fetchRxGetStatus() == 1;
+	}
+	
+	return false;
 }
 
 
@@ -209,6 +229,19 @@ bool TCPHandler<N>::connecToServer(){
 }
 
 
+template<int N>
+bool TCPHandler<N>::tryToShutConenction(){
+	TCP_STATE oldState = state;
+	refPort.writeCIPSHUT();
+	refPort.readTimeout(10000);
+	if(state == oldState){
+		return false;
+	}
+	
+	return true;
+	// return readAndExpectSuccess(refPort, refParser, false, 7000);
+}
+
 
 template<int N>
 int TCPHandler<N>::waitForCGATT(){
@@ -248,4 +281,15 @@ bool TCPHandler<N>::askStatus(){
 	refPort.writeCIPSTATUS();
 	
 	return readAndExpectSuccess(refPort, refParser);
+}
+
+
+template<int N>
+void TCPHandler<N>::tryUpdateState(){
+	if(askStatus()){
+		updateState();
+	// }else{
+		// Serial.println("NO ANWSER FOR STATUS");
+		// state = TCP_STATE::TCP_STATE_UNDEFINIED;
+	}
 }

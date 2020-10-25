@@ -246,43 +246,43 @@ TCP_STATE SimResultParser<N>::fetchTCPState(){
 	int index = this->refBuffer.indexOf("STATE: ");
 	index += 7;		//move index on first letter of actual state
 	
-	if(this->refBuffer.indexOfFrom(index, "INITIAL")){
+	if(this->refBuffer.indexOfFrom(index, "INITIAL") != -1){
 		return TCP_STATE::TCP_STATE_INITIAL;
 	}
 	
-	if(this->refBuffer.indexOfFrom(index, "START")){
+	if(this->refBuffer.indexOfFrom(index, "START") != -1){
 		return TCP_STATE::TCP_STATE_IP_START;
 	}
 	
-	if(this->refBuffer.indexOfFrom(index, "CONFIG")){
+	if(this->refBuffer.indexOfFrom(index, "CONFIG") != -1){
 		return TCP_STATE::TCP_STATE_IP_CONFIG;
 	}
 	
-	if(this->refBuffer.indexOfFrom(index, "GPRSACT")){
+	if(this->refBuffer.indexOfFrom(index, "GPRSACT") != -1){
 		return TCP_STATE::TCP_STATE_IP_GPRS_ACT;
 	}
 	
-	if(this->refBuffer.indexOfFrom(index, "STATUS")){
+	if(this->refBuffer.indexOfFrom(index, "STATUS") != -1){
 		return TCP_STATE::TCP_STATE_IP_STATUS;
 	}
 	
-	if(this->refBuffer.indexOfFrom(index, "CONNECTING")){
+	if(this->refBuffer.indexOfFrom(index, "CONNECTING") != -1){
 		return TCP_STATE::TCP_STATE_CONNECTING;
 	}
 	
-	if(this->refBuffer.indexOfFrom(index, "CONNECT OK")){
+	if(this->refBuffer.indexOfFrom(index, "CONNECT OK") != -1){
 		return TCP_STATE::TCP_STATE_CONNECTED;
 	}
 	
-	if(this->refBuffer.indexOfFrom(index, "CLOSING")){
+	if(this->refBuffer.indexOfFrom(index, "CLOSING") != -1){
 		return TCP_STATE::TCP_STATE_CLOSING;
 	}
 	
-	if(this->refBuffer.indexOfFrom(index, "CLOSED")){
+	if(this->refBuffer.indexOfFrom(index, "CLOSED") != -1){
 		return TCP_STATE::TCP_STATE_CLOSED;
 	}
 	
-	if(this->refBuffer.indexOfFrom(index, "PDP DEACT")){
+	if(this->refBuffer.indexOfFrom(index, "PDP DEACT") != -1){
 		return TCP_STATE::TCP_STATE_PDP_DEACT;
 	}
 	
@@ -290,3 +290,8 @@ TCP_STATE SimResultParser<N>::fetchTCPState(){
 }
 
 
+template<int N>
+int SimResultParser<N>::fetchRxGetStatus(){
+	int index = this->refBuffer.indexOf("+CIPRXGET: ");
+	return characterToInt(this->refBuffer[index + 11]);
+}

@@ -21,3 +21,5 @@ const static char* OVER_VOLTAGE_WARNING = "\r\nOVER-VOLTAGE WARNNING\r\n";
 const static char* CONNECTE_OK = "\r\nCONNECT OK\r\n";
 const static char* ALREADY_CONNECTE = "\r\nALREADY CONNECT\r\n";
 const static char* CONNECT_FAIL = "\r\nCONNECT FAIL\r\n";
+const static char* SHUT_OK = "\r\nSHUT OK\r\n";
+const static char* CLOSED = "\r\nCLOSED\r\n";

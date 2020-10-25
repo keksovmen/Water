@@ -83,6 +83,14 @@ void UnexpectedHandler<N>::handleSwitch(){
 		if(refBuffer.remove(CONNECT_FAIL)){
 			tcpHandler->connectionFaild();
 		}
+		
+		if(refBuffer.remove(SHUT_OK)){
+			tcpHandler->shutOk();
+		}
+		
+		if(refBuffer.remove(CLOSED)){
+			tcpHandler->closedConnection();
+		}
 	}
 
 }

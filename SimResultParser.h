@@ -189,6 +189,15 @@ class SimResultParser : public ResultParserStateBase<N>
 		
 		TCP_STATE fetchTCPState();
 		
+		
+		/**
+			Gets status from AT+CIPRXGET?
+			
+			@return 0 if plain mode, 1 if command mode
+		*/
+		
+		int fetchRxGetStatus();
+		
 	private:
 		ResultParserStateBase<N>* pState;
 		
