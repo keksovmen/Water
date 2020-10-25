@@ -111,6 +111,7 @@ class SimHandler
 	private:
 		void writeDefaultParam(int id);
 		bool tryToSetDefaultParam(int id);
+		void handleTCPMessage();
 	
 		FixedBuffer<N> buffer;
 		SimIOWrapper<N> wrapper;
@@ -120,6 +121,8 @@ class SimHandler
 		TCPHandler<N> tcpHandler;
 		GPRSHandler<N> gprsHandler;
 		HTTPHandler<N> httpHandler;
+		
+		ParameterHandler& refParams;
 		
 };
 

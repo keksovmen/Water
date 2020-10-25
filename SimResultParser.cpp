@@ -84,6 +84,12 @@ bool SimResultParser<N>::isReadHttpMessageFull(){
 
 
 template<int N>
+bool SimResultParser<N>::isReadTCPMessageFull(){
+	return pState->isReadTCPMessageFull();
+}
+
+
+template<int N>
 int SimResultParser<N>::fetchResultCode(){
 	return pState->fetchResultCode();
 }
@@ -92,6 +98,12 @@ int SimResultParser<N>::fetchResultCode(){
 template<int N>
 void SimResultParser<N>::removeReadHttpGarbage(){
 	pState->removeReadHttpGarbage();
+}
+
+
+template<int N>
+void SimResultParser<N>::removeReadTCPGarbage(){
+	pState->removeReadTCPGarbage();
 }
 
 
@@ -294,4 +306,13 @@ template<int N>
 int SimResultParser<N>::fetchRxGetStatus(){
 	int index = this->refBuffer.indexOf("+CIPRXGET: ");
 	return characterToInt(this->refBuffer[index + 11]);
+}
+
+
+template<int N>
+int SimResultParser<N>::parseRxGetLength(){
+	int index = this->refBuffer.indexOf(TCP_READ_ANWSER);
+	index += strlen(TCP_READ_ANWSER);
+	
+	return atoi(&this->refBuffer[index]);
 }

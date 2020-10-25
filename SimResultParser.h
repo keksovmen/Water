@@ -73,6 +73,9 @@ class SimResultParser : public ResultParserStateBase<N>
 		bool isReadHttpMessageFull() override;
 		
 		
+		bool isReadTCPMessageFull() override;
+		
+		
 		/**
 			Expect anthing but has to end with <code>\r\n
 		
@@ -89,6 +92,8 @@ class SimResultParser : public ResultParserStateBase<N>
 		*/
 		
 		void removeReadHttpGarbage() override;
+		
+		void removeReadTCPGarbage() override;
 		
 		
 		/**
@@ -197,6 +202,8 @@ class SimResultParser : public ResultParserStateBase<N>
 		*/
 		
 		int fetchRxGetStatus();
+		
+		int parseRxGetLength();
 		
 	private:
 		ResultParserStateBase<N>* pState;

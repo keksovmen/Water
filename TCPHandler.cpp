@@ -4,6 +4,7 @@
 #include "Util.h"
 
 
+
 template<int N>
 TCPHandler<N>::TCPHandler(
 				SimCommandPort& simPort,
@@ -158,6 +159,33 @@ void TCPHandler<N>::updateState(){
 		Serial.println("UNDEFINED STATE OF TCP!");
 		while(1){}
 	}
+}
+
+
+template<int N>
+void TCPHandler<N>::incomingMessage(){
+	hasMessage = true;
+}
+
+
+template<int N>
+void TCPHandler<N>::clearMessage(){
+	hasMessage = false;
+}
+
+
+template<int N>
+TCPReader<N> TCPHandler<N>::readMessage(FixedBuffer<N> buffer){
+	refPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_INFO);
+	int length = 0;
+	
+	if(readAndExpectSuccess(refPort, refParser)){
+		length = refParser.parseRxGetLength();
+	}else{
+		Serial.println("ERRROR NO ANWSER FROM LENGTH");
+	}
+	
+	return TCPReader<N>(refParser, refPort, buffer, length);
 }
 
 

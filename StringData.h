@@ -23,3 +23,9 @@ const static char* ALREADY_CONNECTE = "\r\nALREADY CONNECT\r\n";
 const static char* CONNECT_FAIL = "\r\nCONNECT FAIL\r\n";
 const static char* SHUT_OK = "\r\nSHUT OK\r\n";
 const static char* CLOSED = "\r\nCLOSED\r\n";
+const static char* INCOMING_MESSAGE = "\r\n+CIPRXGET: 1\r\n";
+
+
+const static char* HTTPREAD_ANWSER = "\r\n+HTTPREAD: ";
+const static char* TCP_READ_ANWSER = "\r\n+CIPRXGET: 4,";
+const static char* TCP_READ_DATA_ANWSER = "\r\n+CIPRXGET: 2,";

@@ -9,7 +9,7 @@
 
 //For new Post/GetDataHandler to return a pointer
 //Caution first check or calculate sizeof(Post/GetDataHandler)
-static char dynamicMemory[15];
+static char dynamicMemory[17];
 
 
 
@@ -24,7 +24,8 @@ SimHandler<N>::SimHandler(
 		simPort(wrapper, reader),
 		tcpHandler(simPort, parser, parameters),
 		gprsHandler(simPort, parser), 
-		httpHandler(simPort, parser)
+		httpHandler(simPort, parser),
+		refParams(parameters)
 {
 	reader.attachTCPHandler(&tcpHandler);
 }
@@ -186,6 +187,12 @@ void SimHandler<N>::handleReading(){
 		}
 	}
 	
+	if(tcpHandler.isMessageWaiting()){
+		//handle message
+		handleTCPMessage();
+		tcpHandler.clearMessage();
+	}
+	
 	if(!wrapper.lazyRead()){
 		return;
 	}
@@ -241,3 +248,29 @@ bool SimHandler<N>::tryToSetDefaultParam(int id){
 	buffer.clear();
 	return result;
 }
+
+
+template<int N>
+void SimHandler<N>::handleTCPMessage(){
+	auto tmp = tcpHandler.readMessage(buffer);
+	
+	while(tmp.readResponce()){
+		int index = buffer.indexOf("2=");
+		if(index == -1){
+			continue;
+		}
+		
+		int end = buffer.indexOfFrom(index, "!");
+		if(end == -1){
+			continue;
+		}
+		
+		index += 2;
+		if(!refParams.getClock().getValue().parse(&buffer[index])){
+			Serial.println("FAILED PARSING");
+		}
+		
+	}
+}
+
+

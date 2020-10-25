@@ -19,11 +19,13 @@ class ResultParserStateBase
 		virtual bool isSimpleMessageReady();
 		virtual bool isComplexMessageReady();
 		virtual bool isReadHttpMessageFull();
+		virtual bool isReadTCPMessageFull();
 		virtual bool checkError();
 		
 		virtual int fetchResultCode();
 		
 		virtual void removeReadHttpGarbage();
+		virtual void removeReadTCPGarbage();
 		
 		
 		/**
@@ -33,7 +35,7 @@ class ResultParserStateBase
 		int getLastError(){return lastErrorCode;}
 		
 	protected:
-		int findLastIndexForRead();
+		int findLastIndexForRead(const char* str);
 		virtual int getAmountToDeleteAfterRead();
 		virtual bool isReadEnded(int index);
 		

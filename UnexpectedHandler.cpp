@@ -91,6 +91,10 @@ void UnexpectedHandler<N>::handleSwitch(){
 		if(refBuffer.remove(CLOSED)){
 			tcpHandler->closedConnection();
 		}
+		
+		if(refBuffer.remove(INCOMING_MESSAGE)){
+			tcpHandler->incomingMessage();
+		}
 	}
 
 }

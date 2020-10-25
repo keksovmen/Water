@@ -5,6 +5,7 @@
 #include "SimCommandPort.h"
 #include "Buffer/FixedBuffer.h"
 #include "Constants.h"
+#include "ResponceReader.h"
 
 
 /**
@@ -13,7 +14,7 @@
 */
 
 template<int N>
-class DataHandler : public BaseWriter
+class DataHandler : public BaseWriter, public ResponceReader<N>
 {
 	public:
 		DataHandler(	SimResultParser<N>& parser, 
@@ -72,21 +73,15 @@ class DataHandler : public BaseWriter
 					or buffer full;
 		*/
 		
-		bool readResponce();
+		// bool readResponce();
 		
-		FixedBuffer<N>& getBuffer(){ return refBuffer;};
+		// FixedBuffer<N>& getBuffer(){ return refBuffer;};
 		
 	protected:
-		SimResultParser<N>& refParser;
-		SimCommandPort& refPort;
-		FixedBuffer<N>& refBuffer;
-		
-		unsigned int readIndex = 0;
-		
-		unsigned long responceLength = 0;
-		
-		bool firstRead = true;
-		
+		int getMinMessageLength() override;
+		void removeGarbage() override;
+		bool isMessageFull() override;
+		void askForData(int index, int amount) override;
 	
 };
 

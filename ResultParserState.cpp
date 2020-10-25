@@ -63,7 +63,7 @@ bool ResultParserStateBase<N>::isComplexMessageReady(){
 
 template<int N>
 bool ResultParserStateBase<N>::isReadHttpMessageFull(){
-	int lastIndexForRead = findLastIndexForRead();
+	int lastIndexForRead = findLastIndexForRead(HTTPREAD_ANWSER);
 	if(lastIndexForRead == -1){
 		return false;
 	}
@@ -74,7 +74,23 @@ bool ResultParserStateBase<N>::isReadHttpMessageFull(){
 	
 
 	return isReadEnded(lastIndexForRead + 1);
- }
+}
+
+
+template<int N>
+bool ResultParserStateBase<N>::isReadTCPMessageFull(){
+	int lastIndexForRead = findLastIndexForRead(TCP_READ_DATA_ANWSER);
+	if(lastIndexForRead == -1){
+		return false;
+	}
+	
+	if(this->refBuffer.getLength() < lastIndexForRead + getAmountToDeleteAfterRead()){
+		return false;
+	}
+	
+
+	return isReadEnded(lastIndexForRead + 1);
+}
  
  
  template<int N>
@@ -119,14 +135,15 @@ int ResultParserStateBase<N>::fetchResultCode(){
 
 template<int N>
 void ResultParserStateBase<N>::removeReadHttpGarbage(){
-	int index = this->refBuffer.indexOf("\r\n+HTTPREAD: ");
-	int endIndex = this->refBuffer.indexOfFrom(index + 12, END_LINE);
+	int index = this->refBuffer.indexOf(HTTPREAD_ANWSER);
+	int endIndex = this->refBuffer.indexOfFrom(
+			index + strlen(HTTPREAD_ANWSER), END_LINE);
 	//set on first character of real data
 	endIndex += 2;
 	
 	//remove from right to left cause everything will fuck up 
 	//the other way around!
-	this->refBuffer.remove(findLastIndexForRead()+ 1, 
+	this->refBuffer.remove(findLastIndexForRead(HTTPREAD_ANWSER)+ 1, 
 					getAmountToDeleteAfterRead());
 					
 	this->refBuffer.remove(index, endIndex - index);
@@ -134,14 +151,37 @@ void ResultParserStateBase<N>::removeReadHttpGarbage(){
 }
 
 
+
+/**
+	NOT CALL FROM SUPER CLASS DUE TO LACK OF KNOLEGE
+	OF WHAT TYPE OF MESSAGE DEAL WITH
+*/
+
 template<int N>
-int ResultParserStateBase<N>::findLastIndexForRead(){
-	int index = this->refBuffer.indexOf("\r\n+HTTPREAD: ");
+void ResultParserStateBase<N>::removeReadTCPGarbage(){
+	int index = this->refBuffer.indexOf(TCP_READ_ANWSER);
+	int endIndex = this->refBuffer.indexOfFrom(
+			index + strlen(TCP_READ_ANWSER), END_LINE);
+	//set on first character of real data
+	endIndex += 2;
+	
+	//remove from right to left cause everything will fuck up 
+	//the other way around!
+	this->refBuffer.remove(findLastIndexForRead(TCP_READ_ANWSER)+ 1, 
+					getAmountToDeleteAfterRead());
+					
+	this->refBuffer.remove(index, endIndex - index);
+}
+
+
+template<int N>
+int ResultParserStateBase<N>::findLastIndexForRead(const char* str){
+	int index = this->refBuffer.indexOf(str);
 	if(index == -1)
 		return -1;
 	
 	//set position on to space character
-	index += 12;
+	index += strlen(str);
 	
 	int endIndex = this->refBuffer.indexOfFrom(index, END_LINE);
 	if(endIndex == -1)

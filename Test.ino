@@ -112,10 +112,10 @@ void loop(){
 	
 	
 	// if button 8 pressed
-	// if(digitalRead(BUTTON_TIME) == LOW){
-		// printMessage("Asking time");
-		// askForTime();
-	// }
+	if(digitalRead(BUTTON_TIME) == LOW){
+		printMessage("Asking time");
+		askForTime();
+	}
 	
 	
 	//if button 9 pressed

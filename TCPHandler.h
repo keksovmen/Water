@@ -5,6 +5,9 @@
 #include "SimResultParser.h"
 #include "ParameterHandler.h"
 #include "Constants.h"
+#include "TCPReader.h"
+#include "Buffer/FixedBuffer.h"
+
 
 
 template<int N>
@@ -34,6 +37,13 @@ class TCPHandler
 		
 		void updateState();
 		
+		void incomingMessage();
+		void clearMessage();
+		
+		TCPReader<N> readMessage(FixedBuffer<N> buffer);
+		
+		
+		bool isMessageWaiting(){return hasMessage;}
 		
 	private:
 		bool writeDefaults();
@@ -53,6 +63,7 @@ class TCPHandler
 	
 		TCP_STATE state = TCP_STATE::TCP_STATE_WRITING_DEFAULTS;
 		unsigned long timeStartOfCGATT;
+		bool hasMessage = false;
 		
 		SimCommandPort& refPort;
 		SimResultParser<N>& refParser;
