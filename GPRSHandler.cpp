@@ -4,11 +4,11 @@
 
 
 template<int N>
-GPRSHandler<N>::GPRSHandler(BaseReader& reader, 
-			SimCommandWriter& writer,
-			SimResultParser<N>& parser
-			) : 
-refReader(reader), refWriter(writer), refParser(parser){
+GPRSHandler<N>::GPRSHandler(
+					SimCommandPort& simPort,
+					SimResultParser<N>& parser
+					) : 
+	refPort(simPort), refParser(parser){
 	
 }
 
@@ -46,23 +46,23 @@ bool GPRSHandler<N>::isConnected(){
 
 template<int N>
 bool GPRSHandler<N>::connect(const char* apn){
-	refWriter.writeSAPBR(SET_PARAM_BEARER,
+	refPort.writeSAPBR(SET_PARAM_BEARER,
 						"Contype", "GPRS");
 	
-	if(!readAndExpectSuccess(refReader, refParser)){
+	if(!readAndExpectSuccess(refPort, refParser)){
 		return false;
 	}
 	
-	refWriter.writeSAPBR(SET_PARAM_BEARER,
+	refPort.writeSAPBR(SET_PARAM_BEARER,
 						"APN", apn);
 	
-	if(!readAndExpectSuccess(refReader, refParser)){
+	if(!readAndExpectSuccess(refPort, refParser)){
 		return false;
 	}
 	
-	refWriter.writeSAPBR(OPEN_BEARER);
+	refPort.writeSAPBR(OPEN_BEARER);
 
-	if(!readAndExpectSuccess(refReader, refParser, false, 5000)){
+	if(!readAndExpectSuccess(refPort, refParser, false, 5000)){
 		return false;
 	}
 	
@@ -78,9 +78,9 @@ bool GPRSHandler<N>::connect(const char* apn){
 
 template<int N>
 bool GPRSHandler<N>::close(){
-	refWriter.writeSAPBR(SAPBR_COMMANDS::CLOSE_BEARER);
+	refPort.writeSAPBR(SAPBR_COMMANDS::CLOSE_BEARER);
 	
-	if(!readAndExpectSuccess(refReader, refParser, false, 5000)){
+	if(!readAndExpectSuccess(refPort, refParser, false, 5000)){
 		return false;
 	}
 	
@@ -94,15 +94,15 @@ bool GPRSHandler<N>::close(){
 
 template<int N>
 int GPRSHandler<N>::retriveStatus(){
-	refWriter.writeSAPBR(SAPBR_COMMANDS::QUERY_BEARER);
+	refPort.writeSAPBR(SAPBR_COMMANDS::QUERY_BEARER);
 	
-	if(!readAndExpectSuccess(refReader, refParser, true)){
+	if(!readAndExpectSuccess(refPort, refParser, true)){
 		if(refParser.getLastError() == CME_ERROR_UNKNOWN){
 			for(int i = 0; i < 3; i++){
 				delay(300);
-				refWriter.writeSAPBR(SAPBR_COMMANDS::QUERY_BEARER);
+				refPort.writeSAPBR(SAPBR_COMMANDS::QUERY_BEARER);
 				
-				if(readAndExpectSuccess(refReader, refParser, true)){
+				if(readAndExpectSuccess(refPort, refParser, true)){
 					return refParser.fetchGPRSStatus();
 				}
 			}

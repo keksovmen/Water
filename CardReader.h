@@ -9,7 +9,11 @@
 class CardReader
 {
 	public:
-		CardReader(int interruptPin, HardwareSerial& port, LiquidCrystal_I2C& display);
+		CardReader(
+				int interruptPin, 
+				HardwareSerial& port, 
+				LiquidCrystal_I2C& display
+				);
 		
 		bool init();
 		bool readCard();

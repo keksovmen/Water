@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Buffer/FixedBuffer.h"
 #include "BaseReader.h"
 #include "SimIOWrapper.h"
 #include "SimResultParser.h"
 #include "SimCommandWriter.h"
 #include "TCPHandler.h"
+#include "Constants.h"
 
 
 /**
@@ -18,20 +20,16 @@ template<int N>
 class UnexpectedHandler : public BaseReader
 {
 	public:
-		UnexpectedHandler(SimIOWrapper<N>& wrapper, 
-							SimResultParser<N>& parser,
-							SimCommandWriter& writer
+		UnexpectedHandler(	FixedBuffer<N>& buffer,
+							BaseReader& reader
 							);
 		
 		
-		void init(TCPHandler<N>* tcpHandler);
+		void attachTCPHandler(TCPHandler<N>* tcpHandler);
 		
-		/**
-			@return same as SimIOWrapper
-		*/
 		
+		//delegate to refReader
 		bool read() override;
-		
 		bool readTimeout(unsigned long maxDelay) override;
 		
 		void handleSwitch();
@@ -50,14 +48,13 @@ class UnexpectedHandler : public BaseReader
 		
 		bool readRemovingGarbage();
 	
-		SimIOWrapper<N>& wrapper;
-		SimResultParser<N>& parser;
-		SimCommandWriter& writer;
+		FixedBuffer<N>& refBuffer;
+		BaseReader& refReader;
 		TCPHandler<N>* tcpHandler;
 		
 		
 };
 
 
-template class UnexpectedHandler<128>;
+template class UnexpectedHandler<FIXED_BUFFER_SIZE>;
 

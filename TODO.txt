@@ -22,3 +22,5 @@
 			STATE: CONNECT OK
 8	-	AT+CIPSHUT
 			SHUT OK
+			
+bool lazyRead() as super class method ???

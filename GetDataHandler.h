@@ -14,11 +14,10 @@ template<int N>
 class GetDataHandler : public DataHandler<N>
 {
 	public:
-		GetDataHandler(CommandWriter& wrapper, 
-						SimResultParser<N>& parser, 
-						SimCommandWriter& writer,
-						BaseReader& reader,
-						FixedBuffer<N>& buffer);
+		GetDataHandler(	SimResultParser<N>& parser, 
+						SimCommandPort& simPort,
+						FixedBuffer<N>& buffer
+						);
 		
 		bool send() override;
 		

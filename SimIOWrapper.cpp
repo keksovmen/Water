@@ -10,8 +10,8 @@
 
 
 template<int N>
-SimIOWrapper<N>::SimIOWrapper(Stream& refSerial) : 
-	refPort(refSerial){
+SimIOWrapper<N>::SimIOWrapper(Stream& refSerial, FixedBuffer<N>& buffer) : 
+	refPort(refSerial), refBuffer(buffer){
 		
 }
 
@@ -72,7 +72,7 @@ void SimIOWrapper<N>::writeEndOfCommand(bool clearBuffer){
 	refPort.print('\r');
 	
 	if(clearBuffer){
-		buffer.clear();
+		refBuffer.clear();
 	}
 }
 
@@ -115,8 +115,8 @@ bool SimIOWrapper<N>::lazyRead(){
 		return false;
 	}
 	
-	//prevent from looping if buffer full
-	if(buffer.remains() == 0){
+	//prevent from looping if refBuffer full
+	if(refBuffer.remains() == 0){
 		return false;
 	}
 	
@@ -124,9 +124,9 @@ bool SimIOWrapper<N>::lazyRead(){
 	while(refPort.available()){
 		
 		//WARNING error place
-		//try to find optimal buffer size
+		//try to find optimal refBuffer size
 		//to prevent from overfloving
-		if(buffer.remains() == 0){
+		if(refBuffer.remains() == 0){
 			return true;
 		}
 		
@@ -136,7 +136,7 @@ bool SimIOWrapper<N>::lazyRead(){
 			Serial.print(c);
 		// #endif
 		
-		buffer += c; 
+		refBuffer += c; 
 	}
 	
 	return true;

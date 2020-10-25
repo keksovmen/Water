@@ -3,25 +3,24 @@
 
 
 template <int N>
-PostDataHandler<N>::PostDataHandler(CommandWriter& wrapper, 
-										SimResultParser<N>& parser, 
-										SimCommandWriter& writer,
-										BaseReader& reader,
-										FixedBuffer<N>& buffer) :
-	DataHandler<N>(wrapper, parser, writer, reader, buffer){
+PostDataHandler<N>::PostDataHandler(	SimResultParser<N>& parser, 
+										SimCommandPort& simPort,
+										FixedBuffer<N>& buffer
+										) :
+	DataHandler<N>(parser, simPort, buffer){
 		
 }
 
 
 template<int N>
 bool PostDataHandler<N>::send(){
-	this->refWriteHandler.writeEndOfCommand();
+	this->refPort.writeEndOfCommand();
 	
-	if(!readAndExpectSuccess(this->refReader, this->refParser)){
+	if(!readAndExpectSuccess(this->refPort, this->refParser)){
 		return false;
 	}
 		
-	this->refWriter.writeHTPPAction(HTTP_REQUESTS::HTTP_POST);
+	this->refPort.writeHTPPAction(HTTP_REQUESTS::HTTP_POST);
 	
-	return readAndExpectSuccess(this->refReader, this->refParser);
+	return readAndExpectSuccess(this->refPort, this->refParser);
 }

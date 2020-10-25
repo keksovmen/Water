@@ -5,46 +5,46 @@
 
 
 template <int N>
-DataHandler<N>::DataHandler(CommandWriter& wrapper, 
-								SimResultParser<N>& parser, 
-								SimCommandWriter& writer,
-								BaseReader& reader,
-								FixedBuffer<N>& buffer) :
-	refWriteHandler (wrapper), refParser(parser), 
-	refWriter(writer), refReader(reader), refBuffer(buffer){
-		
+DataHandler<N>::DataHandler(	SimResultParser<N>& parser, 
+								SimCommandPort& simPort,
+								FixedBuffer<N>& buffer
+								) :
+	refParser(parser), refPort(simPort), 
+	refBuffer(buffer)
+{
+	
 }
 
 template<int N>
 void DataHandler<N>::write(const char* str){
-	refWriteHandler.write(str);
+	refPort.write(str);
 }
 
 template<int N>
 void DataHandler<N>::write(char c){
-	refWriteHandler.write(c);
+	refPort.write(c);
 }
 
 template<int N>
 void DataHandler<N>::write(int i){
-	refWriteHandler.write(i);
+	refPort.write(i);
 }
 
 
 template<int N>
 void DataHandler<N>::write(long l){
-	refWriteHandler.write(l);
+	refPort.write(l);
 }
 
 template<int N>
 void DataHandler<N>::write(double d, int amountAfterDot){
-	refWriteHandler.write(d, amountAfterDot);
+	refPort.write(d, amountAfterDot);
 }
 
 
 template<int N>
 bool DataHandler<N>::isSended(){
-	if(refReader.read()){
+	if(refPort.read()){
 		if(refParser.isHttpActionPresents()){
 			responceLength = refParser.fetchHttpResponceLength();
 			return true;
@@ -64,8 +64,8 @@ bool DataHandler<N>::isSendedSuccesfully(){
 
 template<int N>
 void DataHandler<N>::finish(){
-	refWriter.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
-	readAndExpectSuccess(refReader, refParser);
+	refPort.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
+	readAndExpectSuccess(refPort, refParser);
 	refBuffer.clear();
 }
 
@@ -108,6 +108,7 @@ bool DataHandler<N>::readResponce(){
 	}
 
 	unsigned int readAmount = refBuffer.remains() - MIN_LENGTH;
+	//TODO: Made use UART define buffer size
 	if(readAmount > 64){
 		readAmount = 64;
 		
@@ -119,11 +120,11 @@ bool DataHandler<N>::readResponce(){
 		readAmount -= findLongLength(readAmount);
 	}
 	
-	refWriter.writeReadHTTP(readIndex, readAmount);
+	refPort.writeReadHTTP(readIndex, readAmount);
 	readIndex += readAmount;
 	
 	while(1){
-		refReader.read();
+		refPort.read();
 		if(refParser.isReadHttpMessageFull()){
 			break;
 		}else{

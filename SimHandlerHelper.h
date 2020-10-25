@@ -13,6 +13,7 @@ class SimHandlerHelper
 {
 	public:
 		SimHandlerHelper(Stream& connection, ParameterHandler& parameters);
+		
 		bool init();
 		bool sendParams(ParameterHandler& params);
 		bool sendVolume(Parameter<PrimitivIntParameter<int>>& volume, ParameterHandler& params);
@@ -62,7 +63,7 @@ class SimHandlerHelper
 	
 		SimHandler<N> handler;
 		// TCPHandler<N> tcpHandler;
-		ParameterHandler& parameters;
+		ParameterHandler& refParameters;
 		
 		bool isInit = false;
 		

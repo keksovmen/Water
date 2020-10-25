@@ -81,7 +81,7 @@ bool ResultParserStateBase<N>::isReadHttpMessageFull(){
 bool ResultParserStateBase<N>::checkError(){
 	int index = this->refBuffer.indexOfEnd("+CME ERROR: ");
 	if(this->refBuffer.indexOfFrom(index, END_LINE) != -1){
-		lastErrorCode = atoi(this->refBuffer[index + 11]);
+		lastErrorCode = atoi(&this->refBuffer[index + 11]);
 		return true;
 	}
 	

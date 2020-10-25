@@ -2,17 +2,18 @@
 
 #include <Stream.h>
 #include <IPAddress.h>
-#include "SimIOWrapper.h"
-#include "SimCommandWriter.h"
-#include "SimResultParser.h"
 #include "Enums.h"
+#include "Constants.h"
+#include "ParameterHandler.h"
+#include "Buffer/FixedBuffer.h"
+#include "SimIOWrapper.h"
+#include "SimResultParser.h"
+#include "UnexpectedHandler.h"
+#include "SimCommandPort.h"
 #include "GPRSHandler.h"
 #include "DataHandler.h"
 #include "HTTPHandler.h"
-#include "UnexpectedHandler.h"
-#include "Constants.h"
 #include "TCPHandler.h"
-#include "ParameterHandler.h"
 
 
 
@@ -111,12 +112,12 @@ class SimHandler
 		void writeDefaultParam(int id);
 		bool tryToSetDefaultParam(int id);
 	
-	
+		FixedBuffer<N> buffer;
 		SimIOWrapper<N> wrapper;
-		SimCommandWriter writer;
-		SimResultParser<N> parser;
-		TCPHandler<N> tcpHandler;
 		UnexpectedHandler<N> reader;
+		SimResultParser<N> parser;
+		SimCommandPort simPort;
+		TCPHandler<N> tcpHandler;
 		GPRSHandler<N> gprsHandler;
 		HTTPHandler<N> httpHandler;
 		

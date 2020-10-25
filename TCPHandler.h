@@ -1,9 +1,8 @@
 #pragma once
 
 #include "Enums.h"
-#include "SimCommandWriter.h"
+#include "SimCommandPort.h"
 #include "SimResultParser.h"
-#include "BaseReader.h"
 #include "ParameterHandler.h"
 #include "Constants.h"
 
@@ -13,9 +12,8 @@ class TCPHandler
 {
 	public:
 		TCPHandler(
-				SimCommandWriter& writer,
+				SimCommandPort& simPort,
 				SimResultParser<N>& parser,
-				BaseReader& reader, 
 				ParameterHandler& parameters
 				);
 		
@@ -52,9 +50,8 @@ class TCPHandler
 		TCP_STATE state = TCP_STATE::TCP_STATE_WRITING_DEFAULTS;
 		unsigned long timeStartOfCGATT;
 		
-		SimCommandWriter& refWriter;
+		SimCommandPort& refPort;
 		SimResultParser<N>& refParser;
-		BaseReader& refReader;
 		ParameterHandler& refParameters;
 };
 

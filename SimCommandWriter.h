@@ -1,6 +1,7 @@
 #pragma once
 
 #include <IPAddress.h>
+#include "BaseWriter.h"
 #include "CommandWriter.h"
 #include "Enums.h"
 
@@ -12,11 +13,23 @@
 */
 
 
-class SimCommandWriter
+class SimCommandWriter : public CommandWriter
 {
 	public:
 		explicit SimCommandWriter(CommandWriter& writer);
 	
+		
+		
+		//Delegates to refWriter
+		void write(const char* str) override;
+		void write(char c) override;
+		void write(int i) override;
+		void write(long l) override;
+		void write(double d, int amountAfterDot) override;
+		void writeEndOfCommand(bool clearBuffer = true) override;
+		
+	
+		//Own stuff
 		void writeAT();
 		void writeCREG();
 		void writeCSQ();
@@ -48,7 +61,7 @@ class SimCommandWriter
 		void writeCIPSTART(IPAddress& address, long port);
 		void writeGetIpTCP();
 		
-	private:
+	protected:
 		CommandWriter& refWriter;
 		
 };

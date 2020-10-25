@@ -13,7 +13,8 @@ template<int N>
 class ResultParserStateBase
 {
 	public:
-		explicit ResultParserStateBase(FixedBuffer<N>& refBuffer) : refBuffer(refBuffer){}
+		explicit ResultParserStateBase(FixedBuffer<N>& refBuffer)
+				: refBuffer(refBuffer){}
 	
 		virtual bool isSimpleMessageReady();
 		virtual bool isComplexMessageReady();
@@ -50,7 +51,8 @@ template<int N>
 class ResultParserStateText : public ResultParserStateBase<N>
 {
 	public:
-		explicit ResultParserStateText(FixedBuffer<N>& refBuffer) : ResultParserStateBase<N>(refBuffer){}
+		explicit ResultParserStateText(FixedBuffer<N>& refBuffer)
+				: ResultParserStateBase<N>(refBuffer){}
 		
 		bool isSimpleMessageReady() override;
 		bool isComplexMessageReady() override;
@@ -69,7 +71,8 @@ template<int N>
 class ResultParserStateDigit : public ResultParserStateBase<N>
 {
 	public:
-		explicit ResultParserStateDigit(FixedBuffer<N>& refBuffer) : ResultParserStateBase<N>(refBuffer){}
+		explicit ResultParserStateDigit(FixedBuffer<N>& refBuffer)
+				: ResultParserStateBase<N>(refBuffer){}
 	
 		bool isSimpleMessageReady() override;
 		bool isComplexMessageReady() override;

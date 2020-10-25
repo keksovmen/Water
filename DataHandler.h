@@ -2,8 +2,7 @@
 
 #include "CommandWriter.h"
 #include "SimResultParser.h"
-#include "SimCommandWriter.h"
-#include "BaseReader.h"
+#include "SimCommandPort.h"
 #include "Buffer/FixedBuffer.h"
 #include "Constants.h"
 
@@ -17,11 +16,10 @@ template<int N>
 class DataHandler : public BaseWriter
 {
 	public:
-		DataHandler(CommandWriter& wrapper, 
-						SimResultParser<N>& parser, 
-						SimCommandWriter& writer,
-						BaseReader& reader,
-						FixedBuffer<N>& buffer);
+		DataHandler(	SimResultParser<N>& parser, 
+						SimCommandPort& simPort,
+						FixedBuffer<N>& buffer
+						);
 		
 		
 		/**
@@ -33,6 +31,7 @@ class DataHandler : public BaseWriter
 		virtual bool send() = 0;
 		
 		
+		//delegates to refWriter
 		void write(const char* str) override;
 		void write(char c) override;
 		void write(int i) override;
@@ -78,10 +77,8 @@ class DataHandler : public BaseWriter
 		FixedBuffer<N>& getBuffer(){ return refBuffer;};
 		
 	protected:
-		CommandWriter& refWriteHandler;
 		SimResultParser<N>& refParser;
-		SimCommandWriter& refWriter;
-		BaseReader& refReader;
+		SimCommandPort& refPort;
 		FixedBuffer<N>& refBuffer;
 		
 		unsigned int readIndex = 0;

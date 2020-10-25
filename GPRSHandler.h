@@ -1,8 +1,7 @@
 #pragma once
 
-#include "SimCommandWriter.h"
+#include "SimCommandPort.h"
 #include "SimResultParser.h"
-#include "BaseReader.h"
 #include "Constants.h"
 
 
@@ -15,10 +14,9 @@ template<int N>
 class GPRSHandler
 {
 	public:
-		GPRSHandler(BaseReader& reader, 
-					SimCommandWriter& writer,
-					SimResultParser<N>& parser
-					);
+		GPRSHandler(	SimCommandPort& simPort,
+						SimResultParser<N>& parser
+						);
 		
 		
 		/**
@@ -56,8 +54,7 @@ class GPRSHandler
 		//short cut for connect() method
 		int retriveStatus();
 	
-		BaseReader& refReader;
-		SimCommandWriter& refWriter;
+		SimCommandPort& refPort;
 		SimResultParser<N>& refParser;
 		
 		

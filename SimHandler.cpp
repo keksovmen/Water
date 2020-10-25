@@ -9,28 +9,32 @@
 
 //For new Post/GetDataHandler to return a pointer
 //Caution first check or calculate sizeof(Post/GetDataHandler)
-static char dynamicMemory[19];
+static char dynamicMemory[15];
 
 
 
 template<int N>
-SimHandler<N>::SimHandler(Stream& refPort, ParameterHandler& parameters) :
-	wrapper(refPort), writer(wrapper),
-		parser(wrapper.getBuffer()), 
-		reader(wrapper, parser, writer),
-		tcpHandler(writer, parser, reader, parameters),
-		gprsHandler(reader, writer, parser), 
-		httpHandler(reader, writer, parser)
+SimHandler<N>::SimHandler(
+				Stream& refPort, 
+				ParameterHandler& parameters
+				) :
+		wrapper(refPort, buffer), 
+		reader(buffer, wrapper),
+		parser(buffer), 
+		simPort(wrapper, reader),
+		tcpHandler(simPort, parser, parameters),
+		gprsHandler(simPort, parser), 
+		httpHandler(simPort, parser)
 {
-	reader.init(&tcpHandler);
+	reader.attachTCPHandler(&tcpHandler);
 }
 
 template<int N>
 bool SimHandler<N>::isModuleUp(){
-	writer.writeAT();
+	simPort.writeAT();
 	
 	bool result = readAndExpectSuccess(reader, parser);
-	wrapper.getBuffer().clear();
+	buffer.clear();
 	
 	return result;
 }
@@ -38,14 +42,14 @@ bool SimHandler<N>::isModuleUp(){
 
 template<int N>
 bool SimHandler<N>::isModuleAlive(){
-	writer.writeCPIN();
+	simPort.writeCPIN();
 	
 	bool result = readAndExpectSuccess(reader, parser);
 	if(result){
 		result = parser.isPinRdy();
 	}
 	
-	wrapper.getBuffer().clear();
+	buffer.clear();
 	
 	return result;
 }
@@ -71,15 +75,17 @@ bool SimHandler<N>::isModuleAlive(){
 
 template<int N>
 NETWORK_CONNECTION SimHandler<N>::isConnectedToNetwork(){
-	writer.writeCREG();
+	simPort.writeCREG();
 	
 	NETWORK_CONNECTION status = NETWORK_CONNECTION::UNKNOWN;
 	if(readAndExpectSuccess(reader, parser, true)){
 		//if minimum time has passed and there is still no anwser
-		status = static_cast<NETWORK_CONNECTION>(parser.fetchNetworkRegistration());
+		status = static_cast<NETWORK_CONNECTION>(
+					parser.fetchNetworkRegistration()
+					);
 	}
 	
-	wrapper.getBuffer().clear();
+	buffer.clear();
 	
 	return status;
 }
@@ -120,7 +126,7 @@ bool SimHandler<N>::connectToGPRS(const char* apn){
 		result = gprsHandler.connect(apn);
 	}
 	
-	wrapper.getBuffer().clear();
+	buffer.clear();
 	
 	return result;
 }
@@ -132,21 +138,25 @@ bool SimHandler<N>::disconnectFromGPRS(){
 		result = gprsHandler.close();
 	}
 	
-	wrapper.getBuffer().clear();
+	buffer.clear();
 	
 	return result;
 }
 
 
 template<int N>
-DataHandler<N>* SimHandler<N>::sendPostRequest(IPAddress& address, const char* url, int dataLength){
+DataHandler<N>* SimHandler<N>::sendPostRequest(
+							IPAddress& address, 
+							const char* url, 
+							int dataLength)
+{
 	if(httpHandler.initPostRequest(address, url, dataLength)){
-		wrapper.getBuffer().clear();
-		return new(dynamicMemory) PostDataHandler<N>(wrapper, parser, writer, 
-													reader, wrapper.getBuffer());
+		buffer.clear();
+		return new(dynamicMemory) 
+				PostDataHandler<N>(parser, simPort, buffer);
 	}
 	
-	wrapper.getBuffer().clear();
+	buffer.clear();
 	
 	return nullptr;
 }
@@ -155,12 +165,12 @@ DataHandler<N>* SimHandler<N>::sendPostRequest(IPAddress& address, const char* u
 template<int N>
 DataHandler<N>* SimHandler<N>::sendGetRequest(){
 	if(httpHandler.initGetRequest()){
-		wrapper.getBuffer().clear();
-		return new(dynamicMemory) GetDataHandler<N>(wrapper, parser, writer,
-													reader, wrapper.getBuffer());
+		buffer.clear();
+		return new(dynamicMemory)
+				GetDataHandler<N>(parser, simPort, buffer);
 	}
 	
-	wrapper.getBuffer().clear();
+	buffer.clear();
 	
 	return nullptr;
 }
@@ -185,7 +195,7 @@ void SimHandler<N>::handleReading(){
 	}
 	
 	//clear possible garbage
-	wrapper.getBuffer().clear();
+	buffer.clear();
 }
 
 
@@ -193,19 +203,19 @@ template<int N>
 void SimHandler<N>::writeDefaultParam(int id){
 	switch(id){
 		case 0:
-			writer.writeEcho(false);
+			simPort.writeEcho(false);
 			break;
 		case 1:
-			writer.writeNumberFormat(false);
+			simPort.writeNumberFormat(false);
 			break;
 		case 2:
-			writer.writeCallReady(false);
+			simPort.writeCallReady(false);
 			break;
 		case 3:
-			writer.writeReportAsError(true);
+			simPort.writeReportAsError(true);
 			break;
 		case 4:
-			writer.writeIPR(115200);
+			simPort.writeIPR(115200);
 			break;
 		
 		default : Serial.println("MISSID ID");
@@ -224,6 +234,6 @@ bool SimHandler<N>::tryToSetDefaultParam(int id){
 	}
 	
 	
-	wrapper.getBuffer().clear();
+	buffer.clear();
 	return result;
 }

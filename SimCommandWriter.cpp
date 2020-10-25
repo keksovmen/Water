@@ -6,6 +6,37 @@ SimCommandWriter::SimCommandWriter(CommandWriter& writer) :
 	
 }
 
+
+void SimCommandWriter::write(const char* str){
+	refWriter.write(str);
+}
+
+
+void SimCommandWriter::write(char c){
+	refWriter.write(c);
+}
+
+
+void SimCommandWriter::write(int i){
+	refWriter.write(i);
+}
+
+
+void SimCommandWriter::write(long l){
+	refWriter.write(l);
+}
+
+
+void SimCommandWriter::write(double d, int amountAfterDot){
+	refWriter.write(d, amountAfterDot);
+}
+
+
+void SimCommandWriter::writeEndOfCommand(bool clearBuffer){
+	refWriter.writeEndOfCommand(clearBuffer);
+}
+
+
 void SimCommandWriter::writeAT(){
 	refWriter.writeCommand("AT");
 }
@@ -186,13 +217,15 @@ void SimCommandWriter::writeCIPRXGET(CIPRXGET_COMMAND cmd, int arg){
 			refWriter.write(',');
 			refWriter.write(arg);
 			break;
+			
+		default : break;
 	}
 	
 	refWriter.writeEndOfCommand();
 }
 
 
-void SimCommandWriter::writeCGATT(bool askForStatus, bool turnOn = true){
+void SimCommandWriter::writeCGATT(bool askForStatus, bool turnOn){
 	refWriter.write("AT+CGATT");
 	
 	if(askForStatus){

@@ -18,7 +18,7 @@ template<int N>
 class SimIOWrapper : public CommandWriter, public BaseReader
 {
 	public:
-		explicit SimIOWrapper(Stream& refSerial);
+		explicit SimIOWrapper(Stream& refSerial, FixedBuffer<N>& buffer);
 		
 		
 		/**
@@ -107,10 +107,6 @@ class SimIOWrapper : public CommandWriter, public BaseReader
 		bool readTimeout(unsigned long maxDelay) override;
 		
 		
-		//Getter
-		FixedBuffer<N>& getBuffer(){return buffer;};
-		
-		
 		/**
 			Tries to read without any delay
 		*/
@@ -133,7 +129,7 @@ class SimIOWrapper : public CommandWriter, public BaseReader
 		//sim module here
 		Stream& refPort;
 		
-		FixedBuffer<N> buffer;
+		FixedBuffer<N>& refBuffer;
 		
 };
 

@@ -6,13 +6,12 @@
 
 template<int N>
 TCPHandler<N>::TCPHandler(
-				SimCommandWriter& writer,
+				SimCommandPort& simPort,
 				SimResultParser<N>& parser,
-				BaseReader& reader, 
 				ParameterHandler& parameters
 				) :
-	refWriter(writer), refParser(parser),
-	refReader(reader), refParameters(parameters)
+	refPort(simPort), refParser(parser),
+	refParameters(parameters)
 {
 	
 }
@@ -153,22 +152,23 @@ void TCPHandler<N>::updateState(){
 template<int N>
 bool TCPHandler<N>::writeDefaults(){
 	//TODO: try to write APN SETTING HERE
-	refWriter.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_ON);
-	return readAndExpectSuccess(refReader, refParser);
+	//TODO: check if OK or ERROR becuase ERROR means you have to AT+CIPSHUT
+	refPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_ON);
+	return readAndExpectSuccess(refPort, refParser);
 }
 
 
 template<int N>
 bool TCPHandler<N>::setAPN(){
-	refWriter.writeCSTT("internet");
-	return readAndExpectSuccess(refReader, refParser);
+	refPort.writeCSTT("internet");
+	return readAndExpectSuccess(refPort, refParser);
 }
 
 
 template<int N>
 bool TCPHandler<N>::connectToGPRS(){
-	refWriter.writeCIICR();
-	return readAndExpectSuccess(refReader, refParser, false, 5000);
+	refPort.writeCIICR();
+	return readAndExpectSuccess(refPort, refParser, false, 5000);
 }
 
 
@@ -178,17 +178,17 @@ bool TCPHandler<N>::connectToCGATT(){
 		return true;
 	}
 	
-	refWriter.writeCGATT(false, true);
+	refPort.writeCGATT(false, true);
 	
-	return readAndExpectSuccess(refReader, refParser, false, 7000);
+	return readAndExpectSuccess(refPort, refParser, false, 7000);
 }
 
 
 template<int N>
 bool TCPHandler<N>::getMyIp(){
-	refWriter.writeGetIpTCP();
+	refPort.writeGetIpTCP();
 	
-	ANWSER_CODES code = readAndGetCode(refReader, refParser);
+	ANWSER_CODES code = readAndGetCode(refPort, refParser);
 	if(code == ANWSER_CODES::ERROR){
 		return false;
 	}
@@ -199,13 +199,13 @@ bool TCPHandler<N>::getMyIp(){
 
 template<int N>
 bool TCPHandler<N>::connecToServer(){
-	refWriter.writeCIPSTART(
+	refPort.writeCIPSTART(
 			refParameters.getAddress().getValue(),
 			8188
 			);
 	
 	//TODO: Make check for ALREADY CONNECT
-	return readAndExpectSuccess(refReader, refParser);
+	return readAndExpectSuccess(refPort, refParser);
 }
 
 
@@ -234,8 +234,8 @@ int TCPHandler<N>::waitForCGATT(){
 
 template<int N>
 bool TCPHandler<N>::askCGATTStatus(){
-	refWriter.writeCGATT(true);
-	if(!readAndExpectSuccess(refReader, refParser)){
+	refPort.writeCGATT(true);
+	if(!readAndExpectSuccess(refPort, refParser)){
 		return false;
 	}
 	
@@ -245,7 +245,7 @@ bool TCPHandler<N>::askCGATTStatus(){
 
 template<int N>
 bool TCPHandler<N>::askStatus(){
-	refWriter.writeCIPSTATUS();
+	refPort.writeCIPSTATUS();
 	
-	return readAndExpectSuccess(refReader, refParser);
+	return readAndExpectSuccess(refPort, refParser);
 }

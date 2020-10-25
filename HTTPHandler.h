@@ -1,8 +1,7 @@
 #pragma once
 
 #include <IPAddress.h>
-#include "BaseReader.h"
-#include "SimCommandWriter.h"
+#include "SimCommandPort.h"
 #include "SimResultParser.h"
 #include "Constants.h"
 
@@ -20,9 +19,9 @@ template<int N>
 class HTTPHandler
 {
 	public:
-		HTTPHandler(BaseReader& reader, 
-						SimCommandWriter& writer, 
-						SimResultParser<N>& parser);
+		HTTPHandler(	SimCommandPort& simPort,
+						SimResultParser<N>& parser
+						);
 		
 		/**
 			Tries to initiate POST session
@@ -49,8 +48,8 @@ class HTTPHandler
 		bool startDataTransmition(int dataLength);
 		bool terminateSession();
 		
-		BaseReader& refReader;
-		SimCommandWriter& refWriter;
+		
+		SimCommandPort& refPort;
 		SimResultParser<N>& refParser;
 	
 };

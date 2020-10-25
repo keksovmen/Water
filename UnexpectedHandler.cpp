@@ -6,12 +6,11 @@
 
 
 template<int N>
-UnexpectedHandler<N>::UnexpectedHandler(SimIOWrapper<N>& wrapper, 
-							SimResultParser<N>& parser,
-							SimCommandWriter& writer
-							) :
-	wrapper(wrapper), parser(parser), 
-	writer(writer)
+UnexpectedHandler<N>::UnexpectedHandler(
+				FixedBuffer<N>& buffer,
+				BaseReader& reader
+				) :
+	refBuffer(buffer), refReader(reader)
 {
 
 }
@@ -19,7 +18,7 @@ UnexpectedHandler<N>::UnexpectedHandler(SimIOWrapper<N>& wrapper,
 
 
 template<int N>
-void UnexpectedHandler<N>::init(TCPHandler<N>* tcpHandler){
+void UnexpectedHandler<N>::attachTCPHandler(TCPHandler<N>* tcpHandler){
 	this->tcpHandler = tcpHandler;
 }
 
@@ -27,7 +26,7 @@ void UnexpectedHandler<N>::init(TCPHandler<N>* tcpHandler){
 
 template<int N>
 bool UnexpectedHandler<N>::read(){
-	if(!wrapper.read()){
+	if(!refReader.read()){
 		return false;
 	}
 	
@@ -39,7 +38,7 @@ bool UnexpectedHandler<N>::read(){
 
 template<int N>
 bool UnexpectedHandler<N>::readTimeout(unsigned long maxDelay){
-	if(!wrapper.readTimeout(maxDelay)){
+	if(!refReader.readTimeout(maxDelay)){
 		return false;
 	}
 	
@@ -51,116 +50,70 @@ bool UnexpectedHandler<N>::readTimeout(unsigned long maxDelay){
 
 template<int N>
 void UnexpectedHandler<N>::handleSwitch(){
-	auto& buffer = wrapper.getBuffer();
 	
-	// Serial.println("BUFFER 1:");
-	// Serial.println(buffer.begin());
-	// Serial.println("END");
-	
-	if(buffer.remove(RING_STRING)){
-		while(buffer.remove(RING_STRING)){}
+	if(refBuffer.remove(RING_STRING)){
+		while(refBuffer.remove(RING_STRING)){}
 		//change unexpectedMessages
 		handleIncomingCall();
 	}
 	
-	if(buffer.remove(NO_CARRIER_STRING)){
+	if(refBuffer.remove(NO_CARRIER_STRING)){
 		
 	}
 	
-	if(buffer.remove(UNDER_VOLTAGE_WARNING)){
-		while(buffer.remove(UNDER_VOLTAGE_WARNING)){}
+	if(refBuffer.remove(UNDER_VOLTAGE_WARNING)){
+		while(refBuffer.remove(UNDER_VOLTAGE_WARNING)){}
 		
 	}
 	
-	if(buffer.remove(OVER_VOLTAGE_WARNING)){
-		while(buffer.remove(OVER_VOLTAGE_WARNING)){}
+	if(refBuffer.remove(OVER_VOLTAGE_WARNING)){
+		while(refBuffer.remove(OVER_VOLTAGE_WARNING)){}
 		
 	}
 	
-	if(buffer.remove(CONNECTE_OK)){
-		tcpHandler->connectedSuccessfully();
-	}
-	
-	// if(buffer.remove(ALREADY_CONNECTE)){
-		// tcpHandler->connectedSuccessfully();
-	// }
-	
-	if(buffer.remove(CONNECT_FAIL)){
-		tcpHandler->connectionFaild();
+	if(tcpHandler){
+		if(refBuffer.remove(CONNECTE_OK)){
+			tcpHandler->connectedSuccessfully();
+		}
+		
+		// if(refBuffer.remove(ALREADY_CONNECTE)){
+			// tcpHandler->connectedSuccessfully();
+		// }
+		
+		if(refBuffer.remove(CONNECT_FAIL)){
+			tcpHandler->connectionFaild();
+		}
 	}
 
-	
-	// Serial.println("BUFFER 2:");
-	// Serial.println(buffer.begin());
-	// Serial.println("END");
 }
 
 
 template<int N>
 void UnexpectedHandler<N>::handleIncomingCall(){
-	auto& buffer = wrapper.getBuffer();
-	int lastIndex = buffer.indexOfEnd(NO_CARRIER_STRING);
-	// int index = buffer.indexOfEnd("\r\nOK\r\n");
-	
-	// Serial.print(lastIndex);
-	// Serial.print("\t");
-	// Serial.println(index);
-	
-	// writer.writeDenyCall();
-	// int count = 0;
+	int lastIndex = refBuffer.indexOfEnd(NO_CARRIER_STRING);
+
 	while(lastIndex == -1){
-		// if(count == 100){
-			// writer.writeDenyCall();
-			// count = 0;
-		// }
 		readRemovingGarbage();
-		lastIndex = buffer.indexOf(NO_CARRIER_STRING);
-		// count++;
+		lastIndex = refBuffer.indexOf(NO_CARRIER_STRING);
 	}
 	
-	if(!buffer.remove(NO_CARRIER_STRING)){
+	if(!refBuffer.remove(NO_CARRIER_STRING)){
 		Serial.println("FALSE REMOVE");
 	}
-	
-	
-	// lastIndex = buffer.indexOfEnd("\r\nOK\r\n");
-	
-	// while(lastIndex == index){
-		// readRemovingGarbage();
-		// lastIndex = buffer.indexOfEnd("\r\nOK\r\n");
-		
-		// Serial.print(index);
-		// Serial.print("\t");
-		// Serial.println(lastIndex);
-		
-		// Serial.println("BUFFER 4:");
-		// Serial.println(buffer.begin());
-		// Serial.println("END");
-	// }
-	
-	
-	// Serial.println("BUFFER 3:");
-	// Serial.println(buffer.begin());
-	// Serial.println("END");
-	
-	// buffer.remove(lastIndex, 6);
-	// buffer.remove(index, 6);
 }
 
 
 template<int N>
 bool UnexpectedHandler<N>::readRemovingGarbage(){
-	auto& buffer = wrapper.getBuffer();
-	
-	if(!wrapper.read()){
+	if(!refReader.read()){
 		return false;
 	}
 	
-	while(buffer.remove(RING_STRING)){}
+	while(refBuffer.remove(RING_STRING)){}
 	
-	while(buffer.remove(UNDER_VOLTAGE_WARNING)){}
+	while(refBuffer.remove(UNDER_VOLTAGE_WARNING)){}
 	
-	while(buffer.remove(OVER_VOLTAGE_WARNING)){}
+	while(refBuffer.remove(OVER_VOLTAGE_WARNING)){}
 	
 	return true;
 }
