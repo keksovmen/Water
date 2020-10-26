@@ -159,15 +159,15 @@ void ResultParserStateBase<N>::removeReadHttpGarbage(){
 
 template<int N>
 void ResultParserStateBase<N>::removeReadTCPGarbage(){
-	int index = this->refBuffer.indexOf(TCP_READ_ANWSER);
+	int index = this->refBuffer.indexOf(TCP_READ_DATA_ANWSER);
 	int endIndex = this->refBuffer.indexOfFrom(
-			index + strlen(TCP_READ_ANWSER), END_LINE);
+			index + strlen(TCP_READ_DATA_ANWSER), END_LINE);
 	//set on first character of real data
 	endIndex += 2;
 	
 	//remove from right to left cause everything will fuck up 
 	//the other way around!
-	this->refBuffer.remove(findLastIndexForRead(TCP_READ_ANWSER)+ 1, 
+	this->refBuffer.remove(findLastIndexForRead(TCP_READ_DATA_ANWSER)+ 1, 
 					getAmountToDeleteAfterRead());
 					
 	this->refBuffer.remove(index, endIndex - index);

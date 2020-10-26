@@ -95,6 +95,9 @@ void UnexpectedHandler<N>::handleSwitch(){
 		if(refBuffer.remove(INCOMING_MESSAGE)){
 			tcpHandler->incomingMessage();
 		}
+		
+		refBuffer.remove(TCP_SEND_OK);
+		refBuffer.remove(TCP_SEND_FAIL);
 	}
 
 }

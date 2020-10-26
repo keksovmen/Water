@@ -5,6 +5,7 @@
 #include "HTTPHandler.h"
 #include "PostDataHandler.h"
 #include "GetDataHandler.h"
+#include "TCPIncomingHandler.h"
 
 
 //For new Post/GetDataHandler to return a pointer
@@ -253,22 +254,23 @@ bool SimHandler<N>::tryToSetDefaultParam(int id){
 template<int N>
 void SimHandler<N>::handleTCPMessage(){
 	auto tmp = tcpHandler.readMessage(buffer);
-	
+	TCPIncomingHandler<N> handler;
 	while(tmp.readResponce()){
-		int index = buffer.indexOf("2=");
-		if(index == -1){
-			continue;
-		}
+		handler.handleMessage(buffer, refParams, simPort, parser);
+		// int index = buffer.indexOf("2=");
+		// if(index == -1){
+			// continue;
+		// }
 		
-		int end = buffer.indexOfFrom(index, "!");
-		if(end == -1){
-			continue;
-		}
+		// int end = buffer.indexOfFrom(index, "!");
+		// if(end == -1){
+			// continue;
+		// }
 		
-		index += 2;
-		if(!refParams.getClock().getValue().parse(&buffer[index])){
-			Serial.println("FAILED PARSING");
-		}
+		// index += 2;
+		// if(!refParams.getClock().getValue().parse(&buffer[index])){
+			// Serial.println("FAILED PARSING");
+		// }
 		
 	}
 }

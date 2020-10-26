@@ -48,6 +48,7 @@ class SimCommandWriter : public CommandWriter
 		void writeCPIN();
 		void writeDenyCall();
 		void writeCIPRXGET(CIPRXGET_COMMAND cmd, int arg = 0);
+		void writeCIPSEND();
 		
 		/**
 			@param askForStatus true if whant to know current status

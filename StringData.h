@@ -29,3 +29,5 @@ const static char* INCOMING_MESSAGE = "\r\n+CIPRXGET: 1\r\n";
 const static char* HTTPREAD_ANWSER = "\r\n+HTTPREAD: ";
 const static char* TCP_READ_ANWSER = "\r\n+CIPRXGET: 4,";
 const static char* TCP_READ_DATA_ANWSER = "\r\n+CIPRXGET: 2,";
+const static char* TCP_SEND_OK = "\r\nSEND OK\r\n";
+const static char* TCP_SEND_FAIL = "\r\nSEND FAIL\r\n";

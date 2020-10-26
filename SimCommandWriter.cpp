@@ -299,3 +299,8 @@ void SimCommandWriter::writeGetIpTCP(){
 void SimCommandWriter::writeCIPSHUT(){
 	refWriter.writeCommand("AT+CIPSHUT");
 }
+
+
+void SimCommandWriter::writeCIPSEND(){
+	refWriter.writeCommand("AT+CIPSEND");
+}
