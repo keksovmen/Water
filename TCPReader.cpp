@@ -17,7 +17,7 @@ TCPReader<N>::TCPReader(	SimResultParser<N>& parser,
 
 template<int N>
 int TCPReader<N>::getMinMessageLength(){
-	return 24;
+	return 25 + findLongLength(this->responceLength - this->readIndex);
 }
 
 
