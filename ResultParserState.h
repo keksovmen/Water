@@ -2,6 +2,7 @@
 
 #include "Buffer/FixedBuffer.h"
 #include "Constants.h"
+#include "Enums.h"
 
 
 /**
@@ -18,14 +19,27 @@ class ResultParserStateBase
 	
 		virtual bool isSimpleMessageReady();
 		virtual bool isComplexMessageReady();
-		virtual bool isReadHttpMessageFull();
-		virtual bool isReadTCPMessageFull();
+		
+		
+		/**
+			Works for AT+HTTPREAD and AT+CIPRXGET
+			
+			@param str one of HTTPREAD_ANWSER, TCP_READ_ANWSER
+		*/
+		
+		virtual bool isReadMessageFull(READ_TYPE type);
 		virtual bool checkError();
 		
 		virtual int fetchResultCode();
 		
-		virtual void removeReadHttpGarbage();
-		virtual void removeReadTCPGarbage();
+		
+		/**
+			Works for AT+HTTPREAD and AT+CIPRXGET
+			
+			@param type what to expect
+		*/
+		
+		virtual void removeReadGarbage(READ_TYPE type);
 		
 		
 		/**
@@ -36,6 +50,7 @@ class ResultParserStateBase
 		
 	protected:
 		int findLastIndexForRead(const char* str);
+		const char* routeReadType(READ_TYPE type);
 		virtual int getAmountToDeleteAfterRead();
 		virtual bool isReadEnded(int index);
 		

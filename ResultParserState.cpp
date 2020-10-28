@@ -62,24 +62,9 @@ bool ResultParserStateBase<N>::isComplexMessageReady(){
 */
 
 template<int N>
-bool ResultParserStateBase<N>::isReadHttpMessageFull(){
-	int lastIndexForRead = findLastIndexForRead(HTTPREAD_ANWSER);
-	if(lastIndexForRead == -1){
-		return false;
-	}
-	
-	if(this->refBuffer.getLength() < lastIndexForRead + getAmountToDeleteAfterRead()){
-		return false;
-	}
-	
-
-	return isReadEnded(lastIndexForRead + 1);
-}
-
-
-template<int N>
-bool ResultParserStateBase<N>::isReadTCPMessageFull(){
-	int lastIndexForRead = findLastIndexForRead(TCP_READ_DATA_ANWSER);
+bool ResultParserStateBase<N>::isReadMessageFull(READ_TYPE type){
+	const char* str = routeReadType(type);
+	int lastIndexForRead = findLastIndexForRead(str);
 	if(lastIndexForRead == -1){
 		return false;
 	}
@@ -134,45 +119,27 @@ int ResultParserStateBase<N>::fetchResultCode(){
 */
 
 template<int N>
-void ResultParserStateBase<N>::removeReadHttpGarbage(){
-	int index = this->refBuffer.indexOf(HTTPREAD_ANWSER);
+void ResultParserStateBase<N>::removeReadGarbage(READ_TYPE type){
+	const char* str = routeReadType(type);
+	int index = this->refBuffer.indexOf(str);
 	int endIndex = this->refBuffer.indexOfFrom(
-			index + strlen(HTTPREAD_ANWSER), END_LINE);
+			index + strlen(str), END_LINE);
 	//set on first character of real data
-	endIndex += 2;
+	endIndex += strlen(END_LINE);
 	
 	//remove from right to left cause everything will fuck up 
 	//the other way around!
-	this->refBuffer.remove(findLastIndexForRead(HTTPREAD_ANWSER)+ 1, 
+	this->refBuffer.remove(findLastIndexForRead(str)+ 1, 
 					getAmountToDeleteAfterRead());
 					
 	this->refBuffer.remove(index, endIndex - index);
 	
 }
-
 
 
 /**
-	NOT CALL FROM SUPER CLASS DUE TO LACK OF KNOLEGE
-	OF WHAT TYPE OF MESSAGE DEAL WITH
+	Work only for AT+HTTPREAD=<n> nad AT+CIPRXGET=2,<n>
 */
-
-template<int N>
-void ResultParserStateBase<N>::removeReadTCPGarbage(){
-	int index = this->refBuffer.indexOf(TCP_READ_DATA_ANWSER);
-	int endIndex = this->refBuffer.indexOfFrom(
-			index + strlen(TCP_READ_DATA_ANWSER), END_LINE);
-	//set on first character of real data
-	endIndex += 2;
-	
-	//remove from right to left cause everything will fuck up 
-	//the other way around!
-	this->refBuffer.remove(findLastIndexForRead(TCP_READ_DATA_ANWSER)+ 1, 
-					getAmountToDeleteAfterRead());
-					
-	this->refBuffer.remove(index, endIndex - index);
-}
-
 
 template<int N>
 int ResultParserStateBase<N>::findLastIndexForRead(const char* str){
@@ -180,7 +147,7 @@ int ResultParserStateBase<N>::findLastIndexForRead(const char* str){
 	if(index == -1)
 		return -1;
 	
-	//set position on to space character
+	//set position after given str
 	index += strlen(str);
 	
 	int endIndex = this->refBuffer.indexOfFrom(index, END_LINE);
@@ -190,9 +157,22 @@ int ResultParserStateBase<N>::findLastIndexForRead(const char* str){
 	//set position on last character of end line
 	endIndex += (strlen(END_LINE) - 1);
 	
+	//parse integer that follow the string
 	int dataLength = atoi(&this->refBuffer[index]);
 	
 	return endIndex + dataLength;
+}
+
+
+template<int N>
+const char* ResultParserStateBase<N>::routeReadType(READ_TYPE type){
+	switch(type){
+		case READ_TYPE_HTTP:
+			return HTTPREAD_ANWSER;
+		
+		case READ_TYPE_TCP:
+			return TCP_READ_ANWSER;
+	}
 }
 
 

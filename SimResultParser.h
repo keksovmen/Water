@@ -65,15 +65,12 @@ class SimResultParser : public ResultParserStateBase<N>
 		
 		
 		/**
-			@return true if AT+HTTPREAD presents as whole string
-				+HTTPREAD: <length>\r\nDATA...<code>\r\n
+			@return true if AT+HTTPREAD or AT+CIPRXGET
+				is present in buffer
 		
 		*/
 		
-		bool isReadHttpMessageFull() override;
-		
-		
-		bool isReadTCPMessageFull() override;
+		bool isReadMessageFull(READ_TYPE type) override;
 		
 		
 		/**
@@ -87,13 +84,10 @@ class SimResultParser : public ResultParserStateBase<N>
 		
 		/**
 			Modifies buffer removing from it
-			garbare such as \r\nHTTPREAD: <length>\r\n 
-				and status code at the end
+			garbare from AT+HTTPREAD and AT+CIPRXGET
 		*/
 		
-		void removeReadHttpGarbage() override;
-		
-		void removeReadTCPGarbage() override;
+		void removeReadGarbage(READ_TYPE type) override;
 		
 		
 		/**

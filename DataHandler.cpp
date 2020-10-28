@@ -1,6 +1,7 @@
 #include "DataHandler.h"
 #include "Enums.h"
 #include "Util.h"
+#include "StringData.h"
 
 
 
@@ -77,13 +78,13 @@ int DataHandler<N>::getMinMessageLength(){
 
 template<int N>
 void DataHandler<N>::removeGarbage(){
-	this->refParser.removeReadHttpGarbage();
+	this->refParser.removeReadGarbage(READ_TYPE_HTTP);
 }
 
 
 template<int N>
 bool DataHandler<N>::isMessageFull(){
-	return this->refParser.isReadHttpMessageFull();
+	return this->refParser.isReadMessageFull(READ_TYPE_HTTP);
 }
 
 

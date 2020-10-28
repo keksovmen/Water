@@ -71,21 +71,9 @@ bool SimResultParser<N>::isComplexMessageReady(){
 }
 
 
-/**
-	MEssage looks like 
-	\r\n+HTTPREAD: <n>\r\n
-		<n> = amount of read data
-*/
-
 template<int N>
-bool SimResultParser<N>::isReadHttpMessageFull(){
-	return pState->isReadHttpMessageFull();
-}
-
-
-template<int N>
-bool SimResultParser<N>::isReadTCPMessageFull(){
-	return pState->isReadTCPMessageFull();
+bool SimResultParser<N>::isReadMessageFull(READ_TYPE type){
+	return pState->isReadMessageFull(type);
 }
 
 
@@ -96,14 +84,8 @@ int SimResultParser<N>::fetchResultCode(){
 
 
 template<int N>
-void SimResultParser<N>::removeReadHttpGarbage(){
-	pState->removeReadHttpGarbage();
-}
-
-
-template<int N>
-void SimResultParser<N>::removeReadTCPGarbage(){
-	pState->removeReadTCPGarbage();
+void SimResultParser<N>::removeReadGarbage(READ_TYPE type){
+	pState->removeReadGarbage(type);
 }
 
 
@@ -311,8 +293,8 @@ int SimResultParser<N>::fetchRxGetStatus(){
 
 template<int N>
 int SimResultParser<N>::parseRxGetLength(){
-	int index = this->refBuffer.indexOf(TCP_READ_ANWSER);
-	index += strlen(TCP_READ_ANWSER);
+	int index = this->refBuffer.indexOf(TCP_DATA_LENGTH_ANWSER);
+	index += strlen(TCP_DATA_LENGTH_ANWSER);
 	
 	return atoi(&this->refBuffer[index]);
 }

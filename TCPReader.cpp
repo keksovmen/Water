@@ -1,6 +1,8 @@
 #include "TCPReader.h"
 #include "Util.h"
 #include "Enums.h"
+#include "StringData.h"
+
 
 
 template <int N>
@@ -23,13 +25,13 @@ int TCPReader<N>::getMinMessageLength(){
 
 template<int N>
 void TCPReader<N>::removeGarbage(){
-	this->refParser.removeReadTCPGarbage();
+	this->refParser.removeReadGarbage(READ_TYPE_TCP);
 }
 
 
 template<int N>
 bool TCPReader<N>::isMessageFull(){
-	return this->refParser.isReadTCPMessageFull();
+	return this->refParser.isReadMessageFull(READ_TYPE_TCP);
 }
 
 
