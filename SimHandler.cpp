@@ -212,7 +212,7 @@ void SimHandler<N>::handleReading(){
 }
 
 
-
+//TODO: Cut into bool functions big blocks of handling
 template<int N>
 void SimHandler<N>::doActivity(){
 	if(handleLongMessages()){
@@ -321,6 +321,7 @@ bool SimHandler<N>::handleLongMessages(){
 		if(state.longCmd.isAnwserReady){
 			if(state.longCmd.cmdHandler->handle()){
 				state.setLongCmd();	//longCmd to initial state
+				reader.handleSwitch();
 				return false;
 			}else{
 				state.longCmd.isAnwserReady = false;
