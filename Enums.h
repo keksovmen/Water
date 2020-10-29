@@ -79,6 +79,7 @@ enum SAPBR_COMMANDS : int
 		1 - connected
 		2 - closing
 		3 - closed
+		4 - undefinied my type for implementation purposes
 */
 
 enum BEARER_STATUS : int
@@ -86,7 +87,8 @@ enum BEARER_STATUS : int
 	GPRS_CONNECTING = 0,
 	GPRS_CONNECTED = 1,
 	GPRS_CLOSING = 2,
-	GPRS_CLOSED = 3
+	GPRS_CLOSED = 3,
+	GPRS_UNDEFINIED = 4
 };
 
 

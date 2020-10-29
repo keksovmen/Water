@@ -80,12 +80,12 @@ void setup(){
 		Serial.println("NFC not connected");
 	}
 	
-	if(!simHelper.init()){
-		delay(3000);
-		if(!simHelper.init()){
+	// if(!simHelper.init()){
+		// delay(3000);
+		// if(!simHelper.init()){
 			// while(1){}
-		}
-	}
+		// }
+	// }
 	
 	//update time
 	timeBefore = millis();
@@ -131,7 +131,8 @@ void loop(){
 		// askServerData();
 	// }
 	
-	simHandler.handleReading();
+	// simHandler.handleReading();
+	simHandler.doActivity();
 	
 	if(cardReader.readCard()){
 		// Serial.print("Counter: ");

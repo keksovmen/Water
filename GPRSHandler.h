@@ -3,6 +3,8 @@
 #include "SimCommandPort.h"
 #include "SimResultParser.h"
 #include "Constants.h"
+#include "SimState.h"
+#include "LongCommandHandler.h"
 
 
 /**
@@ -11,13 +13,16 @@
 */
 
 template<int N>
-class GPRSHandler
+class GPRSHandler : public LongCommandHandler
 {
 	public:
 		GPRSHandler(	SimCommandPort& simPort,
-						SimResultParser<N>& parser
+						SimResultParser<N>& parser,
+						SimState& state
 						);
 		
+		
+		bool handle() override;
 		
 		/**
 			Check if module is connected to network
@@ -27,7 +32,7 @@ class GPRSHandler
 			@return network connection status
 		*/	
 		
-		bool isConnected();
+		BEARER_STATUS isConnected();
 		
 		
 		/**
@@ -56,6 +61,7 @@ class GPRSHandler
 	
 		SimCommandPort& refPort;
 		SimResultParser<N>& refParser;
+		SimState& refState;
 		
 		
 };

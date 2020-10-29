@@ -6,32 +6,47 @@
 template<int N>
 GPRSHandler<N>::GPRSHandler(
 					SimCommandPort& simPort,
-					SimResultParser<N>& parser
+					SimResultParser<N>& parser,
+					SimState& state
 					) : 
-	refPort(simPort), refParser(parser){
+	refPort(simPort), refParser(parser),
+	refState(state)
+{
 	
 }
 
 
 template<int N>
-bool GPRSHandler<N>::isConnected(){
-	int result = (retriveStatus());
-	
-	if(result == -1){
+bool GPRSHandler<N>::handle(){
+	if(!refParser.isSimpleMessageReady()){
 		return false;
 	}
 	
-	BEARER_STATUS status = static_cast<BEARER_STATUS>(result);
-		
-	switch (status){
-		case GPRS_CONNECTING:
-		case GPRS_CONNECTED:
-			return true;
-		
+	ANWSER_CODES code = static_cast<ANWSER_CODES>(
+						refParser.fetchResultCode());
+	switch(code){
+		case OK:
+			refState.health.GPRS_Connection = GPRS_CONNECTED;
+			break;
 		default: break;
 	}
+
+	return true;
+}
+
+
+template<int N>
+BEARER_STATUS GPRSHandler<N>::isConnected(){
+	int result = (retriveStatus());
 	
-	return false;
+	if(result == -1){
+		return GPRS_UNDEFINIED;
+	}
+	
+	BEARER_STATUS status = static_cast<BEARER_STATUS>(result);
+	refState.health.GPRS_Connection = status;
+	
+	return status;
 }
 
 
@@ -61,12 +76,15 @@ bool GPRSHandler<N>::connect(const char* apn){
 	}
 	
 	refPort.writeSAPBR(OPEN_BEARER);
+	refState.setLongCmd(this);
 
-	if(!readAndExpectSuccess(refPort, refParser, false, 5000)){
-		return false;
-	}
+	// if(!readAndExpectSuccess(refPort, refParser, false, 5000)){
+		// return false;
+	// }
 	
-	return isConnected();
+	// return isConnected();
+	
+	return true;
 }
 
 

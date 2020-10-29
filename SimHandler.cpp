@@ -24,7 +24,7 @@ SimHandler<N>::SimHandler(
 		parser(buffer), 
 		simPort(wrapper, reader),
 		tcpHandler(simPort, parser, parameters),
-		gprsHandler(simPort, parser), 
+		gprsHandler(simPort, parser, state), 
 		httpHandler(simPort, parser),
 		refParams(parameters)
 {
@@ -53,6 +53,7 @@ bool SimHandler<N>::isModuleAlive(){
 	
 	buffer.clear();
 	
+	state.health.cpin = result;
 	return result;
 }
 
@@ -88,7 +89,7 @@ NETWORK_CONNECTION SimHandler<N>::isConnectedToNetwork(){
 	}
 	
 	buffer.clear();
-	
+	state.health.networkRegistration = status == REGISTERED;
 	return status;
 }
 
@@ -123,7 +124,7 @@ bool SimHandler<N>::setDefaultParams(){
 
 template<int N>
 bool SimHandler<N>::connectToGPRS(const char* apn){
-	bool result = gprsHandler.isConnected();
+	bool result = gprsHandler.isConnected() == GPRS_CONNECTED;
 	if(!result){
 		result = gprsHandler.connect(apn);
 	}
@@ -135,7 +136,7 @@ bool SimHandler<N>::connectToGPRS(const char* apn){
 
 template<int N>
 bool SimHandler<N>::disconnectFromGPRS(){
-	bool result = gprsHandler.isConnected();
+	bool result = gprsHandler.isConnected() == GPRS_CONNECTED;
 	if(result){
 		result = gprsHandler.close();
 	}
@@ -211,6 +212,59 @@ void SimHandler<N>::handleReading(){
 }
 
 
+
+template<int N>
+void SimHandler<N>::doActivity(){
+	if(handleLongMessages()){
+		return;	//currently waiting for anwser
+	}
+	
+	if(!state.health.defaultsAreSet){
+		if(!isModuleUp()){
+			return;
+		}
+		
+		if(setDefaultParams()){
+			state.health.defaultsAreSet = true;
+		}else{
+			return;
+		}
+	}
+	
+	if(!state.isMinimumEstablished()){
+		if(!state.health.cpin && !isModuleAlive()){
+			//skip turns and wait until sim will be ok
+			return;
+		}
+		
+		if(isConnectedToNetwork() != 
+				NETWORK_CONNECTION::REGISTERED){
+			//skip turns and wait until network will be ok
+			return;
+		}
+	}
+	
+	if(!state.isGPRS_Connected()){
+		A:
+		switch(state.health.GPRS_Connection){
+			case GPRS_UNDEFINIED:
+				if(gprsHandler.isConnected() != GPRS_UNDEFINIED){
+					goto A;
+				}
+				return;	//wait until module is send something
+				
+			case GPRS_CLOSED:
+				//take APN from params
+				gprsHandler.connect("internet");
+				return;
+				
+			default: return;	//wait for result
+		}
+	}
+	
+}
+
+
 template<int N>
 void SimHandler<N>::writeDefaultParam(int id){
 	switch(id){
@@ -257,22 +311,30 @@ void SimHandler<N>::handleTCPMessage(){
 	TCPIncomingHandler<N> handler;
 	while(tmp.readResponce()){
 		handler.handleMessage(buffer, refParams, simPort, parser);
-		// int index = buffer.indexOf("2=");
-		// if(index == -1){
-			// continue;
-		// }
-		
-		// int end = buffer.indexOfFrom(index, "!");
-		// if(end == -1){
-			// continue;
-		// }
-		
-		// index += 2;
-		// if(!refParams.getClock().getValue().parse(&buffer[index])){
-			// Serial.println("FAILED PARSING");
-		// }
-		
 	}
 }
 
 
+template<int N>
+bool SimHandler<N>::handleLongMessages(){
+	if(state.longCmd.cmdHandler){
+		if(state.longCmd.isAnwserReady){
+			if(state.longCmd.cmdHandler->handle()){
+				state.setLongCmd();	//longCmd to initial state
+				return false;
+			}else{
+				state.longCmd.isAnwserReady = false;
+				return true;
+			}
+		}else{
+			if(wrapper.lazyRead()){
+				state.longCmd.isAnwserReady = true;
+				return handleLongMessages();
+			}
+		}
+		
+		return true;
+	}
+	
+	return false;
+}

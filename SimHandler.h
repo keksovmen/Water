@@ -5,6 +5,7 @@
 #include "Enums.h"
 #include "Constants.h"
 #include "ParameterHandler.h"
+#include "SimState.h"
 #include "Buffer/FixedBuffer.h"
 #include "SimIOWrapper.h"
 #include "SimResultParser.h"
@@ -108,11 +109,15 @@ class SimHandler
 		
 		void handleReading();
 		
+		void doActivity();
+		
 	private:
 		void writeDefaultParam(int id);
 		bool tryToSetDefaultParam(int id);
 		void handleTCPMessage();
-	
+		bool handleLongMessages();
+		
+		SimState state;
 		FixedBuffer<N> buffer;
 		SimIOWrapper<N> wrapper;
 		UnexpectedHandler<N> reader;
