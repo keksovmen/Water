@@ -10,7 +10,7 @@
 
 //For new Post/GetDataHandler to return a pointer
 //Caution first check or calculate sizeof(Post/GetDataHandler)
-static char dynamicMemory[17];
+static char dynamicMemory[21];
 
 
 
@@ -156,7 +156,7 @@ DataHandler<N>* SimHandler<N>::sendPostRequest(
 	if(httpHandler.initPostRequest(address, url, dataLength)){
 		buffer.clear();
 		return new(dynamicMemory) 
-				PostDataHandler<N>(parser, simPort, buffer);
+				PostDataHandler<N>(parser, simPort, buffer, state);
 	}
 	
 	buffer.clear();
@@ -170,7 +170,7 @@ DataHandler<N>* SimHandler<N>::sendGetRequest(){
 	if(httpHandler.initGetRequest()){
 		buffer.clear();
 		return new(dynamicMemory)
-				GetDataHandler<N>(parser, simPort, buffer);
+				GetDataHandler<N>(parser, simPort, buffer, state);
 	}
 	
 	buffer.clear();

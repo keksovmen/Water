@@ -6,6 +6,8 @@
 #include "Buffer/FixedBuffer.h"
 #include "Constants.h"
 #include "ResponceReader.h"
+#include "SimState.h"
+#include "LongCommandHandler.h"
 
 
 /**
@@ -14,12 +16,13 @@
 */
 
 template<int N>
-class DataHandler : public BaseWriter, public ResponceReader<N>
+class DataHandler : public BaseWriter, public ResponceReader<N>, public LongCommandHandler
 {
 	public:
 		DataHandler(	SimResultParser<N>& parser, 
 						SimCommandPort& simPort,
-						FixedBuffer<N>& buffer
+						FixedBuffer<N>& buffer,
+						SimState& state
 						);
 		
 		
@@ -29,7 +32,7 @@ class DataHandler : public BaseWriter, public ResponceReader<N>
 			@return true if anwser after command was success
 		*/
 		
-		virtual bool send() = 0;
+		virtual bool send();
 		
 		
 		//delegates to refWriter
@@ -39,6 +42,7 @@ class DataHandler : public BaseWriter, public ResponceReader<N>
 		void write(long l) override;
 		void write(double d, int amountAfterDot) override;
 		
+		bool handle() override;
 		
 		/**
 			Check if request was sended fully on server
@@ -82,6 +86,8 @@ class DataHandler : public BaseWriter, public ResponceReader<N>
 		void removeGarbage() override;
 		bool isMessageFull() override;
 		void askForData(int index, int amount) override;
+		
+		SimState& refState;
 	
 };
 

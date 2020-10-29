@@ -91,7 +91,7 @@ void setup(){
 	timeBefore = millis();
 	
 	//set IP
-	parameters.getAddress().getValue().fromString("128.69.240.186");
+	parameters.getAddress().getValue().fromString("37.146.149.79");
 }
 
 void loop(){
@@ -114,7 +114,7 @@ void loop(){
 	// if button 8 pressed
 	if(digitalRead(BUTTON_TIME) == LOW){
 		printMessage("Asking time");
-		askForTime();
+		simHelper.askTime();
 	}
 	
 	

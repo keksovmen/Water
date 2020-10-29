@@ -115,7 +115,45 @@ bool SimHandlerHelper<N>::sendVolume(Parameter<PrimitivIntParameter<int>>& volum
 }
 
 
-
+template<int N>
+bool SimHandlerHelper<N>::askTime(){
+	auto* dataHandler = handler.sendGetRequest();
+	
+	if(!dataHandler){
+		return false;
+	}
+	
+	dataHandler->write("http://");
+	dataHandler->write(refParameters.getAddress().getValue()[0]);
+	dataHandler->write('.');
+	dataHandler->write(refParameters.getAddress().getValue()[1]);
+	dataHandler->write('.');
+	dataHandler->write(refParameters.getAddress().getValue()[2]);
+	dataHandler->write('.');
+	dataHandler->write(refParameters.getAddress().getValue()[3]);
+	dataHandler->write("/GetTime.php");
+	
+	
+	bool result = false;
+	if(handleSendRootine(dataHandler)){
+		result = true;
+	}
+	
+	dataHandler->getBuffer().clear();
+	if(dataHandler->readResponce()){
+		auto& b = dataHandler->getBuffer();
+		if(!refParameters.getClock().getValue().parse(b.begin())){
+			Serial.println("CLOCK PARSE FAILED BUFFER:");
+			Serial.println(b.begin());
+			dataHandler->finish();
+			// result = false;
+		}
+	}
+	
+	dataHandler->finish();
+	
+	return result;
+}
 
 
 
@@ -181,10 +219,11 @@ bool SimHandlerHelper<N>::handleSendRootine(DataHandler<N>* dataHandler){
 	}
 	
 	while(!dataHandler->isSended()){
+		handler.doActivity();
 		//just wait or could add some interapt
 		//so you could break from here and
 		//somehow later continue from here
-		delay(100);
+		// delay(100);
 	}
 	
 	if(!dataHandler->isSendedSuccesfully()){

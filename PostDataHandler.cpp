@@ -5,9 +5,10 @@
 template <int N>
 PostDataHandler<N>::PostDataHandler(	SimResultParser<N>& parser, 
 										SimCommandPort& simPort,
-										FixedBuffer<N>& buffer
+										FixedBuffer<N>& buffer,
+										SimState& state
 										) :
-	DataHandler<N>(parser, simPort, buffer){
+	DataHandler<N>(parser, simPort, buffer, state){
 		
 }
 
@@ -22,5 +23,10 @@ bool PostDataHandler<N>::send(){
 		
 	this->refPort.writeHTPPAction(HTTP_REQUESTS::HTTP_POST);
 	
-	return readAndExpectSuccess(this->refPort, this->refParser);
+	bool result = readAndExpectSuccess(this->refPort, this->refParser);
+	if(result){
+		DataHandler<N>::send();
+	}
+	
+	return result;
 }

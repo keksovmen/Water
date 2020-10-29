@@ -16,7 +16,8 @@ class GetDataHandler : public DataHandler<N>
 	public:
 		GetDataHandler(	SimResultParser<N>& parser, 
 						SimCommandPort& simPort,
-						FixedBuffer<N>& buffer
+						FixedBuffer<N>& buffer,
+						SimState& state
 						);
 		
 		bool send() override;

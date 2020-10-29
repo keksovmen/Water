@@ -17,6 +17,7 @@ class SimHandlerHelper
 		bool init();
 		bool sendParams(ParameterHandler& params);
 		bool sendVolume(Parameter<PrimitivIntParameter<int>>& volume, ParameterHandler& params);
+		bool askTime();
 		
 		
 		SimHandler<N>& getHandler(){return handler;}

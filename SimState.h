@@ -18,6 +18,7 @@ struct SimState
 		bool isBussy = false;
 		bool isAnwserReady = false;
 		long responseLength = 0;
+		int responseCode = 0;
 	} http;
 	
 	
@@ -52,5 +53,10 @@ struct SimState
 	
 	bool isGPRS_Connected(){
 		return health.GPRS_Connection == GPRS_CONNECTED;
+	}
+	
+	
+	void clearHTTP(){
+		http = StateHTTP();
 	}
 };

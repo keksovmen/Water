@@ -8,12 +8,36 @@
 template <int N>
 DataHandler<N>::DataHandler(	SimResultParser<N>& parser, 
 								SimCommandPort& simPort,
-								FixedBuffer<N>& buffer
+								FixedBuffer<N>& buffer,
+								SimState& state
 								) :
-	ResponceReader<N>(parser, simPort, buffer)
+	ResponceReader<N>(parser, simPort, buffer),
+	refState(state)
 {
 	
 }
+
+
+
+template<int N>
+bool DataHandler<N>::send(){
+	refState.setLongCmd(this);
+}
+
+
+template<int N>
+bool DataHandler<N>::handle(){
+	if(this->refParser.isHttpActionPresents()){
+		this->responceLength = this->refParser.fetchHttpResponceLength();
+		refState.http.responseLength = this->responceLength;
+		refState.http.responseCode = this->refParser.fetchHTTPStatus();
+		refState.http.isAnwserReady = true;
+		return true;
+	}
+	
+	return false;
+}
+
 
 template<int N>
 void DataHandler<N>::write(const char* str){
@@ -44,20 +68,13 @@ void DataHandler<N>::write(double d, int amountAfterDot){
 
 template<int N>
 bool DataHandler<N>::isSended(){
-	if(this->refPort.read()){
-		if(this->refParser.isHttpActionPresents()){
-			this->responceLength = this->refParser.fetchHttpResponceLength();
-			return true;
-		}
-	}
-	
-	return false;
+	return refState.http.isAnwserReady;
 }
 
 
 template<int N>
 bool DataHandler<N>::isSendedSuccesfully(){
-	return this->refParser.fetchHTTPStatus() == 
+	return refState.http.responseCode == 
 		static_cast<int>(HTTP_STATUS_CODES::HTTP_STATUS_SUCCESS);
 }
 
@@ -66,7 +83,10 @@ template<int N>
 void DataHandler<N>::finish(){
 	this->refPort.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
 	readAndExpectSuccess(this->refPort, this->refParser);
+	
 	this->refBuffer.clear();
+	refState.clearHTTP();
+	
 }
 
 

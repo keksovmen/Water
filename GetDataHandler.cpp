@@ -5,9 +5,10 @@
 template <int N>
 GetDataHandler<N>::GetDataHandler(	SimResultParser<N>& parser, 
 									SimCommandPort& simPort,
-									FixedBuffer<N>& buffer
+									FixedBuffer<N>& buffer,
+									SimState& state
 									) :
-	DataHandler<N>(parser, simPort, buffer){
+	DataHandler<N>(parser, simPort, buffer, state){
 		
 }
 
@@ -23,5 +24,10 @@ bool GetDataHandler<N>::send(){
 		
 	this->refPort.writeHTPPAction(HTTP_REQUESTS::HTTP_GET);
 	
-	return readAndExpectSuccess(this->refPort, this->refParser);
+	bool result = readAndExpectSuccess(this->refPort, this->refParser);
+	if(result){
+		DataHandler<N>::send();
+	}
+	
+	return result;
 }
