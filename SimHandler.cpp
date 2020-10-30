@@ -166,8 +166,11 @@ DataHandler<N>* SimHandler<N>::sendPostRequest(
 
 
 template<int N>
-DataHandler<N>* SimHandler<N>::sendGetRequest(){
-	if(httpHandler.initGetRequest()){
+DataHandler<N>* SimHandler<N>::sendGetRequest(
+							IPAddress& address, 
+							const char* url
+							){
+	if(httpHandler.initGetRequest(address, url)){
 		buffer.clear();
 		return new(dynamicMemory)
 				GetDataHandler<N>(parser, simPort, buffer, state);

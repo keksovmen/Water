@@ -105,7 +105,7 @@ class SimHandler
 			@return get handler
 		*/
 		
-		DataHandler<N>* sendGetRequest();
+		DataHandler<N>* sendGetRequest(IPAddress& address, const char* url);
 		
 		void handleReading();
 		

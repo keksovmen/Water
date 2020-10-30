@@ -29,9 +29,9 @@ bool HTTPHandler<N>::initPostRequest(IPAddress& address, const char* url, int da
 }
 
 template<int N>
-bool HTTPHandler<N>::initGetRequest(){
+bool HTTPHandler<N>::initGetRequest(IPAddress& address, const char* url){
 	if(initSession()){
-		setGetURL();
+		setGetURL(address, url);
 		return true;
 	}
 	
@@ -75,8 +75,8 @@ bool HTTPHandler<N>::setPostURL(IPAddress& address, const char* url){
 }
 
 template<int N>
-void HTTPHandler<N>::setGetURL(){
-	refPort.writeHTPPSetParam("URL", nullptr);
+void HTTPHandler<N>::setGetURL(IPAddress& address, const char* url){
+	refPort.writeHTTPURL(address, url, false);
 }
 
 template<int N>

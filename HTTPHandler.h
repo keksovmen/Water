@@ -38,12 +38,12 @@ class HTTPHandler
 			@return true if succeed
 		*/
 		
-		bool initGetRequest();
+		bool initGetRequest(IPAddress& address, const char* url);
 	
 	private:
 		bool initSession();
 		bool setPostURL(IPAddress& address, const char* url);
-		void setGetURL();
+		void setGetURL(IPAddress& address, const char* url);
 		bool setContentForPHP();
 		bool startDataTransmition(int dataLength);
 		bool terminateSession();

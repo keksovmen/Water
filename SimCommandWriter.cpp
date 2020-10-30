@@ -119,7 +119,11 @@ void SimCommandWriter::writeHTPP(HTTP_COMMANDS cmd){
 }
 
 
-void SimCommandWriter::writeHTTPURL(IPAddress& address, const char* url){
+void SimCommandWriter::writeHTTPURL(
+					IPAddress& address, 
+					const char* url,
+					bool endCommand = true
+					){
 	refWriter.write("AT+HTTP");	//memory saving
 	refWriter.write("PARA=");
 	refWriter.write('"');
@@ -134,8 +138,11 @@ void SimCommandWriter::writeHTTPURL(IPAddress& address, const char* url){
 	refWriter.write(address[3]);
 	refWriter.write('/');
 	refWriter.write(url);
-	refWriter.write('"');
-	refWriter.writeEndOfCommand();
+	//for get post request
+	if(endCommand){
+		refWriter.write('"');
+		refWriter.writeEndOfCommand();
+	}
 }
 
 

@@ -39,7 +39,7 @@ class SimCommandWriter : public CommandWriter
 		void writeReportAsError(bool turnOn);
 		void writeSAPBR(SAPBR_COMMANDS cmd, const char* param = nullptr, const char* value = nullptr);
 		void writeHTPP(HTTP_COMMANDS cmd);
-		void writeHTTPURL(IPAddress& address, const char* url);
+		void writeHTTPURL(IPAddress& address, const char* url, bool endCommand = true);
 		void writeHTPPSetParam(const char* param, const char* value);
 		void writeHTPPAction(HTTP_REQUESTS method);
 		void writeHTPPData(int length);

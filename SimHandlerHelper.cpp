@@ -117,21 +117,17 @@ bool SimHandlerHelper<N>::sendVolume(Parameter<PrimitivIntParameter<int>>& volum
 
 template<int N>
 bool SimHandlerHelper<N>::askTime(){
-	auto* dataHandler = handler.sendGetRequest();
+	auto* dataHandler = handler.sendGetRequest(
+			refParameters.getAddress().getValue(),
+			"/GetTime.php"
+			);
 	
 	if(!dataHandler){
 		return false;
 	}
 	
-	dataHandler->write("http://");
-	dataHandler->write(refParameters.getAddress().getValue()[0]);
-	dataHandler->write('.');
-	dataHandler->write(refParameters.getAddress().getValue()[1]);
-	dataHandler->write('.');
-	dataHandler->write(refParameters.getAddress().getValue()[2]);
-	dataHandler->write('.');
-	dataHandler->write(refParameters.getAddress().getValue()[3]);
-	dataHandler->write("/GetTime.php");
+	//write your query string
+	// dataHandler->write("?a=1&b=2");
 	
 	
 	bool result = false;
