@@ -51,7 +51,7 @@ class GPRSHandler : public LongCommandHandler
 			@return true if closed
 		*/
 		
-		bool close();
+		void close();
 		
 		
 	private:
@@ -62,6 +62,8 @@ class GPRSHandler : public LongCommandHandler
 		SimCommandPort& refPort;
 		SimResultParser<N>& refParser;
 		SimState& refState;
+		
+		bool lastCommandOpen;
 		
 		
 };

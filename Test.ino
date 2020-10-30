@@ -93,8 +93,8 @@ void setup(){
 	//set IP
 	parameters.getAddress().getValue().fromString("37.146.149.79");
 	
-	sim.write("AT+CGATT=0\r");
-	delay(3000);
+	// sim.write("AT+CGATT=0\r");
+	// delay(3000);
 	// sim.read();
 }
 

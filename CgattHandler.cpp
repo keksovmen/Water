@@ -43,7 +43,6 @@ bool CgattHandler<N>::connectToCGATT(){
 	refState.setLongCmd(this);
 	
 	return false;
-	// return readAndExpectSuccess(refPort, refParser, false, 7000);
 }
 
 

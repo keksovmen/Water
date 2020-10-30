@@ -26,7 +26,11 @@ bool GPRSHandler<N>::handle(){
 						refParser.fetchResultCode());
 	switch(code){
 		case OK:
+		if(lastCommandOpen){
 			refState.health.GPRS_Connection = GPRS_CONNECTED;
+		}else{
+			refState.health.GPRS_Connection = GPRS_CLOSED;
+		}
 			break;
 		default: break;
 	}
@@ -77,12 +81,7 @@ bool GPRSHandler<N>::connect(const char* apn){
 	
 	refPort.writeSAPBR(OPEN_BEARER);
 	refState.setLongCmd(this);
-
-	// if(!readAndExpectSuccess(refPort, refParser, false, 5000)){
-		// return false;
-	// }
-	
-	// return isConnected();
+	lastCommandOpen = true;
 	
 	return true;
 }
@@ -95,14 +94,10 @@ bool GPRSHandler<N>::connect(const char* apn){
 */
 
 template<int N>
-bool GPRSHandler<N>::close(){
-	refPort.writeSAPBR(SAPBR_COMMANDS::CLOSE_BEARER);
-	
-	if(!readAndExpectSuccess(refPort, refParser, false, 5000)){
-		return false;
-	}
-	
-	return !isConnected();
+void GPRSHandler<N>::close(){
+	refPort.writeSAPBR(CLOSE_BEARER);
+	refState.setLongCmd(this);
+	lastCommandOpen = false;
 }
 
 
@@ -115,16 +110,6 @@ int GPRSHandler<N>::retriveStatus(){
 	refPort.writeSAPBR(SAPBR_COMMANDS::QUERY_BEARER);
 	
 	if(!readAndExpectSuccess(refPort, refParser, true)){
-		if(refParser.getLastError() == CME_ERROR_UNKNOWN){
-			for(int i = 0; i < 3; i++){
-				delay(300);
-				refPort.writeSAPBR(SAPBR_COMMANDS::QUERY_BEARER);
-				
-				if(readAndExpectSuccess(refPort, refParser, true)){
-					return refParser.fetchGPRSStatus();
-				}
-			}
-		}
 		return -1;
 	}
 	

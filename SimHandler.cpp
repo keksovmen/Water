@@ -138,11 +138,11 @@ bool SimHandler<N>::connectToGPRS(const char* apn){
 template<int N>
 bool SimHandler<N>::disconnectFromGPRS(){
 	bool result = gprsHandler.isConnected() == GPRS_CONNECTED;
-	if(result){
-		result = gprsHandler.close();
-	}
+	// if(result){
+		// result = gprsHandler.close();
+	// }
 	
-	buffer.clear();
+	// buffer.clear();
 	
 	return result;
 }
