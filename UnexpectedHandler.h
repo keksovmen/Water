@@ -7,6 +7,7 @@
 #include "SimCommandWriter.h"
 #include "TCPHandler.h"
 #include "Constants.h"
+#include "SimState.h"
 
 
 /**
@@ -21,7 +22,8 @@ class UnexpectedHandler : public BaseReader
 {
 	public:
 		UnexpectedHandler(	FixedBuffer<N>& buffer,
-							BaseReader& reader
+							BaseReader& reader,
+							SimState& state
 							);
 		
 		
@@ -50,6 +52,7 @@ class UnexpectedHandler : public BaseReader
 	
 		FixedBuffer<N>& refBuffer;
 		BaseReader& refReader;
+		SimState& refState;
 		TCPHandler<N>* tcpHandler;
 		
 		

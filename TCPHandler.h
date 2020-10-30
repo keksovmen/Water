@@ -7,62 +7,44 @@
 #include "Constants.h"
 #include "TCPReader.h"
 #include "Buffer/FixedBuffer.h"
+#include "SimState.h"
+#include "LongCommandHandler.h"
 
 
 
 template<int N>
-class TCPHandler
+class TCPHandler : public LongCommandHandler
 {
 	public:
 		TCPHandler(
 				SimCommandPort& simPort,
 				SimResultParser<N>& parser,
-				ParameterHandler& parameters
+				ParameterHandler& parameters,
+				SimState& state
 				);
 		
 		
-		bool isConnected();
+		bool handle() override;
+		
+
 		bool connect();
-		
-		/**
-			Call when module accidently dies from power lose
-			Changes state to CLOSED
-		*/
-		
-		void reset();
-		void connectedSuccessfully();
-		void connectionFaild();
-		void shutOk();
-		void closedConnection();
-		
-		void updateState();
-		
-		void incomingMessage();
-		void clearMessage();
-		
 		TCPReader<N> readMessage(FixedBuffer<N> buffer);
 		
-		
-		bool isMessageWaiting(){return hasMessage;}
-		
 	private:
-		bool writeDefaults();
-		bool setAPN();
-		bool connectToGPRS();
-		bool getMyIp();
-		bool connecToServer();
-		bool tryToShutConenction();
-		bool askStatus();
-		void tryUpdateState();
+		bool handleInitial();
+		bool handleIpStart();
+		bool handleGPRSAct();
+		bool handleIpStatus();
+		bool handlePDPDeact();
+		TCP_STATE handleUndefinied();
 		
-	
-		TCP_STATE state = TCP_STATE::TCP_STATE_WRITING_DEFAULTS;
-		unsigned long timeStartOfCGATT;
-		bool hasMessage = false;
 		
 		SimCommandPort& refPort;
 		SimResultParser<N>& refParser;
 		ParameterHandler& refParameters;
+		SimState& refState;
+		
+		bool isLastCommandCIICR;
 };
 
 

@@ -199,6 +199,8 @@ class SimResultParser : public ResultParserStateBase<N>
 		
 		int parseRxGetLength();
 		
+		bool containShut();
+		
 	private:
 		ResultParserStateBase<N>* pState;
 		

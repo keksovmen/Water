@@ -298,3 +298,10 @@ int SimResultParser<N>::parseRxGetLength(){
 	
 	return atoi(&this->refBuffer[index]);
 }
+
+
+template<int N>
+bool SimResultParser<N>::containShut(){
+	int index = this->refBuffer.indexOf(TCP_SHUT_OK);
+	return index != -1;
+}

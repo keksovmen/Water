@@ -14,3 +14,7 @@ bool lazyRead() as super class method ???
 			made global error to restart
 
 17	-	Made all string to be in flash memory
+
+18	-	Add check if i am able to send right now http request
+19	-	SimState flag for undefinied state, when you didn't
+			recieve result

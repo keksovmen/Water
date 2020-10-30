@@ -23,7 +23,7 @@ struct SimState
 	
 	
 	struct StateTCP{
-		TCP_STATE state = TCP_STATE_WRITING_DEFAULTS;
+		TCP_STATE state = TCP_STATE_UNDEFINIED;
 		bool hasMessage = false;
 		bool isSending = false;
 	} tcp;
@@ -58,5 +58,22 @@ struct SimState
 	
 	void clearHTTP(){
 		http = StateHTTP();
+	}
+	
+	
+	bool isTCP_Connected(){
+		return tcp.state == TCP_STATE_CONNECTED;
+	}
+	
+	
+	void diedGPRS(){
+		health.GPRS_Connection = GPRS_UNDEFINIED;
+		//TODO: prevent http request from waiting for eternity
+	}
+	
+	
+	void diedCGATT(){
+		tcp.state = TCP_STATE_PDP_DEACT;
+		health.CGATT_Connection = false;
 	}
 };

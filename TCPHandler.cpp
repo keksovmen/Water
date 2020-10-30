@@ -9,88 +9,97 @@ template<int N>
 TCPHandler<N>::TCPHandler(
 				SimCommandPort& simPort,
 				SimResultParser<N>& parser,
-				ParameterHandler& parameters
+				ParameterHandler& parameters,
+				SimState& state
 				) :
 	refPort(simPort), refParser(parser),
-	refParameters(parameters)
+	refParameters(parameters), refState(state)
 {
 	
 }
 
 
 template<int N>
-bool TCPHandler<N>::isConnected(){
-	return state == TCP_STATE::TCP_STATE_CONNECTED;
+bool TCPHandler<N>::handle(){
+	if(isLastCommandCIICR){
+		if(refParser.isSimpleMessageReady()){
+			if(refParser.fetchResultCode() == OK){
+				refState.tcp.state = TCP_STATE_IP_GPRS_ACT;
+			}else{
+				refState.tcp.state = TCP_STATE_UNDEFINIED;
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}else{
+		if(refParser.containShut()){
+			refState.tcp.state = TCP_STATE_INITIAL;
+			return true;
+		}else{
+			//check if there is ERROR if no return false
+			ANWSER_CODES code = static_cast<ANWSER_CODES>(
+							refParser.fetchResultCode()
+							);
+			switch(code){
+				case ERROR:
+					refState.tcp.state = TCP_STATE_UNDEFINIED;
+					return true;
+					
+				default: return false;
+			}
+		}
+	}
 }
 
 
 template<int N>
 bool TCPHandler<N>::connect(){
-	// if(state != TCP_STATE::TCP_STATE_WRITING_DEFAULTS){
-		// tryUpdateState();
-	// }
-	
-	if(isConnected()){
-		return true;
-	}
-	
-	
-	switch(state){
-		case TCP_STATE_WRITING_DEFAULTS:
-			if(writeDefaults()){
-				state = TCP_STATE::TCP_STATE_INITIAL;
-			}else{
-				tryUpdateState();
-			}
-			break;
-		
+	switch(refState.tcp.state){
 		case TCP_STATE_INITIAL :
-			if(setAPN()){
-				state = TCP_STATE::TCP_STATE_IP_START;
-			}else{
-				tryUpdateState();
+			if(handleInitial()){
+				refState.tcp.state = TCP_STATE_IP_START;
 			}
 			
 			break;
 			
 		case TCP_STATE_IP_START: 
-			if(connectToGPRS()){
-				state = TCP_STATE::TCP_STATE_IP_GPRS_ACT;
-			}else{
-				state = TCP_STATE::TCP_STATE_IP_CONFIG;
+			if(handleIpStart()){
+				refState.tcp.state = TCP_STATE_IP_CONFIG;
+				return true;
 			}
 			
 			break;
 			
 		case TCP_STATE_IP_CONFIG:
-			tryUpdateState();
+			//wait until handle will be called
+			// tryUpdateState();
 			break;
 			
 		case TCP_STATE_IP_GPRS_ACT: 
-			if(getMyIp()){
-				state = TCP_STATE::TCP_STATE_IP_STATUS;
-				
+			if(handleGPRSAct()){
+				refState.tcp.state = TCP_STATE_IP_STATUS;
 			}else{
-				tryUpdateState();
+				refState.tcp.state = TCP_STATE_UNDEFINIED;
 			}
 			break;
 			
 		case TCP_STATE_IP_STATUS:
-			if(connecToServer()){
+			if(handleIpStatus()){
 				//fix when UnexpectedHandler sets state of greater power
-				// if(state == TCP_STATE::TCP_STATE_CONNECTED){
-					// break;
-				// }
+				if(refState.tcp.state == TCP_STATE_CONNECTED){
+					break;
+				}
 				
-				state = TCP_STATE::TCP_STATE_CONNECTING;
+				refState.tcp.state = TCP_STATE_CONNECTING;
 			}else{
-				tryUpdateState();
+				refState.tcp.state = TCP_STATE_UNDEFINIED;
 			}
 			break;
 			
 		case TCP_STATE_CONNECTING:
-			//just wair until status will be changed
-			tryUpdateState();
+			//just wait until status will be changed
 			break;
 			
 		case TCP_STATE_CONNECTED:
@@ -98,79 +107,25 @@ bool TCPHandler<N>::connect(){
 			break;
 			
 		case TCP_STATE_CLOSING:
-			tryUpdateState();
+			//just wait until status will be changed
 			break;
 		
 		case TCP_STATE_CLOSED:
-			state = TCP_STATE::TCP_STATE_IP_STATUS;
+			refState.tcp.state = TCP_STATE_IP_STATUS;
 			break;
 			
 		case TCP_STATE_PDP_DEACT:
-			if(tryToShutConenction()){
-				state = TCP_STATE::TCP_STATE_INITIAL;
+			if(handlePDPDeact()){
+				return true;
 			}
 			break;
 			
 		case TCP_STATE_UNDEFINIED:
-			Serial.println("UNDEFINED");
-			while(1){}
+			refState.tcp.state = handleUndefinied();
 			break;
 	}
 	
 	return false;
-}
-
-
-
-template<int N>
-void TCPHandler<N>::reset(){
-	state = TCP_STATE::TCP_STATE_WRITING_DEFAULTS;
-}
-
-
-template<int N>
-void TCPHandler<N>::connectedSuccessfully(){
-	state = TCP_STATE::TCP_STATE_CONNECTED;
-}
-
-
-template<int N>
-void TCPHandler<N>::connectionFaild(){
-	state = TCP_STATE::TCP_STATE_CLOSED;
-}
-
-
-template<int N>
-void TCPHandler<N>::shutOk(){
-	state = TCP_STATE::TCP_STATE_INITIAL;
-}
-
-
-template<int N>
-void TCPHandler<N>::closedConnection(){
-	state = TCP_STATE::TCP_STATE_CLOSED;
-}
-
-
-template<int N>
-void TCPHandler<N>::updateState(){
-	state = refParser.fetchTCPState();
-	if(state == TCP_STATE::TCP_STATE_UNDEFINIED){
-		Serial.println("UNDEFINED STATE OF TCP!");
-		while(1){}
-	}
-}
-
-
-template<int N>
-void TCPHandler<N>::incomingMessage(){
-	hasMessage = true;
-}
-
-
-template<int N>
-void TCPHandler<N>::clearMessage(){
-	hasMessage = false;
 }
 
 
@@ -182,7 +137,7 @@ TCPReader<N> TCPHandler<N>::readMessage(FixedBuffer<N> buffer){
 	if(readAndExpectSuccess(refPort, refParser)){
 		length = refParser.parseRxGetLength();
 	}else{
-		Serial.println("ERRROR NO ANWSER FROM LENGTH");
+		Serial.println("ERROR NO ANWSER FROM LENGTH");
 	}
 	
 	return TCPReader<N>(refParser, refPort, buffer, length);
@@ -190,89 +145,73 @@ TCPReader<N> TCPHandler<N>::readMessage(FixedBuffer<N> buffer){
 
 
 template<int N>
-bool TCPHandler<N>::writeDefaults(){
-	refPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_ON);
-	
-	if(readAndExpectSuccess(refPort, refParser)){
-		return true;
-	}
-	
+bool TCPHandler<N>::handleInitial(){
 	refPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_MODE);
+	bool currentStatus = false;
+	
 	if(readAndExpectSuccess(refPort, refParser)){
-		return refParser.fetchRxGetStatus() == 1;
+		currentStatus = refParser.fetchRxGetStatus();
+	}else{
+		return false;
 	}
 	
-	return false;
-}
-
-
-template<int N>
-bool TCPHandler<N>::setAPN(){
-	refPort.writeCSTT("internet");
+	if(!currentStatus){
+		refPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_ON);
+		if(!readAndExpectSuccess(refPort, refParser)){
+			return false;
+		}
+	}
+	
+	refPort.writeCSTT("internet");	//take from params
+	
 	return readAndExpectSuccess(refPort, refParser);
 }
 
 
 template<int N>
-bool TCPHandler<N>::connectToGPRS(){
+bool TCPHandler<N>::handleIpStart(){
 	refPort.writeCIICR();
-	return readAndExpectSuccess(refPort, refParser, false, 5000);
-}
-
-
-template<int N>
-bool TCPHandler<N>::getMyIp(){
-	refPort.writeGetIpTCP();
-	
-	ANWSER_CODES code = readAndGetCode(refPort, refParser);
-	if(code == ANWSER_CODES::ERROR){
-		return false;
-	}
+	refState.longCmd.cmdHandler = this;
+	isLastCommandCIICR = true;
 	
 	return true;
 }
 
 
 template<int N>
-bool TCPHandler<N>::connecToServer(){
+bool TCPHandler<N>::handleGPRSAct(){
+	refPort.writeGetIpTCP();
+	return readAndExpectSuccess(refPort, refParser);
+}
+
+
+template<int N>
+bool TCPHandler<N>::handleIpStatus(){
 	refPort.writeCIPSTART(
 			refParameters.getAddress().getValue(),
 			8188
 			);
 	
-	//TODO: Make check for ALREADY CONNECT
 	return readAndExpectSuccess(refPort, refParser);
 }
 
 
 template<int N>
-bool TCPHandler<N>::tryToShutConenction(){
-	TCP_STATE oldState = state;
+bool TCPHandler<N>::handlePDPDeact(){
 	refPort.writeCIPSHUT();
-	refPort.readTimeout(10000);
-	if(state == oldState){
-		return false;
-	}
+	refState.longCmd.cmdHandler = this;
+	isLastCommandCIICR = false;
 	
 	return true;
-	// return readAndExpectSuccess(refPort, refParser, false, 7000);
 }
 
 
 template<int N>
-bool TCPHandler<N>::askStatus(){
+TCP_STATE TCPHandler<N>::handleUndefinied(){
 	refPort.writeCIPSTATUS();
-	
-	return readAndExpectSuccess(refPort, refParser);
-}
-
-
-template<int N>
-void TCPHandler<N>::tryUpdateState(){
-	if(askStatus()){
-		updateState();
-	// }else{
-		// Serial.println("NO ANWSER FOR STATUS");
-		// state = TCP_STATE::TCP_STATE_UNDEFINIED;
+	if(readAndExpectSuccess(refPort, refParser)){
+		return refParser.fetchTCPState();
 	}
+	
+	return TCP_STATE_UNDEFINIED;
 }

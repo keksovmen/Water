@@ -8,9 +8,11 @@
 template<int N>
 UnexpectedHandler<N>::UnexpectedHandler(
 				FixedBuffer<N>& buffer,
-				BaseReader& reader
+				BaseReader& reader,
+				SimState& state
 				) :
-	refBuffer(buffer), refReader(reader)
+	refBuffer(buffer), refReader(reader),
+	refState(state)
 {
 
 }
@@ -71,33 +73,48 @@ void UnexpectedHandler<N>::handleSwitch(){
 		
 	}
 	
+	if(refBuffer.remove(SAPBR_DEACT)){
+		refState.diedGPRS();
+	}
+	
+	
 	if(tcpHandler){
-		if(refBuffer.remove(CONNECTE_OK)){
-			tcpHandler->connectedSuccessfully();
+		if(refBuffer.remove(TCP_CONNECTE_OK)){
+			refState.tcp.state = TCP_STATE_CONNECTED;
 		}
 		
-		// if(refBuffer.remove(ALREADY_CONNECTE)){
-			// tcpHandler->connectedSuccessfully();
+		if(refBuffer.remove(TCP_ALREADY_CONNECTE)){
+			refState.tcp.state = TCP_STATE_CONNECTED;
+		}
+		
+		if(refBuffer.remove(TCP_CONNECT_FAIL)){
+			refState.tcp.state = TCP_STATE_CLOSED;
+		}
+		
+		//becuase i wait for it
+		// if(refBuffer.remove(TCP_SHUT_OK)){
+			// refState.tcp.state = TCP_STATE_INITIAL;
 		// }
 		
-		if(refBuffer.remove(CONNECT_FAIL)){
-			tcpHandler->connectionFaild();
+		if(refBuffer.remove(TCP_CONNECTION_CLOSED)){
+			refState.tcp.state = TCP_STATE_CLOSED;
 		}
 		
-		if(refBuffer.remove(SHUT_OK)){
-			tcpHandler->shutOk();
+		if(refBuffer.remove(PDP_DEACT)){
+			refState.diedCGATT();
 		}
 		
-		if(refBuffer.remove(CLOSED)){
-			tcpHandler->closedConnection();
+		if(refBuffer.remove(TCP_INCOMING_MESSAGE)){
+			refState.tcp.hasMessage = true;
 		}
 		
-		if(refBuffer.remove(INCOMING_MESSAGE)){
-			tcpHandler->incomingMessage();
-		}
 		
-		refBuffer.remove(TCP_SEND_OK);
-		refBuffer.remove(TCP_SEND_FAIL);
+		if(refBuffer.remove(TCP_SEND_OK) ||
+			refBuffer.remove(TCP_SEND_FAIL)
+			)
+		{
+			refState.tcp.isSending = false;
+		}
 	}
 
 }
@@ -112,9 +129,7 @@ void UnexpectedHandler<N>::handleIncomingCall(){
 		lastIndex = refBuffer.indexOf(NO_CARRIER_STRING);
 	}
 	
-	if(!refBuffer.remove(NO_CARRIER_STRING)){
-		Serial.println("FALSE REMOVE");
-	}
+	refBuffer.remove(NO_CARRIER_STRING);
 }
 
 

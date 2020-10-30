@@ -20,10 +20,10 @@ SimHandler<N>::SimHandler(
 				ParameterHandler& parameters
 				) :
 		wrapper(refPort, buffer), 
-		reader(buffer, wrapper),
+		reader(buffer, wrapper, state),
 		parser(buffer), 
 		simPort(wrapper, reader),
-		tcpHandler(simPort, parser, parameters),
+		tcpHandler(simPort, parser, parameters, state),
 		gprsHandler(simPort, parser, state), 
 		httpHandler(simPort, parser),
 		cgattHandler(simPort, parser, state),
@@ -185,34 +185,34 @@ DataHandler<N>* SimHandler<N>::sendGetRequest(
 
 template<int N>
 void SimHandler<N>::handleReading(){
-	if(!tcpHandler.isConnected()){
-		if(isModuleAlive()){
-			tcpHandler.connect();
-		}else{
-			tcpHandler.reset();
-		}
-	}
+	// if(!tcpHandler.isConnected()){
+		// if(isModuleAlive()){
+			// tcpHandler.connect();
+		// }else{
+			// tcpHandler.reset();
+		// }
+	// }
 	
-	if(tcpHandler.isMessageWaiting()){
+	// if(tcpHandler.isMessageWaiting()){
 		//handle message
-		handleTCPMessage();
-		tcpHandler.clearMessage();
-	}
+		// handleTCPMessage();
+		// tcpHandler.clearMessage();
+	// }
 	
-	if(!wrapper.lazyRead()){
-		return;
-	}
+	// if(!wrapper.lazyRead()){
+		// return;
+	// }
 	
-	reader.handleSwitch();
+	// reader.handleSwitch();
 	
 	//if will contain a message try to read and parse
 	//through UnexpectedHandler
-	if(parser.isPossibleMessage()){
-		reader.read();
-	}
+	// if(parser.isPossibleMessage()){
+		// reader.read();
+	// }
 	
 	//clear possible garbage
-	buffer.clear();
+	// buffer.clear();
 }
 
 
@@ -272,6 +272,34 @@ void SimHandler<N>::doActivity(){
 		}
 	}
 	
+	if(!state.isTCP_Connected()){
+		if(tcpHandler.connect()){
+			return;
+		}
+	}
+	
+	if(state.tcp.hasMessage){
+		handleTCPMessage();
+		return;
+	}
+	
+	
+	
+	if(!wrapper.lazyRead()){
+		return;
+	}
+	
+	reader.handleSwitch();
+	
+	// if will contain a message try to read and parse
+	// through UnexpectedHandler
+	if(parser.isPossibleMessage()){
+		reader.read();
+	}
+	
+	//clear possible garbage
+	buffer.clear();
+	
 }
 
 
@@ -322,6 +350,8 @@ void SimHandler<N>::handleTCPMessage(){
 	while(tmp.readResponce()){
 		handler.handleMessage(buffer, refParams, simPort, parser);
 	}
+	
+	state.tcp.hasMessage = false;
 }
 
 
