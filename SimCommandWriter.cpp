@@ -122,7 +122,7 @@ void SimCommandWriter::writeHTPP(HTTP_COMMANDS cmd){
 void SimCommandWriter::writeHTTPURL(
 					IPAddress& address, 
 					const char* url,
-					bool endCommand = true
+					bool endCommand
 					){
 	refWriter.write("AT+HTTP");	//memory saving
 	refWriter.write("PARA=");
@@ -242,17 +242,25 @@ void SimCommandWriter::writeCIPRXGET(CIPRXGET_COMMAND cmd, int arg){
 }
 
 
-void SimCommandWriter::writeCGATT(bool askForStatus, bool turnOn){
+void SimCommandWriter::writeCGATT(CGATT_COMMANDS cmd){
 	refWriter.write("AT+CGATT");
-	
-	if(askForStatus){
-		refWriter.write('?');
-		refWriter.writeEndOfCommand();
-		return;
+	switch(cmd){
+		case CGATT_COMMANDS_STATUS:
+			refWriter.write('?');
+			refWriter.writeEndOfCommand();
+			return;
+		
+		case CGATT_COMMANDS_ON:
+			refWriter.write('=');
+			refWriter.write(1);
+			break;
+			
+		case CGATT_COMMANDS_OFF:
+			refWriter.write('=');
+			refWriter.write(0);
+			break;
 	}
 	
-	refWriter.write('=');
-	refWriter.write(turnOn ? 1 : 0);
 	refWriter.writeEndOfCommand();
 }
 

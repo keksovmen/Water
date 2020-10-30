@@ -173,6 +173,8 @@ const char* ResultParserStateBase<N>::routeReadType(READ_TYPE type){
 		case READ_TYPE_TCP:
 			return TCP_READ_ANWSER;
 	}
+	
+	return nullptr;	//won't happen
 }
 
 

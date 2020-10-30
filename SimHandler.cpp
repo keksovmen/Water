@@ -26,6 +26,7 @@ SimHandler<N>::SimHandler(
 		tcpHandler(simPort, parser, parameters),
 		gprsHandler(simPort, parser, state), 
 		httpHandler(simPort, parser),
+		cgattHandler(simPort, parser, state),
 		refParams(parameters)
 {
 	reader.attachTCPHandler(&tcpHandler);
@@ -243,6 +244,12 @@ void SimHandler<N>::doActivity(){
 		if(isConnectedToNetwork() != 
 				NETWORK_CONNECTION::REGISTERED){
 			//skip turns and wait until network will be ok
+			return;
+		}
+	}
+	
+	if(!state.health.CGATT_Connection){
+		if(!cgattHandler.connectToCGATT()){
 			return;
 		}
 	}

@@ -221,18 +221,6 @@ bool TCPHandler<N>::connectToGPRS(){
 
 
 template<int N>
-bool TCPHandler<N>::connectToCGATT(){
-	if(askCGATTStatus()){
-		return true;
-	}
-	
-	refPort.writeCGATT(false, true);
-	
-	return readAndExpectSuccess(refPort, refParser, false, 7000);
-}
-
-
-template<int N>
 bool TCPHandler<N>::getMyIp(){
 	refPort.writeGetIpTCP();
 	
@@ -268,39 +256,6 @@ bool TCPHandler<N>::tryToShutConenction(){
 	
 	return true;
 	// return readAndExpectSuccess(refPort, refParser, false, 7000);
-}
-
-
-template<int N>
-int TCPHandler<N>::waitForCGATT(){
-	unsigned long deltaTime = timeStartOfCGATT - millis();
-	unsigned long tmp = deltaTime / 3000;
-	
-	static unsigned long count = 1;
-	
-	if(deltaTime > 68000){
-		return -1;
-		
-	}else if(tmp > 3000 * count){
-		count = tmp + 1;
-		
-		if(askCGATTStatus()){
-			count = 1;
-			return 1;
-		}
-	}
-	
-	return 0;
-}
-
-template<int N>
-bool TCPHandler<N>::askCGATTStatus(){
-	refPort.writeCGATT(true);
-	if(!readAndExpectSuccess(refPort, refParser)){
-		return false;
-	}
-	
-	return refParser.isAttachedToGPRSServices();
 }
 
 

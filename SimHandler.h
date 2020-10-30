@@ -15,6 +15,7 @@
 #include "DataHandler.h"
 #include "HTTPHandler.h"
 #include "TCPHandler.h"
+#include "CgattHandler.h"
 
 
 
@@ -126,6 +127,7 @@ class SimHandler
 		TCPHandler<N> tcpHandler;
 		GPRSHandler<N> gprsHandler;
 		HTTPHandler<N> httpHandler;
+		CgattHandler<N> cgattHandler;
 		
 		ParameterHandler& refParams;
 		

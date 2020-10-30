@@ -49,13 +49,7 @@ class SimCommandWriter : public CommandWriter
 		void writeDenyCall();
 		void writeCIPRXGET(CIPRXGET_COMMAND cmd, int arg = 0);
 		void writeCIPSEND();
-		
-		/**
-			@param askForStatus true if whant to know current status
-			@param turnOn true if won to try to attach to GPRS services
-		*/
-		
-		void writeCGATT(bool askForStatus, bool turnOn = true);
+		void writeCGATT(CGATT_COMMANDS cmd);
 		void writeCSTT(const char* apn);
 		void writeCIICR();
 		void writeCIPSTATUS();

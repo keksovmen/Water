@@ -52,11 +52,6 @@ class TCPHandler
 		bool getMyIp();
 		bool connecToServer();
 		bool tryToShutConenction();
-		
-		bool connectToCGATT();
-		int waitForCGATT();
-		
-		bool askCGATTStatus();
 		bool askStatus();
 		void tryUpdateState();
 		
