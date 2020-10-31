@@ -1,6 +1,7 @@
 #pragma once
 #include "Enums.h"
 #include "LongCommandHandler.h"
+#include "TimeHandler.h"
 
 
 struct SimState
@@ -37,8 +38,11 @@ struct SimState
 	
 	bool isReadyEncountered = false;
 	unsigned long readyTimeEncountered = 0;
+	TimeHandler timer;
 	
 	
+	
+	/*-----------------FUNCTIONS--------------------*/
 	
 	bool isMinimumEstablished(){
 		return health.cpin && health.networkRegistration;
@@ -75,5 +79,29 @@ struct SimState
 	void diedCGATT(){
 		tcp.state = TCP_STATE_PDP_DEACT;
 		health.CGATT_Connection = false;
+	}
+	
+	
+	void reset(){
+		health = StateHealth();
+		health.defaultsAreSet = true;
+		
+		// http = StateHTTP();
+		tcp.state = TCP_STATE_UNDEFINIED;
+		
+	}
+	
+	
+	void setDefault(){
+		health = StateHealth();
+		http = StateHTTP();
+		tcp = StateTCP();
+		longCmd = StateLongCommand();
+	}
+	
+	
+	void readyDetected(){
+		setDefault();
+		timer.sheduleDelay(7000);
 	}
 };

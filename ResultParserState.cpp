@@ -80,9 +80,11 @@ bool ResultParserStateBase<N>::isReadMessageFull(READ_TYPE type){
  
  template<int N>
 bool ResultParserStateBase<N>::checkError(){
-	int index = this->refBuffer.indexOfEnd("+CME ERROR: ");
+	int index = this->refBuffer.indexOfEnd(TEXT_CME_ERROR);
 	if(this->refBuffer.indexOfFrom(index, END_LINE) != -1){
-		lastErrorCode = atoi(&this->refBuffer[index + 11]);
+		index += strlen(TEXT_CME_ERROR);
+		lastErrorCode = atoi(&this->refBuffer[index]);
+		
 		return true;
 	}
 	

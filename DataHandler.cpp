@@ -22,6 +22,7 @@ DataHandler<N>::DataHandler(	SimResultParser<N>& parser,
 template<int N>
 bool DataHandler<N>::send(){
 	refState.setLongCmd(this);
+	return false;
 }
 
 

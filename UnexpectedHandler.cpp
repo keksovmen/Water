@@ -77,6 +77,10 @@ void UnexpectedHandler<N>::handleSwitch(){
 		refState.diedGPRS();
 	}
 	
+	if(refBuffer.remove(TEXT_RDY)){
+		refState.readyDetected();
+	}
+	
 	
 	if(tcpHandler){
 		if(refBuffer.remove(TCP_CONNECTE_OK)){
@@ -88,6 +92,12 @@ void UnexpectedHandler<N>::handleSwitch(){
 		}
 		
 		if(refBuffer.remove(TCP_CONNECT_FAIL)){
+			//there will be also \r\nSTATE: TCP CLOSED\r\n
+			int index = refBuffer.indexOf("\r\nSTATE: ");
+			int endIndex = refBuffer.indexOfFrom(index + 2, END_LINE);
+			int amount = (endIndex - index) + strlen(END_LINE);
+			refBuffer.remove(index, amount);
+			
 			refState.tcp.state = TCP_STATE_CLOSED;
 		}
 		

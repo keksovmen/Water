@@ -50,7 +50,13 @@ bool SimHandler<N>::isModuleAlive(){
 	bool result = readAndExpectSuccess(reader, parser);
 	if(result){
 		result = parser.isPinRdy();
+	}else{
+		//if sim currently bussy doing initialisation
+		if(parser.getLastError() == CME_ERROR_SIM_BUSSY){
+			state.timer.sheduleDelay(5000);
+		}
 	}
+	
 	
 	buffer.clear();
 	
@@ -219,6 +225,10 @@ void SimHandler<N>::handleReading(){
 //TODO: Cut into bool functions big blocks of handling
 template<int N>
 void SimHandler<N>::doActivity(){
+	if(!state.timer.isOpen()){
+		goto B;
+	}
+	
 	if(handleLongMessages()){
 		return;	//currently waiting for anwser
 	}
@@ -284,7 +294,7 @@ void SimHandler<N>::doActivity(){
 	}
 	
 	
-	
+	B:
 	if(!wrapper.lazyRead()){
 		return;
 	}

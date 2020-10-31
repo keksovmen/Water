@@ -9,6 +9,8 @@ const static char* DIGIT_COMPLEX_ERROR = "\r\n4\r\n";
 
 const static char* TEXT_SUCCESS = "\r\nOK\r\n";
 const static char* TEXT_ERROR = "\r\nERROR\r\n";
+const static char* TEXT_CME_ERROR = "+CME ERROR: ";
+const static char* TEXT_RDY = "\r\nRDY\r\n";
 
 const static char* END_LINE = "\r\n";
 
@@ -36,4 +38,5 @@ const static char* TCP_SEND_FAIL = "\r\nSEND FAIL\r\n";
 
 const static char* PDP_DEACT = "\r\n+PDP: DEACT\r\n";
 const static char* SAPBR_DEACT = "\r\n+SAPBR 1: DEACT\r\n";
+
 
