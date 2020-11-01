@@ -1,20 +1,14 @@
 #pragma once
 
 #include "LongCommandHandler.h"
-#include "SimCommandPort.h"
-#include "SimResultParser.h"
-#include "SimState.h"
+#include "SimTools.h"
 #include "Constants.h"
 
 
 class CgattHandler : public LongCommandHandler
 {
 	public:
-		CgattHandler(
-				SimCommandPort& port, 
-				SimResultParser& parser,
-				SimState& state
-				);
+		CgattHandler(SimTools& tools);
 				
 		bool handle() override;
 		
@@ -32,8 +26,6 @@ class CgattHandler : public LongCommandHandler
 		bool askCGATTStatus();
 		
 		
-		SimCommandPort& refPort; 
-		SimResultParser& refParser;
-		SimState& refState;
+		SimTools& refTools;
 	
 };

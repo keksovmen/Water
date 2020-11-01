@@ -20,13 +20,12 @@ SimHandler<N>::SimHandler(
 				ParameterHandler& parameters
 				) :
 		wrapper(refPort, buffer), 
-		reader(buffer, wrapper, state),
-		parser(buffer), 
-		simPort(wrapper, reader),
-		tcpHandler(simPort, parser, parameters, state),
-		gprsHandler(simPort, parser, state), 
-		httpHandler(simPort, parser, state),
-		cgattHandler(simPort, parser, state),
+		reader(buffer, wrapper, tools.state),
+		tools(wrapper, reader, buffer),
+		gprsHandler(tools), 
+		cgattHandler(tools),
+		httpHandler(tools),
+		tcpHandler(tools, parameters),
 		refParams(parameters)
 {
 	reader.attachTCPHandler(&tcpHandler);
@@ -34,9 +33,9 @@ SimHandler<N>::SimHandler(
 
 template<int N>
 bool SimHandler<N>::isModuleUp(){
-	simPort.writeAT();
+	tools.simPort.writeAT();
 	
-	bool result = readAndExpectSuccess(reader, parser);
+	bool result = readAndExpectSuccess(reader, tools.parser);
 	buffer.clear();
 	
 	return result;
@@ -45,22 +44,22 @@ bool SimHandler<N>::isModuleUp(){
 
 template<int N>
 bool SimHandler<N>::isModuleAlive(){
-	simPort.writeCPIN();
+	tools.simPort.writeCPIN();
 	
-	bool result = readAndExpectSuccess(reader, parser);
+	bool result = readAndExpectSuccess(reader, tools.parser);
 	if(result){
-		result = parser.isPinRdy();
+		result = tools.parser.isPinRdy();
 	}else{
 		//if sim currently bussy doing initialisation
-		if(parser.getLastError() == CME_ERROR_SIM_BUSSY){
-			state.timer.sheduleDelay(5000);
+		if(tools.parser.getLastError() == CME_ERROR_SIM_BUSSY){
+			tools.state.timer.sheduleDelay(5000);
 		}
 	}
 	
 	
 	buffer.clear();
 	
-	state.health.cpin = result;
+	tools.state.health.cpin = result;
 	return result;
 }
 
@@ -85,18 +84,18 @@ bool SimHandler<N>::isModuleAlive(){
 
 template<int N>
 NETWORK_CONNECTION SimHandler<N>::isConnectedToNetwork(){
-	simPort.writeCREG();
+	tools.simPort.writeCREG();
 	
 	NETWORK_CONNECTION status = NETWORK_CONNECTION::UNKNOWN;
-	if(readAndExpectSuccess(reader, parser, true)){
+	if(readAndExpectSuccess(reader, tools.parser, true)){
 		//if minimum time has passed and there is still no anwser
 		status = static_cast<NETWORK_CONNECTION>(
-					parser.fetchNetworkRegistration()
+					tools.parser.fetchNetworkRegistration()
 					);
 	}
 	
 	buffer.clear();
-	state.health.networkRegistration = status == REGISTERED;
+	tools.state.health.networkRegistration = status == REGISTERED;
 	return status;
 }
 
@@ -110,7 +109,7 @@ bool SimHandler<N>::setDefaultParams(){
 	if(!tryToSetDefaultParam(1)){
 		return false;
 	}
-	parser.setState(PARSER_STATE_TEXT);
+	tools.parser.setState(PARSER_STATE_TEXT);
 	
 	if(!tryToSetDefaultParam(2)){
 		return false;
@@ -163,7 +162,7 @@ DataHandler* SimHandler<N>::sendPostRequest(
 	if(httpHandler.initPostRequest(address, url, dataLength)){
 		buffer.clear();
 		return new(dynamicMemory) 
-				PostDataHandler(parser, simPort, buffer, state);
+				PostDataHandler(tools.parser, tools.simPort, buffer, tools.state);
 	}
 	
 	buffer.clear();
@@ -180,7 +179,7 @@ DataHandler* SimHandler<N>::sendGetRequest(
 	if(httpHandler.initGetRequest(address, url)){
 		buffer.clear();
 		return new(dynamicMemory)
-				GetDataHandler(parser, simPort, buffer, state);
+				GetDataHandler(tools.parser, tools.simPort, buffer, tools.state);
 	}
 	
 	buffer.clear();
@@ -213,7 +212,7 @@ void SimHandler<N>::handleReading(){
 	
 	//if will contain a message try to read and parse
 	//through UnexpectedHandler
-	// if(parser.isPossibleMessage()){
+	// if(tools.parser.isPossibleMessage()){
 		// reader.read();
 	// }
 	
@@ -225,7 +224,7 @@ void SimHandler<N>::handleReading(){
 //TODO: Cut into bool functions big blocks of handling
 template<int N>
 void SimHandler<N>::doActivity(){
-	if(!state.timer.isOpen()){
+	if(!tools.state.timer.isOpen()){
 		goto B;
 	}
 	
@@ -233,20 +232,20 @@ void SimHandler<N>::doActivity(){
 		return;	//currently waiting for anwser
 	}
 	
-	if(!state.health.defaultsAreSet){
+	if(!tools.state.health.defaultsAreSet){
 		if(!isModuleUp()){
 			return;
 		}
 		
 		if(setDefaultParams()){
-			state.health.defaultsAreSet = true;
+			tools.state.health.defaultsAreSet = true;
 		}else{
 			return;
 		}
 	}
 	
-	if(!state.isMinimumEstablished()){
-		if(!state.health.cpin && !isModuleAlive()){
+	if(!tools.state.isMinimumEstablished()){
+		if(!tools.state.health.cpin && !isModuleAlive()){
 			//skip turns and wait until sim will be ok
 			return;
 		}
@@ -258,15 +257,15 @@ void SimHandler<N>::doActivity(){
 		}
 	}
 	
-	if(!state.health.CGATT_Connection){
+	if(!tools.state.health.CGATT_Connection){
 		if(!cgattHandler.connectToCGATT()){
 			return;
 		}
 	}
 	
-	if(!state.isGPRS_Connected()){
+	if(!tools.state.isGPRS_Connected()){
 		A:
-		switch(state.health.GPRS_Connection){
+		switch(tools.state.health.GPRS_Connection){
 			case GPRS_UNDEFINIED:
 				if(gprsHandler.isConnected() != GPRS_UNDEFINIED){
 					goto A;
@@ -282,13 +281,13 @@ void SimHandler<N>::doActivity(){
 		}
 	}
 	
-	if(!state.isTCP_Connected()){
+	if(!tools.state.isTCP_Connected()){
 		if(tcpHandler.connect()){
 			return;
 		}
 	}
 	
-	if(state.tcp.hasMessage){
+	if(tools.state.tcp.hasMessage){
 		handleTCPMessage();
 		return;
 	}
@@ -303,7 +302,7 @@ void SimHandler<N>::doActivity(){
 	
 	// if will contain a message try to read and parse
 	// through UnexpectedHandler
-	if(parser.isPossibleMessage()){
+	if(tools.parser.isPossibleMessage()){
 		reader.read();
 	}
 	
@@ -317,19 +316,19 @@ template<int N>
 void SimHandler<N>::writeDefaultParam(int id){
 	switch(id){
 		case 0:
-			simPort.writeEcho(false);
+			tools.simPort.writeEcho(false);
 			break;
 		case 1:
-			simPort.writeNumberFormat(false);
+			tools.simPort.writeNumberFormat(false);
 			break;
 		case 2:
-			simPort.writeCallReady(false);
+			tools.simPort.writeCallReady(false);
 			break;
 		case 3:
-			simPort.writeReportAsError(true);
+			tools.simPort.writeReportAsError(true);
 			break;
 		case 4:
-			simPort.writeIPR(115200);
+			tools.simPort.writeIPR(115200);
 			break;
 		
 		default : Serial.println("MISSID ID");
@@ -342,9 +341,9 @@ bool SimHandler<N>::tryToSetDefaultParam(int id){
 	bool result = true;
 	
 	writeDefaultParam(id);
-	if(readAndGetCode(reader, parser) == ANWSER_CODES::UNDEFINED){
+	if(readAndGetCode(reader, tools.parser) == ANWSER_CODES::UNDEFINED){
 		writeDefaultParam(id);
-		result = readAndExpectSuccess(reader, parser);
+		result = readAndExpectSuccess(reader, tools.parser);
 	}
 	
 	
@@ -358,28 +357,28 @@ void SimHandler<N>::handleTCPMessage(){
 	auto tmp = tcpHandler.readMessage(buffer);
 	TCPIncomingHandler handler;
 	while(tmp.readResponce()){
-		handler.handleMessage(buffer, refParams, simPort, parser);
+		handler.handleMessage(buffer, refParams, tools.simPort, tools.parser);
 	}
 	
-	state.tcp.hasMessage = false;
+	tools.state.tcp.hasMessage = false;
 }
 
 
 template<int N>
 bool SimHandler<N>::handleLongMessages(){
-	if(state.longCmd.cmdHandler){
-		if(state.longCmd.isAnwserReady){
-			if(state.longCmd.cmdHandler->handle()){
-				state.setLongCmd();	//longCmd to initial state
+	if(tools.state.longCmd.cmdHandler){
+		if(tools.state.longCmd.isAnwserReady){
+			if(tools.state.longCmd.cmdHandler->handle()){
+				tools.state.setLongCmd();	//longCmd to initial tools.state
 				reader.handleSwitch();
 				return false;
 			}else{
-				state.longCmd.isAnwserReady = false;
+				tools.state.longCmd.isAnwserReady = false;
 				return true;
 			}
 		}else{
 			if(wrapper.lazyRead()){
-				state.longCmd.isAnwserReady = true;
+				tools.state.longCmd.isAnwserReady = true;
 				return handleLongMessages();
 			}
 		}

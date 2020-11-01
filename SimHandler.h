@@ -5,17 +5,15 @@
 #include "Enums.h"
 #include "Constants.h"
 #include "ParameterHandler.h"
-#include "SimState.h"
 #include "Buffer/FixedBuffer.h"
 #include "SimIOWrapper.h"
-#include "SimResultParser.h"
 #include "UnexpectedHandler.h"
-#include "SimCommandPort.h"
+#include "SimTools.h"
 #include "GPRSHandler.h"
-#include "DataHandler.h"
+#include "CgattHandler.h"
 #include "HTTPHandler.h"
 #include "TCPHandler.h"
-#include "CgattHandler.h"
+#include "DataHandler.h"
 
 
 
@@ -118,16 +116,15 @@ class SimHandler
 		void handleTCPMessage();
 		bool handleLongMessages();
 		
-		SimState state;
+
 		FixedBuffer<N> buffer;
 		SimIOWrapper wrapper;
 		UnexpectedHandler reader;
-		SimResultParser parser;
-		SimCommandPort simPort;
-		TCPHandler tcpHandler;
+		SimTools tools;
 		GPRSHandler gprsHandler;
-		HTTPHandler httpHandler;
 		CgattHandler cgattHandler;
+		HTTPHandler httpHandler;
+		TCPHandler tcpHandler;
 		
 		ParameterHandler& refParams;
 		

@@ -20,3 +20,4 @@ bool lazyRead() as super class method ???
 			recieve result
 20	-	Check unsigned long SMALL - same but BIG. Will
 			return delta time?
+21	-	Remove all template params and pass buffer to SimHandler

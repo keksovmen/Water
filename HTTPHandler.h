@@ -1,10 +1,8 @@
 #pragma once
 
 #include <IPAddress.h>
-#include "SimCommandPort.h"
-#include "SimResultParser.h"
+#include "SimTools.h"
 #include "Constants.h"
-#include "SimState.h"
 
 
 /**
@@ -19,10 +17,7 @@
 class HTTPHandler
 {
 	public:
-		HTTPHandler(	SimCommandPort& simPort,
-						SimResultParser& parser,
-						SimState& state
-						);
+		HTTPHandler(SimTools& tools);
 		
 		/**
 			Tries to initiate POST session
@@ -50,8 +45,6 @@ class HTTPHandler
 		bool terminateSession();
 		
 		
-		SimCommandPort& refPort;
-		SimResultParser& refParser;
-		SimState& refState;
+		SimTools& refTools;
 	
 };

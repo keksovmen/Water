@@ -1,32 +1,22 @@
 #include "CgattHandler.h"
-#include "Util.h"
-#include "Enums.h"
 
 
 
-
-CgattHandler::CgattHandler(
-				SimCommandPort& port, 
-				SimResultParser& parser,
-				SimState& state
-				):
-	refPort(port), refParser(parser),
-	refState(state)
+CgattHandler::CgattHandler(SimTools& tools):
+	refTools(tools)
 {
 	
 }
 
 
-
-
-
 bool CgattHandler::handle(){
-	if(!refParser.isSimpleMessageReady()){
+	//TODO: made single method for only text check, fuck digit
+	if(!refTools.parser.isSimpleMessageReady()){
 		return false;
 	}
 	
-	if(refParser.fetchResultCode() == OK){
-		refState.health.CGATT_Connection = true;
+	if(refTools.parser.fetchResultCode() == OK){
+		refTools.state.health.CGATT_Connection = true;
 	}
 	
 	return true;
@@ -39,8 +29,8 @@ bool CgattHandler::connectToCGATT(){
 		return true;
 	}
 	
-	refPort.writeCGATT(CGATT_COMMANDS_ON);
-	refState.setLongCmd(this);
+	refTools.simPort.writeCGATT(CGATT_COMMANDS_ON);
+	refTools.state.setLongCmd(this);
 	
 	return false;
 }
@@ -48,13 +38,13 @@ bool CgattHandler::connectToCGATT(){
 
 
 bool CgattHandler::askCGATTStatus(){
-	refPort.writeCGATT(CGATT_COMMANDS_STATUS);
-	if(!readAndExpectSuccess(refPort, refParser)){
+	refTools.simPort.writeCGATT(CGATT_COMMANDS_STATUS);
+	if(!refTools.readAndExpectSuccess()){
 		return false;
 	}
 	
-	bool result = refParser.isAttachedToGPRSServices();
-	refState.health.CGATT_Connection = result;
+	bool result = refTools.parser.isAttachedToGPRSServices();
+	refTools.state.health.CGATT_Connection = result;
 	
 	return result;
 }

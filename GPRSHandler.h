@@ -1,7 +1,6 @@
 #pragma once
 
-#include "SimCommandPort.h"
-#include "SimResultParser.h"
+#include "SimTools.h"
 #include "Constants.h"
 #include "SimState.h"
 #include "LongCommandHandler.h"
@@ -15,10 +14,7 @@
 class GPRSHandler : public LongCommandHandler
 {
 	public:
-		GPRSHandler(	SimCommandPort& simPort,
-						SimResultParser& parser,
-						SimState& state
-						);
+		GPRSHandler(SimTools& tools);
 		
 		
 		bool handle() override;
@@ -58,9 +54,7 @@ class GPRSHandler : public LongCommandHandler
 		//short cut for connect() method
 		int retriveStatus();
 	
-		SimCommandPort& refPort;
-		SimResultParser& refParser;
-		SimState& refState;
+		SimTools& refTools;
 		
 		bool lastCommandOpen;
 		

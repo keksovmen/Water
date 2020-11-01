@@ -7,13 +7,10 @@
 
 
 TCPHandler::TCPHandler(
-				SimCommandPort& simPort,
-				SimResultParser& parser,
-				ParameterHandler& parameters,
-				SimState& state
+				SimTools& tools,
+				ParameterHandler& parameters
 				) :
-	refPort(simPort), refParser(parser),
-	refParameters(parameters), refState(state)
+	refTools(tools), refParameters(parameters)
 {
 	
 }
@@ -22,11 +19,11 @@ TCPHandler::TCPHandler(
 
 bool TCPHandler::handle(){
 	if(isLastCommandCIICR){
-		if(refParser.isSimpleMessageReady()){
-			if(refParser.fetchResultCode() == OK){
-				refState.tcp.state = TCP_STATE_IP_GPRS_ACT;
+		if(refTools.parser.isSimpleMessageReady()){
+			if(refTools.parser.fetchResultCode() == OK){
+				refTools.state.tcp.state = TCP_STATE_IP_GPRS_ACT;
 			}else{
-				refState.tcp.state = TCP_STATE_UNDEFINIED;
+				refTools.state.tcp.state = TCP_STATE_UNDEFINIED;
 			}
 			
 			return true;
@@ -34,17 +31,17 @@ bool TCPHandler::handle(){
 		
 		return false;
 	}else{
-		if(refParser.containShut()){
-			refState.tcp.state = TCP_STATE_INITIAL;
+		if(refTools.parser.containShut()){
+			refTools.state.tcp.state = TCP_STATE_INITIAL;
 			return true;
 		}else{
 			//check if there is ERROR if no return false
 			ANWSER_CODES code = static_cast<ANWSER_CODES>(
-							refParser.fetchResultCode()
+							refTools.parser.fetchResultCode()
 							);
 			switch(code){
 				case ERROR:
-					refState.tcp.state = TCP_STATE_UNDEFINIED;
+					refTools.state.tcp.state = TCP_STATE_UNDEFINIED;
 					return true;
 					
 				default: return false;
@@ -56,17 +53,17 @@ bool TCPHandler::handle(){
 
 
 bool TCPHandler::connect(){
-	switch(refState.tcp.state){
+	switch(refTools.state.tcp.state){
 		case TCP_STATE_INITIAL :
 			if(handleInitial()){
-				refState.tcp.state = TCP_STATE_IP_START;
+				refTools.state.tcp.state = TCP_STATE_IP_START;
 			}
 			
 			break;
 			
 		case TCP_STATE_IP_START: 
 			if(handleIpStart()){
-				refState.tcp.state = TCP_STATE_IP_CONFIG;
+				refTools.state.tcp.state = TCP_STATE_IP_CONFIG;
 				return true;
 			}
 			
@@ -79,22 +76,22 @@ bool TCPHandler::connect(){
 			
 		case TCP_STATE_IP_GPRS_ACT: 
 			if(handleGPRSAct()){
-				refState.tcp.state = TCP_STATE_IP_STATUS;
+				refTools.state.tcp.state = TCP_STATE_IP_STATUS;
 			}else{
-				refState.tcp.state = TCP_STATE_UNDEFINIED;
+				refTools.state.tcp.state = TCP_STATE_UNDEFINIED;
 			}
 			break;
 			
 		case TCP_STATE_IP_STATUS:
 			if(handleIpStatus()){
 				//fix when UnexpectedHandler sets state of greater power
-				if(refState.tcp.state == TCP_STATE_CONNECTED){
+				if(refTools.state.tcp.state == TCP_STATE_CONNECTED){
 					break;
 				}
 				
-				refState.tcp.state = TCP_STATE_CONNECTING;
+				refTools.state.tcp.state = TCP_STATE_CONNECTING;
 			}else{
-				refState.tcp.state = TCP_STATE_UNDEFINIED;
+				refTools.state.tcp.state = TCP_STATE_UNDEFINIED;
 			}
 			break;
 			
@@ -111,7 +108,7 @@ bool TCPHandler::connect(){
 			break;
 		
 		case TCP_STATE_CLOSED:
-			refState.tcp.state = TCP_STATE_IP_STATUS;
+			refTools.state.tcp.state = TCP_STATE_IP_STATUS;
 			break;
 			
 		case TCP_STATE_PDP_DEACT:
@@ -121,7 +118,7 @@ bool TCPHandler::connect(){
 			break;
 			
 		case TCP_STATE_UNDEFINIED:
-			refState.tcp.state = handleUndefinied();
+			refTools.state.tcp.state = handleUndefinied();
 			break;
 	}
 	
@@ -131,47 +128,47 @@ bool TCPHandler::connect(){
 
 
 TCPReader TCPHandler::readMessage(FixedBufferBase& buffer){
-	refPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_INFO);
+	refTools.simPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_INFO);
 	int length = 0;
 	
-	if(readAndExpectSuccess(refPort, refParser)){
-		length = refParser.parseRxGetLength();
+	if(refTools.readAndExpectSuccess()){
+		length = refTools.parser.parseRxGetLength();
 	}else{
 		Serial.println("ERROR NO ANWSER FROM LENGTH");
 	}
 	
-	return TCPReader(refParser, refPort, buffer, length);
+	return TCPReader(refTools.parser, refTools.simPort, buffer, length);
 }
 
 
 
 bool TCPHandler::handleInitial(){
-	refPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_MODE);
+	refTools.simPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_MODE);
 	bool currentStatus = false;
 	
-	if(readAndExpectSuccess(refPort, refParser)){
-		currentStatus = refParser.fetchRxGetStatus();
+	if(refTools.readAndExpectSuccess()){
+		currentStatus = refTools.parser.fetchRxGetStatus();
 	}else{
 		return false;
 	}
 	
 	if(!currentStatus){
-		refPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_ON);
-		if(!readAndExpectSuccess(refPort, refParser)){
+		refTools.simPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_ON);
+		if(!refTools.readAndExpectSuccess()){
 			return false;
 		}
 	}
 	
-	refPort.writeCSTT("internet");	//take from params
+	refTools.simPort.writeCSTT("internet");	//take from params
 	
-	return readAndExpectSuccess(refPort, refParser);
+	return refTools.readAndExpectSuccess();
 }
 
 
 
 bool TCPHandler::handleIpStart(){
-	refPort.writeCIICR();
-	refState.longCmd.cmdHandler = this;
+	refTools.simPort.writeCIICR();
+	refTools.state.longCmd.cmdHandler = this;
 	isLastCommandCIICR = true;
 	
 	return true;
@@ -180,26 +177,26 @@ bool TCPHandler::handleIpStart(){
 
 
 bool TCPHandler::handleGPRSAct(){
-	refPort.writeGetIpTCP();
-	return readAndExpectSuccess(refPort, refParser);
+	refTools.simPort.writeGetIpTCP();
+	return refTools.readAndExpectSuccess();
 }
 
 
 
 bool TCPHandler::handleIpStatus(){
-	refPort.writeCIPSTART(
+	refTools.simPort.writeCIPSTART(
 			refParameters.getAddress().getValue(),
 			8188
 			);
 	
-	return readAndExpectSuccess(refPort, refParser);
+	return refTools.readAndExpectSuccess();
 }
 
 
 
 bool TCPHandler::handlePDPDeact(){
-	refPort.writeCIPSHUT();
-	refState.longCmd.cmdHandler = this;
+	refTools.simPort.writeCIPSHUT();
+	refTools.state.longCmd.cmdHandler = this;
 	isLastCommandCIICR = false;
 	
 	return true;
@@ -208,9 +205,9 @@ bool TCPHandler::handlePDPDeact(){
 
 
 TCP_STATE TCPHandler::handleUndefinied(){
-	refPort.writeCIPSTATUS();
-	if(readAndExpectSuccess(refPort, refParser)){
-		return refParser.fetchTCPState();
+	refTools.simPort.writeCIPSTATUS();
+	if(refTools.readAndExpectSuccess()){
+		return refTools.parser.fetchTCPState();
 	}
 	
 	return TCP_STATE_UNDEFINIED;

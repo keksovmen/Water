@@ -1,16 +1,10 @@
 #include "HTTPHandler.h"
 #include "Util.h"
-#include "Enums.h"
 
 
 
-HTTPHandler::HTTPHandler(
-			SimCommandPort& simPort,
-			SimResultParser& parser,
-			SimState& state
-			) :
-	refPort(simPort), refParser(parser),
-	refState(state)
+HTTPHandler::HTTPHandler(SimTools& tools) :
+	refTools(tools)
 {
 	
 	
@@ -49,22 +43,22 @@ bool HTTPHandler::initGetRequest(IPAddress& address, const char* url){
 
 
 bool HTTPHandler::initSession(){
-	if(refState.http.isBussy){
+	if(refTools.state.http.isBussy){
 		return false;
 	}
 	
-	refPort.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
-	ANWSER_CODES code = readAndGetCode(refPort, refParser);
+	refTools.simPort.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
+	ANWSER_CODES code = refTools.readAndGetCode();
 	switch (code){
 		case OK:
-			refState.http.isBussy = true;
+			refTools.state.http.isBussy = true;
 			return true;
 		
 		case ERROR:
 		case UNDEFINED:
 			if(terminateSession()){
-				refPort.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
-				return readAndExpectSuccess(refPort, refParser);
+				refTools.simPort.writeHTPP(HTTP_INIT);
+				return refTools.readAndExpectSuccess();
 			}else{
 				return false;
 			}
@@ -77,33 +71,33 @@ bool HTTPHandler::initSession(){
 
 
 bool HTTPHandler::setPostURL(IPAddress& address, const char* url){
-	refPort.writeHTTPURL(address, url);
-	return readAndExpectSuccess(refPort, refParser);
+	refTools.simPort.writeHTTPURL(address, url);
+	return refTools.readAndExpectSuccess();
 }
 
 
 void HTTPHandler::setGetURL(IPAddress& address, const char* url){
-	refPort.writeHTTPURL(address, url, false);
+	refTools.simPort.writeHTTPURL(address, url, false);
 }
 
 
 bool HTTPHandler::setContentForPHP(){
-	refPort.writeHTPPSetParam("CONTENT", "application/x-www-form-urlencoded");
-	return readAndExpectSuccess(refPort, refParser);
+	refTools.simPort.writeHTPPSetParam("CONTENT", "application/x-www-form-urlencoded");
+	return refTools.readAndExpectSuccess();
 }
 
 
 bool HTTPHandler::startDataTransmition(int dataLength){
-	refPort.writeHTPPData(dataLength);
-	if(!refPort.read()){
+	refTools.simPort.writeHTPPData(dataLength);
+	if(!refTools.simPort.read()){
 		return false;
 	}
 	
-	if(!refParser.containDownload()){
-		if(!refPort.read()){
+	if(!refTools.parser.containDownload()){
+		if(!refTools.simPort.read()){
 			return false;
 		}
-		if(!refParser.containDownload()){
+		if(!refTools.parser.containDownload()){
 			return false;
 		}
 	}
@@ -114,6 +108,6 @@ bool HTTPHandler::startDataTransmition(int dataLength){
 
 
 bool HTTPHandler::terminateSession(){
-	refPort.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
-	return readAndExpectSuccess(refPort, refParser);
+	refTools.simPort.writeHTPP(HTTP_TERM);
+	return refTools.readAndExpectSuccess();
 }
