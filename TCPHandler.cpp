@@ -5,10 +5,10 @@
 
 
 
-template<int N>
-TCPHandler<N>::TCPHandler(
+
+TCPHandler::TCPHandler(
 				SimCommandPort& simPort,
-				SimResultParser<N>& parser,
+				SimResultParser& parser,
 				ParameterHandler& parameters,
 				SimState& state
 				) :
@@ -19,8 +19,8 @@ TCPHandler<N>::TCPHandler(
 }
 
 
-template<int N>
-bool TCPHandler<N>::handle(){
+
+bool TCPHandler::handle(){
 	if(isLastCommandCIICR){
 		if(refParser.isSimpleMessageReady()){
 			if(refParser.fetchResultCode() == OK){
@@ -54,8 +54,8 @@ bool TCPHandler<N>::handle(){
 }
 
 
-template<int N>
-bool TCPHandler<N>::connect(){
+
+bool TCPHandler::connect(){
 	switch(refState.tcp.state){
 		case TCP_STATE_INITIAL :
 			if(handleInitial()){
@@ -129,8 +129,8 @@ bool TCPHandler<N>::connect(){
 }
 
 
-template<int N>
-TCPReader<N> TCPHandler<N>::readMessage(FixedBuffer<N> buffer){
+
+TCPReader TCPHandler::readMessage(FixedBufferBase& buffer){
 	refPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_INFO);
 	int length = 0;
 	
@@ -140,12 +140,12 @@ TCPReader<N> TCPHandler<N>::readMessage(FixedBuffer<N> buffer){
 		Serial.println("ERROR NO ANWSER FROM LENGTH");
 	}
 	
-	return TCPReader<N>(refParser, refPort, buffer, length);
+	return TCPReader(refParser, refPort, buffer, length);
 }
 
 
-template<int N>
-bool TCPHandler<N>::handleInitial(){
+
+bool TCPHandler::handleInitial(){
 	refPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_MODE);
 	bool currentStatus = false;
 	
@@ -168,8 +168,8 @@ bool TCPHandler<N>::handleInitial(){
 }
 
 
-template<int N>
-bool TCPHandler<N>::handleIpStart(){
+
+bool TCPHandler::handleIpStart(){
 	refPort.writeCIICR();
 	refState.longCmd.cmdHandler = this;
 	isLastCommandCIICR = true;
@@ -178,15 +178,15 @@ bool TCPHandler<N>::handleIpStart(){
 }
 
 
-template<int N>
-bool TCPHandler<N>::handleGPRSAct(){
+
+bool TCPHandler::handleGPRSAct(){
 	refPort.writeGetIpTCP();
 	return readAndExpectSuccess(refPort, refParser);
 }
 
 
-template<int N>
-bool TCPHandler<N>::handleIpStatus(){
+
+bool TCPHandler::handleIpStatus(){
 	refPort.writeCIPSTART(
 			refParameters.getAddress().getValue(),
 			8188
@@ -196,8 +196,8 @@ bool TCPHandler<N>::handleIpStatus(){
 }
 
 
-template<int N>
-bool TCPHandler<N>::handlePDPDeact(){
+
+bool TCPHandler::handlePDPDeact(){
 	refPort.writeCIPSHUT();
 	refState.longCmd.cmdHandler = this;
 	isLastCommandCIICR = false;
@@ -206,8 +206,8 @@ bool TCPHandler<N>::handlePDPDeact(){
 }
 
 
-template<int N>
-TCP_STATE TCPHandler<N>::handleUndefinied(){
+
+TCP_STATE TCPHandler::handleUndefinied(){
 	refPort.writeCIPSTATUS();
 	if(readAndExpectSuccess(refPort, refParser)){
 		return refParser.fetchTCPState();

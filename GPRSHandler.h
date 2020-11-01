@@ -12,12 +12,11 @@
 
 */
 
-template<int N>
 class GPRSHandler : public LongCommandHandler
 {
 	public:
 		GPRSHandler(	SimCommandPort& simPort,
-						SimResultParser<N>& parser,
+						SimResultParser& parser,
 						SimState& state
 						);
 		
@@ -60,12 +59,10 @@ class GPRSHandler : public LongCommandHandler
 		int retriveStatus();
 	
 		SimCommandPort& refPort;
-		SimResultParser<N>& refParser;
+		SimResultParser& refParser;
 		SimState& refState;
 		
 		bool lastCommandOpen;
 		
 		
 };
-
-template class GPRSHandler<FIXED_BUFFER_SIZE>;

@@ -1,4 +1,7 @@
 #pragma once
+
+#include "FixedBufferBase.h"
+
 #ifdef ARDUINO
 	#include <Arduino.h>
 #else
@@ -15,10 +18,10 @@
 */
 
 template<int N>
-class FixedBuffer
+class FixedBuffer : public FixedBufferBase
 {
 	public:
-		char& operator[] (int index){return data[index];}
+		char& operator[] (int index) override{return data[index];}
 		
 		
 		/**
@@ -26,7 +29,7 @@ class FixedBuffer
 			Will put null terminator at the end
 		*/
 		
-		FixedBuffer& operator+= (char c){
+		FixedBufferBase& operator+= (char c) override{
 			data[length] = c;
 			length++;
 			data[length] = '\0';
@@ -38,7 +41,7 @@ class FixedBuffer
 			Basicly remove last character
 		*/
 		
-		FixedBuffer& operator--(int){
+		FixedBufferBase& operator--(int) override{
 			if(length <= 0)
 				return *this;
 			
@@ -49,18 +52,18 @@ class FixedBuffer
 		
 		
 		//Iterators
-		char* begin(){return data;}
-		char* end(){return &data[length];}
+		char* begin() override{return data;}
+		char* end() override{return &data[length];}
 		
 		
 		/**
 			@return true if there is no more space
 		*/
 		
-		bool isFull(){return length > size;}
+		bool isFull() override{return length > size;}
 		
 		
-		int remains(){return size - length;}
+		int remains() override{return size - length;}
 		
 		
 		/**
@@ -69,7 +72,7 @@ class FixedBuffer
 			@return as builder pattern
 		*/
 		
-		FixedBuffer& clear(){
+		FixedBufferBase& clear() override{
 			length = 0;
 			data[0] = '\0';
 			
@@ -82,7 +85,7 @@ class FixedBuffer
 			@return true only if there is match
 		*/
 		
-		bool endsWith(const char* str){
+		bool endsWith(const char* str) override{
 			int index = length - strlen(str);
 			if(index < 0)
 				return false;
@@ -100,7 +103,7 @@ class FixedBuffer
 			@return true only if there is match
 		*/
 		
-		bool startsWith(const char* str){
+		bool startsWith(const char* str) override{
 			int wordLength = strlen(str);
 			if(wordLength > length)
 				return false;
@@ -120,7 +123,7 @@ class FixedBuffer
 					of str located
 		*/
 		
-		int indexOf(const char* str){
+		int indexOf(const char* str) override{
 			return indexOfFrom(0, str);
 		}
 		
@@ -129,7 +132,7 @@ class FixedBuffer
 			@param from index from which to start searching
 		*/
 		
-		int indexOfFrom(int from, const char* str){
+		int indexOfFrom(int from, const char* str) override{
 			if(from < 0)
 				return -1;
 			
@@ -154,7 +157,7 @@ class FixedBuffer
 			@return -1 if there is no match
 		*/
 		
-		int indexOfEnd(const char* str){
+		int indexOfEnd(const char* str) override{
 			int wordLength = strlen(str);
 			if(wordLength > length || wordLength <= 0){
 				return -1;
@@ -190,7 +193,7 @@ class FixedBuffer
 			@return as builder pattern
 		*/
 		
-		FixedBuffer& trim(){
+		FixedBufferBase& trim() override{
 			if(length == 0)
 				return *this;
 			
@@ -223,7 +226,7 @@ class FixedBuffer
 			@return as builder pattern
 		*/
 		
-		FixedBuffer& remove(int index, int amount){
+		FixedBufferBase& remove(int index, int amount) override{
 			if(index < 0 || amount < 0)
 				return *this;
 			
@@ -247,7 +250,7 @@ class FixedBuffer
 			@return true if such string existed
 		*/
 		
-		bool remove(const char* str){
+		bool remove(const char* str) override{
 			int index = indexOf(str);
 			if(index == -1)
 				return false;
@@ -267,7 +270,7 @@ class FixedBuffer
 			@return as builder pattern
 		*/
 		
-		FixedBuffer& substring(int from, int to = -1){
+		FixedBufferBase& substring(int from, int to = -1) override{
 			if(from == to || 
 					from < 0 || 
 					to < -1 ||
@@ -290,9 +293,9 @@ class FixedBuffer
 		
 		//Getters
 		
-		char* getData(){return data;};
-		int getSize(){return size;};
-		int getLength(){return length;};
+		char* getData() override{return data;};
+		int getSize() override{return size;};
+		int getLength() override{return length;};
 	
 	private:
 		//represents max size minus zero terminator

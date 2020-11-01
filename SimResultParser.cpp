@@ -1,5 +1,7 @@
-#include <New.h>
 #include "SimResultParser.h"
+
+#include <New.h>
+#include <Arduino.h>
 #include "Util.h"
 #include "StringData.h"
 
@@ -9,28 +11,28 @@ static char dynamicMemory[6];
 
 
 
-template<int N>
-SimResultParser<N>::SimResultParser(FixedBuffer<N>& refBuffer) :
-	ResultParserStateBase<N>(refBuffer)
+
+SimResultParser::SimResultParser(FixedBufferBase& refBuffer) :
+	ResultParserStateBase(refBuffer)
 {
-	pState = new(dynamicMemory) ResultParserStateBase<N>(refBuffer);
+	pState = new(dynamicMemory) ResultParserStateBase(refBuffer);
 	
 }
 
 
-template<int N>
-void SimResultParser<N>::setState(PARSER_STATE state){
+
+void SimResultParser::setState(PARSER_STATE state){
 	switch(state){
 		case PARSER_STATE_TEXT:
-			pState = new (dynamicMemory) ResultParserStateText<N>(this->refBuffer);
+			pState = new (dynamicMemory) ResultParserStateText(this->refBuffer);
 			break;
 			
 		case PARSER_STATE_DIGIT:
-			pState = new (dynamicMemory) ResultParserStateDigit<N>(this->refBuffer);
+			pState = new (dynamicMemory) ResultParserStateDigit(this->refBuffer);
 			break;
 			
 		case PARSER_STATE_BOTH:
-			pState = new (dynamicMemory) ResultParserStateBase<N>(this->refBuffer);
+			pState = new (dynamicMemory) ResultParserStateBase(this->refBuffer);
 			break;
 	}
 }
@@ -51,8 +53,8 @@ void SimResultParser<N>::setState(PARSER_STATE state){
 	<LF> in ASCI = 10 = '\n'
 */
 
-template<int N>
-bool SimResultParser<N>::isSimpleMessageReady(){
+
+bool SimResultParser::isSimpleMessageReady(){
 	return pState->isSimpleMessageReady();
 }
 
@@ -65,32 +67,32 @@ bool SimResultParser<N>::isSimpleMessageReady(){
 	//TODO: made some check when ATV1
 */
 
-template<int N>
-bool SimResultParser<N>::isComplexMessageReady(){
+
+bool SimResultParser::isComplexMessageReady(){
 	return pState->isComplexMessageReady();
 }
 
 
-template<int N>
-bool SimResultParser<N>::isReadMessageFull(READ_TYPE type){
+
+bool SimResultParser::isReadMessageFull(READ_TYPE type){
 	return pState->isReadMessageFull(type);
 }
 
 
-template<int N>
-int SimResultParser<N>::fetchResultCode(){
+
+int SimResultParser::fetchResultCode(){
 	return pState->fetchResultCode();
 }
 
 
-template<int N>
-void SimResultParser<N>::removeReadGarbage(READ_TYPE type){
+
+void SimResultParser::removeReadGarbage(READ_TYPE type){
 	pState->removeReadGarbage(type);
 }
 
 
-template<int N>
-bool SimResultParser<N>::containDownload(){
+
+bool SimResultParser::containDownload(){
 	if(this->refBuffer.indexOf("DOWNLOAD\r\n") != -1)
 		return true;
 	
@@ -98,8 +100,8 @@ bool SimResultParser<N>::containDownload(){
 }
 
 
-template<int N>
-bool SimResultParser<N>::isHttpActionPresents(){
+
+bool SimResultParser::isHttpActionPresents(){
 	int index = this->refBuffer.indexOf("+HTTPACTION: ");
 	if(index == -1)
 		return false;
@@ -112,16 +114,9 @@ bool SimResultParser<N>::isHttpActionPresents(){
 }
 
 
-
-
-
-template<int N>
-bool SimResultParser<N>::checkError(){
+bool SimResultParser::checkError(){
 	return pState->checkError();
 }
-
-
-
 
 
 /**
@@ -130,8 +125,8 @@ bool SimResultParser<N>::checkError(){
 		<stat> = 0...5
 */
 
-template<int N>
-int SimResultParser<N>::fetchNetworkRegistration(){
+
+int SimResultParser::fetchNetworkRegistration(){
 	int index = this->refBuffer.indexOf("+CREG: ");
 	index += 9;	//move on <stat> position
 	
@@ -152,8 +147,8 @@ int SimResultParser<N>::fetchNetworkRegistration(){
 			3 - closed
 */
 
-template<int N>
-int SimResultParser<N>::fetchGPRSStatus(){
+
+int SimResultParser::fetchGPRSStatus(){
 	int index = this->refBuffer.indexOf("+SAPBR: ");
 	index += 10;
 	
@@ -171,8 +166,8 @@ int SimResultParser<N>::fetchGPRSStatus(){
 
 */
 
-template<int N>
-int SimResultParser<N>::fetchHTTPStatus(){
+
+int SimResultParser::fetchHTTPStatus(){
 	int index = this->refBuffer.indexOf("+HTTPACTION: ");
 	index += 15;	//index will be on first character of status
 	
@@ -191,8 +186,8 @@ int SimResultParser<N>::fetchHTTPStatus(){
 
 */
 
-template<int N>
-unsigned long SimResultParser<N>::fetchHttpResponceLength(){
+
+unsigned long SimResultParser::fetchHttpResponceLength(){
 	int index = this->refBuffer.indexOf("+HTTPACTION: ");	
 	index += 19;	//on first char of <data length>
 	
@@ -210,33 +205,29 @@ unsigned long SimResultParser<N>::fetchHttpResponceLength(){
 }
 
 
-
-
-
-template<int N>
-bool SimResultParser<N>::isPinRdy(){
+bool SimResultParser::isPinRdy(){
 	int index = this->refBuffer.indexOf("+CPIN: READY\r\n");
 	return index != -1;
 }
 
 
-template<int N>
-bool SimResultParser<N>::isPossibleMessage(){
+
+bool SimResultParser::isPossibleMessage(){
 	return (this->refBuffer.indexOfEnd(END_LINE) != -1) ||
 			this->refBuffer.getLength() > 3;
 }
 
 
-template<int N>
-bool SimResultParser<N>::isAttachedToGPRSServices(){
+
+bool SimResultParser::isAttachedToGPRSServices(){
 	int index = this->refBuffer.indexOf("+CGATT: ");
 	return characterToInt(this->refBuffer[index + 8]) == 1 
 			? true : false;
 }
 
 
-template<int N>
-TCP_STATE SimResultParser<N>::fetchTCPState(){
+
+TCP_STATE SimResultParser::fetchTCPState(){
 	int index = this->refBuffer.indexOf("STATE: ");
 	index += 7;		//move index on first letter of actual state
 	
@@ -284,15 +275,15 @@ TCP_STATE SimResultParser<N>::fetchTCPState(){
 }
 
 
-template<int N>
-int SimResultParser<N>::fetchRxGetStatus(){
+
+int SimResultParser::fetchRxGetStatus(){
 	int index = this->refBuffer.indexOf("+CIPRXGET: ");
 	return characterToInt(this->refBuffer[index + 11]);
 }
 
 
-template<int N>
-int SimResultParser<N>::parseRxGetLength(){
+
+int SimResultParser::parseRxGetLength(){
 	int index = this->refBuffer.indexOf(TCP_DATA_LENGTH_ANWSER);
 	index += strlen(TCP_DATA_LENGTH_ANWSER);
 	
@@ -300,8 +291,8 @@ int SimResultParser<N>::parseRxGetLength(){
 }
 
 
-template<int N>
-bool SimResultParser<N>::containShut(){
+
+bool SimResultParser::containShut(){
 	int index = this->refBuffer.indexOf(TCP_SHUT_OK);
 	return index != -1;
 }

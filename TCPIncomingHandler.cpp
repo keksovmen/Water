@@ -2,12 +2,12 @@
 #include <Arduino.h>
 
 
-template<int N>
-void TCPIncomingHandler<N>::handleMessage(
-		FixedBuffer<N>& buffer, 
+
+void TCPIncomingHandler::handleMessage(
+		FixedBufferBase& buffer, 
 		ParameterHandler& params,
 		SimCommandPort& simPort,
-		SimResultParser<N>& parser 
+		SimResultParser& parser 
 		)
 {
 	int index = 0;
@@ -31,9 +31,9 @@ void TCPIncomingHandler<N>::handleMessage(
 }
 
 
-template<int N>
-int TCPIncomingHandler<N>::findCommand(
-			FixedBuffer<N>& buffer, 
+
+int TCPIncomingHandler::findCommand(
+			FixedBufferBase& buffer, 
 			int& returnIndex
 			)
 {
@@ -58,9 +58,9 @@ int TCPIncomingHandler<N>::findCommand(
 }
 
 
-template<int N>
-void TCPIncomingHandler<N>::removeCommand(
-			FixedBuffer<N>& buffer, 
+
+void TCPIncomingHandler::removeCommand(
+			FixedBufferBase& buffer, 
 			int cmd, 
 			int index
 			)
@@ -75,14 +75,14 @@ void TCPIncomingHandler<N>::removeCommand(
 }
 
 
-template<int N>
-void TCPIncomingHandler<N>::handleCommand(
-			FixedBuffer<N>& buffer, 
+
+void TCPIncomingHandler::handleCommand(
+			FixedBufferBase& buffer, 
 			int cmd, 
 			int index,
 			ParameterHandler& params,
 			SimCommandPort& simPort,
-			SimResultParser<N>& parser
+			SimResultParser& parser
 			)
 {
 	switch(cmd){
@@ -98,9 +98,9 @@ void TCPIncomingHandler<N>::handleCommand(
 }
 
 
-template<int N>
-void TCPIncomingHandler<N>::handleClockUpdate(
-			FixedBuffer<N>& buffer, 
+
+void TCPIncomingHandler::handleClockUpdate(
+			FixedBufferBase& buffer, 
 			int index,
 			ParameterHandler& params
 			)
@@ -109,11 +109,11 @@ void TCPIncomingHandler<N>::handleClockUpdate(
 }
 
 
-template<int N>
-void TCPIncomingHandler<N>::handlePing(
+
+void TCPIncomingHandler::handlePing(
 			SimCommandPort& simPort, 
-			SimResultParser<N>& parser,
-			FixedBuffer<N>& buffer
+			SimResultParser& parser,
+			FixedBufferBase& buffer
 			)
 {
 	simPort.writeCIPSEND();

@@ -4,11 +4,11 @@
 #include "Util.h"
 
 
-template<int N>
-ResponceReader<N>::ResponceReader(		
-					SimResultParser<N>& parser, 
+
+ResponceReader::ResponceReader(		
+					SimResultParser& parser, 
 					SimCommandPort& simPort,
-					FixedBuffer<N>& buffer
+					FixedBufferBase& buffer
 					) :
 	refParser(parser), refPort(simPort),
 	refBuffer(buffer)
@@ -35,8 +35,8 @@ ResponceReader<N>::ResponceReader(
 	
 */
 
-template<int N>
-bool ResponceReader<N>::readResponce(){
+
+bool ResponceReader::readResponce(){
 	if(firstRead){
 		refBuffer.clear();
 		firstRead = false;
@@ -72,7 +72,10 @@ bool ResponceReader<N>::readResponce(){
 	readIndex += readAmount;
 	
 	while(1){
-		refPort.read();
+		if(!refPort.read()){
+			return false;
+		}
+			
 		if(isMessageFull()){
 			break;
 		}else{

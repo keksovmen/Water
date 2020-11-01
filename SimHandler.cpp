@@ -25,7 +25,7 @@ SimHandler<N>::SimHandler(
 		simPort(wrapper, reader),
 		tcpHandler(simPort, parser, parameters, state),
 		gprsHandler(simPort, parser, state), 
-		httpHandler(simPort, parser),
+		httpHandler(simPort, parser, state),
 		cgattHandler(simPort, parser, state),
 		refParams(parameters)
 {
@@ -155,7 +155,7 @@ bool SimHandler<N>::disconnectFromGPRS(){
 
 
 template<int N>
-DataHandler<N>* SimHandler<N>::sendPostRequest(
+DataHandler* SimHandler<N>::sendPostRequest(
 							IPAddress& address, 
 							const char* url, 
 							int dataLength)
@@ -163,7 +163,7 @@ DataHandler<N>* SimHandler<N>::sendPostRequest(
 	if(httpHandler.initPostRequest(address, url, dataLength)){
 		buffer.clear();
 		return new(dynamicMemory) 
-				PostDataHandler<N>(parser, simPort, buffer, state);
+				PostDataHandler(parser, simPort, buffer, state);
 	}
 	
 	buffer.clear();
@@ -173,14 +173,14 @@ DataHandler<N>* SimHandler<N>::sendPostRequest(
 
 
 template<int N>
-DataHandler<N>* SimHandler<N>::sendGetRequest(
+DataHandler* SimHandler<N>::sendGetRequest(
 							IPAddress& address, 
 							const char* url
 							){
 	if(httpHandler.initGetRequest(address, url)){
 		buffer.clear();
 		return new(dynamicMemory)
-				GetDataHandler<N>(parser, simPort, buffer, state);
+				GetDataHandler(parser, simPort, buffer, state);
 	}
 	
 	buffer.clear();
@@ -356,7 +356,7 @@ bool SimHandler<N>::tryToSetDefaultParam(int id){
 template<int N>
 void SimHandler<N>::handleTCPMessage(){
 	auto tmp = tcpHandler.readMessage(buffer);
-	TCPIncomingHandler<N> handler;
+	TCPIncomingHandler handler;
 	while(tmp.readResponce()){
 		handler.handleMessage(buffer, refParams, simPort, parser);
 	}

@@ -1,11 +1,12 @@
 #include "ResultParserState.h"
+
+#include <Arduino.h>
 #include "StringData.h"
-#include "Enums.h"
 
 
 
-template<int N>
-bool ResultParserStateBase<N>::isSimpleMessageReady(){
+
+bool ResultParserStateBase::isSimpleMessageReady(){
 	if(checkError())
 		return true;
 
@@ -27,8 +28,8 @@ bool ResultParserStateBase<N>::isSimpleMessageReady(){
 }
 
 
-template<int N>
-bool ResultParserStateBase<N>::isComplexMessageReady(){
+
+bool ResultParserStateBase::isComplexMessageReady(){
 	if(this->refBuffer.getLength() <= 3){
 		return false;
 	}
@@ -61,8 +62,8 @@ bool ResultParserStateBase<N>::isComplexMessageReady(){
 	you can't sa for sure is read message full or not
 */
 
-template<int N>
-bool ResultParserStateBase<N>::isReadMessageFull(READ_TYPE type){
+
+bool ResultParserStateBase::isReadMessageFull(READ_TYPE type){
 	const char* str = routeReadType(type);
 	int lastIndexForRead = findLastIndexForRead(str);
 	if(lastIndexForRead == -1){
@@ -78,8 +79,8 @@ bool ResultParserStateBase<N>::isReadMessageFull(READ_TYPE type){
 }
  
  
- template<int N>
-bool ResultParserStateBase<N>::checkError(){
+ 
+bool ResultParserStateBase::checkError(){
 	int index = this->refBuffer.indexOfEnd(TEXT_CME_ERROR);
 	if(this->refBuffer.indexOfFrom(index, END_LINE) != -1){
 		index += strlen(TEXT_CME_ERROR);
@@ -93,8 +94,8 @@ bool ResultParserStateBase<N>::checkError(){
 }
 
 
-template<int N>
-int ResultParserStateBase<N>::fetchResultCode(){
+
+int ResultParserStateBase::fetchResultCode(){
 	if(checkError())
 		return ANWSER_CODES::ERROR;
 
@@ -120,8 +121,8 @@ int ResultParserStateBase<N>::fetchResultCode(){
 	OF WHAT TYPE OF MESSAGE DEAL WITH
 */
 
-template<int N>
-void ResultParserStateBase<N>::removeReadGarbage(READ_TYPE type){
+
+void ResultParserStateBase::removeReadGarbage(READ_TYPE type){
 	const char* str = routeReadType(type);
 	int index = this->refBuffer.indexOf(str);
 	int endIndex = this->refBuffer.indexOfFrom(
@@ -143,8 +144,8 @@ void ResultParserStateBase<N>::removeReadGarbage(READ_TYPE type){
 	Work only for AT+HTTPREAD=<n> nad AT+CIPRXGET=2,<n>
 */
 
-template<int N>
-int ResultParserStateBase<N>::findLastIndexForRead(const char* str){
+
+int ResultParserStateBase::findLastIndexForRead(const char* str){
 	int index = this->refBuffer.indexOf(str);
 	if(index == -1)
 		return -1;
@@ -166,8 +167,8 @@ int ResultParserStateBase<N>::findLastIndexForRead(const char* str){
 }
 
 
-template<int N>
-const char* ResultParserStateBase<N>::routeReadType(READ_TYPE type){
+
+const char* ResultParserStateBase::routeReadType(READ_TYPE type){
 	switch(type){
 		case READ_TYPE_HTTP:
 			return HTTPREAD_ANWSER;
@@ -184,8 +185,8 @@ const char* ResultParserStateBase<N>::routeReadType(READ_TYPE type){
 	MUST BE OVERRIDED BY SUBCLASSES
 */
 
-template<int N>
-int ResultParserStateBase<N>::getAmountToDeleteAfterRead(){
+
+int ResultParserStateBase::getAmountToDeleteAfterRead(){
 	return 0;
 }
 
@@ -194,16 +195,16 @@ int ResultParserStateBase<N>::getAmountToDeleteAfterRead(){
 	MUST BE OVERRIDED BY SUBCLASSES
 */
 
-template<int N>
-bool ResultParserStateBase<N>::isReadEnded(int index){
+
+bool ResultParserStateBase::isReadEnded(int index){
 	return false;
 }
 
 
 //TEXT VERSION
 
-template<int N>
-bool ResultParserStateText<N>::isSimpleMessageReady(){
+
+bool ResultParserStateText::isSimpleMessageReady(){
 	if(this->checkError())
 		return true;
 
@@ -218,14 +219,14 @@ bool ResultParserStateText<N>::isSimpleMessageReady(){
 }
 
 
-template<int N>
-bool ResultParserStateText<N>::isComplexMessageReady(){
+
+bool ResultParserStateText::isComplexMessageReady(){
 	return isSimpleMessageReady();
 }
 
 
-template<int N>
-int ResultParserStateText<N>::fetchResultCode(){
+
+int ResultParserStateText::fetchResultCode(){
 	if(this->checkError())
 		return ANWSER_CODES::ERROR;
 
@@ -240,14 +241,14 @@ int ResultParserStateText<N>::fetchResultCode(){
 }
 
 
-template<int N>
-int ResultParserStateText<N>::getAmountToDeleteAfterRead(){
+
+int ResultParserStateText::getAmountToDeleteAfterRead(){
 	return strlen(TEXT_SUCCESS);
 }
 
 
-template<int N>
-bool ResultParserStateText<N>::isReadEnded(int index){
+
+bool ResultParserStateText::isReadEnded(int index){
 	return this->refBuffer.indexOfFrom(index, TEXT_SUCCESS);
 }
 
@@ -256,8 +257,8 @@ bool ResultParserStateText<N>::isReadEnded(int index){
 
 //NUMBER VERSION
 
-template<int N>
-bool ResultParserStateDigit<N>::isSimpleMessageReady(){
+
+bool ResultParserStateDigit::isSimpleMessageReady(){
 	if(this->checkError())
 		return true;
 
@@ -272,8 +273,8 @@ bool ResultParserStateDigit<N>::isSimpleMessageReady(){
 }
 
 
-template<int N>
-bool ResultParserStateDigit<N>::isComplexMessageReady(){
+
+bool ResultParserStateDigit::isComplexMessageReady(){
 	if(this->refBuffer.getLength() <= 3){
 		return false;
 	}
@@ -292,8 +293,8 @@ bool ResultParserStateDigit<N>::isComplexMessageReady(){
 }
 
 
-template<int N>
-int ResultParserStateDigit<N>::fetchResultCode(){
+
+int ResultParserStateDigit::fetchResultCode(){
 	if(this->checkError())
 		return ANWSER_CODES::ERROR;
 
@@ -308,13 +309,13 @@ int ResultParserStateDigit<N>::fetchResultCode(){
 }
 
 
-template<int N>
-int ResultParserStateDigit<N>::getAmountToDeleteAfterRead(){
+
+int ResultParserStateDigit::getAmountToDeleteAfterRead(){
 	return strlen(DIGIT_SUCCESS);
 }
 
 
-template<int N>
-bool ResultParserStateDigit<N>::isReadEnded(int index){
+
+bool ResultParserStateDigit::isReadEnded(int index){
 	return this->refBuffer.indexOfFrom(index, DIGIT_SUCCESS);
 }

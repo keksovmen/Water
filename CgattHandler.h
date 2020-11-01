@@ -7,13 +7,12 @@
 #include "Constants.h"
 
 
-template<int N>
 class CgattHandler : public LongCommandHandler
 {
 	public:
 		CgattHandler(
 				SimCommandPort& port, 
-				SimResultParser<N>& parser,
+				SimResultParser& parser,
 				SimState& state
 				);
 				
@@ -34,10 +33,7 @@ class CgattHandler : public LongCommandHandler
 		
 		
 		SimCommandPort& refPort; 
-		SimResultParser<N>& refParser;
+		SimResultParser& refParser;
 		SimState& refState;
 	
 };
-
-
-template class CgattHandler<FIXED_BUFFER_SIZE>;

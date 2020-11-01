@@ -3,24 +3,29 @@
 
 // #ifdef ABS
 	// #warning definied
-	// #include <Arduino.h>
+	#include <Arduino.h>
 // #endif
 
 
 
 
-template<int N>
-SimIOWrapper<N>::SimIOWrapper(Stream& refSerial, FixedBuffer<N>& buffer) : 
-	refPort(refSerial), refBuffer(buffer){
-		
+
+SimIOWrapper::SimIOWrapper(
+			Stream& refSerial, 
+			FixedBufferBase& buffer
+			) : 
+	refPort(refSerial), refBuffer(buffer)
+{
+	
 }
 
 
-template<int N>
-void SimIOWrapper<N>::write(const char* str){
+
+void SimIOWrapper::write(const char* str){
 	// #ifdef ABS
 		Serial.print(str);
 	// #endif
+	// refPort.print(str);
 	int amount = refPort.print(str);
 	if(amount != strlen(str)){
 		Serial.println("Amount is missing");
@@ -28,8 +33,8 @@ void SimIOWrapper<N>::write(const char* str){
 }
 
 
-template<int N>
-void SimIOWrapper<N>::write(char c){
+
+void SimIOWrapper::write(char c){
 	// #ifdef ABS
 		Serial.print(c);
 	// #endif
@@ -37,16 +42,16 @@ void SimIOWrapper<N>::write(char c){
 }
 
 
-template<int N>
-void SimIOWrapper<N>::write(int i){
+
+void SimIOWrapper::write(int i){
 	// #ifdef ABS
 		Serial.print(i);
 	// #endif
 	refPort.print(i);
 }
 
-template<int N>
-void SimIOWrapper<N>::write(long l){
+
+void SimIOWrapper::write(long l){
 	// #ifdef ABS
 		Serial.print(l);
 	// #endif
@@ -54,8 +59,8 @@ void SimIOWrapper<N>::write(long l){
 }
 
 
-template<int N>
-void SimIOWrapper<N>::write(double d, int amountAfterDot){
+
+void SimIOWrapper::write(double d, int amountAfterDot){
 	// #ifdef ABS
 		Serial.print(d, amountAfterDot);
 	// #endif
@@ -63,8 +68,8 @@ void SimIOWrapper<N>::write(double d, int amountAfterDot){
 }
 
 
-template<int N>
-void SimIOWrapper<N>::writeEndOfCommand(bool clearBuffer){
+
+void SimIOWrapper::writeEndOfCommand(bool clearBuffer){
 	// #ifdef ABS
 		Serial.print(END_LINE);
 	// #endif
@@ -77,8 +82,8 @@ void SimIOWrapper<N>::writeEndOfCommand(bool clearBuffer){
 }
 
 
-template<int N>
-bool SimIOWrapper<N>::read(){
+
+bool SimIOWrapper::read(){
 	if(tryReadToBuffer()){
 		while(tryReadToBuffer()){
 			
@@ -91,8 +96,8 @@ bool SimIOWrapper<N>::read(){
 }
 
 
-template<int N>
-bool SimIOWrapper<N>::readTimeout(unsigned long maxDelay){
+
+bool SimIOWrapper::readTimeout(unsigned long maxDelay){
 	while(maxDelay > 0){
 		if(tryReadToBuffer()){
 			while(tryReadToBuffer()){
@@ -109,8 +114,8 @@ bool SimIOWrapper<N>::readTimeout(unsigned long maxDelay){
 }
 
 
-template<int N>
-bool SimIOWrapper<N>::lazyRead(){
+
+bool SimIOWrapper::lazyRead(){
 	if(refPort.available() == 0){
 		return false;
 	}
@@ -142,8 +147,8 @@ bool SimIOWrapper<N>::lazyRead(){
 	return true;
 }
 
-template<int N>
-bool SimIOWrapper<N>::tryReadToBuffer(){
+
+bool SimIOWrapper::tryReadToBuffer(){
 	//if there is no data wait
 	if(!lazyRead()){
 		delay(WRAPPER_MIN_DELAY);

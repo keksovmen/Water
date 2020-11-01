@@ -4,6 +4,7 @@
 #include "SimCommandPort.h"
 #include "SimResultParser.h"
 #include "Constants.h"
+#include "SimState.h"
 
 
 /**
@@ -15,12 +16,12 @@
 */
 
 
-template<int N>
 class HTTPHandler
 {
 	public:
 		HTTPHandler(	SimCommandPort& simPort,
-						SimResultParser<N>& parser
+						SimResultParser& parser,
+						SimState& state
 						);
 		
 		/**
@@ -50,9 +51,7 @@ class HTTPHandler
 		
 		
 		SimCommandPort& refPort;
-		SimResultParser<N>& refParser;
+		SimResultParser& refParser;
+		SimState& refState;
 	
 };
-
-
-template class HTTPHandler<FIXED_BUFFER_SIZE>;

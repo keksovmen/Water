@@ -2,21 +2,21 @@
 
 #include "SimResultParser.h"
 #include "SimCommandPort.h"
-#include "Buffer/FixedBuffer.h"
+#include "Buffer/FixedBufferBase.h"
 #include "Constants.h"
 
-template<int N>
+
 class ResponceReader
 {
 	public:
-		ResponceReader(	SimResultParser<N>& parser, 
+		ResponceReader(	SimResultParser& parser, 
 						SimCommandPort& simPort,
-						FixedBuffer<N>& buffer
+						FixedBufferBase& buffer
 						);
 						
 		bool readResponce();
 		
-		FixedBuffer<N>& getBuffer(){ return refBuffer;};
+		FixedBufferBase& getBuffer(){ return refBuffer;};
 		
 	protected:
 		virtual int getMinMessageLength() = 0;
@@ -30,11 +30,9 @@ class ResponceReader
 		//meybe not neccessery
 		bool firstRead = true;
 		
-		SimResultParser<N>& refParser;
+		SimResultParser& refParser;
 		SimCommandPort& refPort;
-		FixedBuffer<N>& refBuffer;
+		FixedBufferBase& refBuffer;
 		
 	
 };
-
-template class ResponceReader<FIXED_BUFFER_SIZE>;

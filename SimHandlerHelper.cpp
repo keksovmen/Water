@@ -208,7 +208,7 @@ bool SimHandlerHelper<N>::handleNetworkStatus(NETWORK_CONNECTION status){
 
 
 template<int N>
-bool SimHandlerHelper<N>::handleSendRootine(DataHandler<N>* dataHandler){
+bool SimHandlerHelper<N>::handleSendRootine(DataHandler* dataHandler){
 	if(!dataHandler->send()){
 		Serial.println("Send failed");
 		return false;

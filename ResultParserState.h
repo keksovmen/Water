@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Buffer/FixedBuffer.h"
+#include "Buffer/FixedBufferBase.h"
 #include "Constants.h"
 #include "Enums.h"
 
@@ -10,11 +10,10 @@
 */
 
 
-template<int N>
 class ResultParserStateBase
 {
 	public:
-		explicit ResultParserStateBase(FixedBuffer<N>& refBuffer)
+		explicit ResultParserStateBase(FixedBufferBase& refBuffer)
 				: refBuffer(refBuffer){}
 	
 		virtual bool isSimpleMessageReady();
@@ -59,17 +58,16 @@ class ResultParserStateBase
 		//-1 is no error 
 		int lastErrorCode = -1;
 		
-		FixedBuffer<N>& refBuffer;
+		FixedBufferBase& refBuffer;
 		
 };
 
 
-template<int N>
-class ResultParserStateText : public ResultParserStateBase<N>
+class ResultParserStateText : public ResultParserStateBase
 {
 	public:
-		explicit ResultParserStateText(FixedBuffer<N>& refBuffer)
-				: ResultParserStateBase<N>(refBuffer){}
+		explicit ResultParserStateText(FixedBufferBase& refBuffer)
+				: ResultParserStateBase(refBuffer){}
 		
 		bool isSimpleMessageReady() override;
 		bool isComplexMessageReady() override;
@@ -84,12 +82,11 @@ class ResultParserStateText : public ResultParserStateBase<N>
 
 //NOT TESTED WITH HTTPREAD
 
-template<int N>
-class ResultParserStateDigit : public ResultParserStateBase<N>
+class ResultParserStateDigit : public ResultParserStateBase
 {
 	public:
-		explicit ResultParserStateDigit(FixedBuffer<N>& refBuffer)
-				: ResultParserStateBase<N>(refBuffer){}
+		explicit ResultParserStateDigit(FixedBufferBase& refBuffer)
+				: ResultParserStateBase(refBuffer){}
 	
 		bool isSimpleMessageReady() override;
 		bool isComplexMessageReady() override;
@@ -100,9 +97,3 @@ class ResultParserStateDigit : public ResultParserStateBase<N>
 		int getAmountToDeleteAfterRead() override;
 		bool isReadEnded(int index) override;
 };
-
-
-
-template class ResultParserStateBase<FIXED_BUFFER_SIZE>;
-template class ResultParserStateText<FIXED_BUFFER_SIZE>;
-template class ResultParserStateDigit<FIXED_BUFFER_SIZE>;

@@ -6,19 +6,18 @@
 #include "ParameterHandler.h"
 #include "Constants.h"
 #include "TCPReader.h"
-#include "Buffer/FixedBuffer.h"
+#include "Buffer/FixedBufferBase.h"
 #include "SimState.h"
 #include "LongCommandHandler.h"
 
 
 
-template<int N>
 class TCPHandler : public LongCommandHandler
 {
 	public:
 		TCPHandler(
 				SimCommandPort& simPort,
-				SimResultParser<N>& parser,
+				SimResultParser& parser,
 				ParameterHandler& parameters,
 				SimState& state
 				);
@@ -28,7 +27,7 @@ class TCPHandler : public LongCommandHandler
 		
 
 		bool connect();
-		TCPReader<N> readMessage(FixedBuffer<N> buffer);
+		TCPReader readMessage(FixedBufferBase& buffer);
 		
 	private:
 		bool handleInitial();
@@ -40,12 +39,9 @@ class TCPHandler : public LongCommandHandler
 		
 		
 		SimCommandPort& refPort;
-		SimResultParser<N>& refParser;
+		SimResultParser& refParser;
 		ParameterHandler& refParameters;
 		SimState& refState;
 		
 		bool isLastCommandCIICR;
 };
-
-
-template class TCPHandler<FIXED_BUFFER_SIZE>;

@@ -5,37 +5,37 @@
 
 
 
-template <int N>
-TCPReader<N>::TCPReader(	SimResultParser<N>& parser, 
-							SimCommandPort& simPort,
-							FixedBuffer<N>& buffer,
-							unsigned long length
-							) :
-	ResponceReader<N>(parser, simPort, buffer)
+
+TCPReader::TCPReader(	SimResultParser& parser, 
+						SimCommandPort& simPort,
+						FixedBufferBase& buffer,
+						unsigned long length
+						) :
+	ResponceReader(parser, simPort, buffer)
 {
 	this->responceLength = length;
 }
 
 
-template<int N>
-int TCPReader<N>::getMinMessageLength(){
+
+int TCPReader::getMinMessageLength(){
 	return 25 + findLongLength(this->responceLength - this->readIndex);
 }
 
 
-template<int N>
-void TCPReader<N>::removeGarbage(){
+
+void TCPReader::removeGarbage(){
 	this->refParser.removeReadGarbage(READ_TYPE_TCP);
 }
 
 
-template<int N>
-bool TCPReader<N>::isMessageFull(){
+
+bool TCPReader::isMessageFull(){
 	return this->refParser.isReadMessageFull(READ_TYPE_TCP);
 }
 
 
-template<int N>
-void TCPReader<N>::askForData(int index, int amount){
+
+void TCPReader::askForData(int index, int amount){
 	this->refPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_GET_NORMAL, amount);
 }

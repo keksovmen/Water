@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Buffer/FixedBuffer.h"
+#include "Buffer/FixedBufferBase.h"
 #include "BaseReader.h"
 #include "SimIOWrapper.h"
 #include "SimResultParser.h"
@@ -17,17 +17,16 @@
 */
 
 
-template<int N>
 class UnexpectedHandler : public BaseReader
 {
 	public:
-		UnexpectedHandler(	FixedBuffer<N>& buffer,
+		UnexpectedHandler(	FixedBufferBase& buffer,
 							BaseReader& reader,
 							SimState& state
 							);
 		
 		
-		void attachTCPHandler(TCPHandler<N>* tcpHandler);
+		void attachTCPHandler(TCPHandler* tcpHandler);
 		
 		
 		//delegate to refReader
@@ -50,14 +49,10 @@ class UnexpectedHandler : public BaseReader
 		
 		bool readRemovingGarbage();
 	
-		FixedBuffer<N>& refBuffer;
+		FixedBufferBase& refBuffer;
 		BaseReader& refReader;
 		SimState& refState;
-		TCPHandler<N>* tcpHandler;
+		TCPHandler* pTcpHandler;
 		
 		
 };
-
-
-template class UnexpectedHandler<FIXED_BUFFER_SIZE>;
-

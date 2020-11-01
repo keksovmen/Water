@@ -5,13 +5,12 @@
 
 
 
-template<int N>
-class TCPReader : public ResponceReader<N>
+class TCPReader : public ResponceReader
 {
 	public:
-		TCPReader(	SimResultParser<N>& parser, 
+		TCPReader(	SimResultParser& parser, 
 					SimCommandPort& simPort,
-					FixedBuffer<N>& buffer,
+					FixedBufferBase& buffer,
 					unsigned long length
 					);
 		
@@ -24,6 +23,3 @@ class TCPReader : public ResponceReader<N>
 		
 	
 };
-
-
-template class TCPReader<FIXED_BUFFER_SIZE>;

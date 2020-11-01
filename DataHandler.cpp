@@ -5,13 +5,13 @@
 
 
 
-template <int N>
-DataHandler<N>::DataHandler(	SimResultParser<N>& parser, 
+
+DataHandler::DataHandler(	SimResultParser& parser, 
 								SimCommandPort& simPort,
-								FixedBuffer<N>& buffer,
+								FixedBufferBase& buffer,
 								SimState& state
 								) :
-	ResponceReader<N>(parser, simPort, buffer),
+	ResponceReader(parser, simPort, buffer),
 	refState(state)
 {
 	
@@ -19,15 +19,15 @@ DataHandler<N>::DataHandler(	SimResultParser<N>& parser,
 
 
 
-template<int N>
-bool DataHandler<N>::send(){
+
+bool DataHandler::send(){
 	refState.setLongCmd(this);
 	return false;
 }
 
 
-template<int N>
-bool DataHandler<N>::handle(){
+
+bool DataHandler::handle(){
 	if(this->refParser.isHttpActionPresents()){
 		this->responceLength = this->refParser.fetchHttpResponceLength();
 		refState.http.responseLength = this->responceLength;
@@ -40,48 +40,48 @@ bool DataHandler<N>::handle(){
 }
 
 
-template<int N>
-void DataHandler<N>::write(const char* str){
+
+void DataHandler::write(const char* str){
 	this->refPort.write(str);
 }
 
-template<int N>
-void DataHandler<N>::write(char c){
+
+void DataHandler::write(char c){
 	this->refPort.write(c);
 }
 
-template<int N>
-void DataHandler<N>::write(int i){
+
+void DataHandler::write(int i){
 	this->refPort.write(i);
 }
 
 
-template<int N>
-void DataHandler<N>::write(long l){
+
+void DataHandler::write(long l){
 	this->refPort.write(l);
 }
 
-template<int N>
-void DataHandler<N>::write(double d, int amountAfterDot){
+
+void DataHandler::write(double d, int amountAfterDot){
 	this->refPort.write(d, amountAfterDot);
 }
 
 
-template<int N>
-bool DataHandler<N>::isSended(){
+
+bool DataHandler::isSended(){
 	return refState.http.isAnwserReady;
 }
 
 
-template<int N>
-bool DataHandler<N>::isSendedSuccesfully(){
+
+bool DataHandler::isSendedSuccesfully(){
 	return refState.http.responseCode == 
 		static_cast<int>(HTTP_STATUS_CODES::HTTP_STATUS_SUCCESS);
 }
 
 
-template<int N>
-void DataHandler<N>::finish(){
+
+void DataHandler::finish(){
 	this->refPort.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
 	readAndExpectSuccess(this->refPort, this->refParser);
 	
@@ -91,26 +91,26 @@ void DataHandler<N>::finish(){
 }
 
 
-template<int N>
-int DataHandler<N>::getMinMessageLength(){
+
+int DataHandler::getMinMessageLength(){
 	return 22;
 }
 
 
-template<int N>
-void DataHandler<N>::removeGarbage(){
+
+void DataHandler::removeGarbage(){
 	this->refParser.removeReadGarbage(READ_TYPE_HTTP);
 }
 
 
-template<int N>
-bool DataHandler<N>::isMessageFull(){
+
+bool DataHandler::isMessageFull(){
 	return this->refParser.isReadMessageFull(READ_TYPE_HTTP);
 }
 
 
-template<int N>
-void DataHandler<N>::askForData(int index, int amount){
+
+void DataHandler::askForData(int index, int amount){
 	this->refPort.writeReadHTTP(index, amount);
 }
 

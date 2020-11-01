@@ -10,18 +10,15 @@
 	Write commands will write into POST body
 */
 
-template<int N>
-class PostDataHandler : public DataHandler<N>
+class PostDataHandler : public DataHandler
 {
 	public:
-		PostDataHandler(	SimResultParser<N>& parser, 
+		PostDataHandler(	SimResultParser& parser, 
 							SimCommandPort& simPort,
-							FixedBuffer<N>& buffer,
+							FixedBufferBase& buffer,
 							SimState& state
 							);
 
 		bool send() override;
 		
 };
-
-template class PostDataHandler<128>;

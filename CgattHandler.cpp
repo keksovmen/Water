@@ -4,10 +4,10 @@
 
 
 
-template<int N>
-CgattHandler<N>::CgattHandler(
+
+CgattHandler::CgattHandler(
 				SimCommandPort& port, 
-				SimResultParser<N>& parser,
+				SimResultParser& parser,
 				SimState& state
 				):
 	refPort(port), refParser(parser),
@@ -19,8 +19,8 @@ CgattHandler<N>::CgattHandler(
 
 
 
-template<int N>
-bool CgattHandler<N>::handle(){
+
+bool CgattHandler::handle(){
 	if(!refParser.isSimpleMessageReady()){
 		return false;
 	}
@@ -33,8 +33,8 @@ bool CgattHandler<N>::handle(){
 }
 
 
-template<int N>
-bool CgattHandler<N>::connectToCGATT(){
+
+bool CgattHandler::connectToCGATT(){
 	if(askCGATTStatus()){
 		return true;
 	}
@@ -46,8 +46,8 @@ bool CgattHandler<N>::connectToCGATT(){
 }
 
 
-template<int N>
-bool CgattHandler<N>::askCGATTStatus(){
+
+bool CgattHandler::askCGATTStatus(){
 	refPort.writeCGATT(CGATT_COMMANDS_STATUS);
 	if(!readAndExpectSuccess(refPort, refParser)){
 		return false;

@@ -1,6 +1,6 @@
 #pragma once
 #include <Stream.h>
-#include "Buffer/FixedBuffer.h"
+#include "Buffer/FixedBufferBase.h"
 #include "CommandWriter.h"
 #include "BaseReader.h"
 #include "Constants.h"
@@ -14,11 +14,10 @@
 */
 
 
-template<int N>
 class SimIOWrapper : public CommandWriter, public BaseReader
 {
 	public:
-		explicit SimIOWrapper(Stream& refSerial, FixedBuffer<N>& buffer);
+		explicit SimIOWrapper(Stream& refSerial, FixedBufferBase& buffer);
 		
 		
 		/**
@@ -129,8 +128,6 @@ class SimIOWrapper : public CommandWriter, public BaseReader
 		//sim module here
 		Stream& refPort;
 		
-		FixedBuffer<N>& refBuffer;
+		FixedBufferBase& refBuffer;
 		
 };
-
-template class SimIOWrapper<FIXED_BUFFER_SIZE>;

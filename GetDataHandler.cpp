@@ -2,19 +2,18 @@
 #include "Util.h"
 
 
-template <int N>
-GetDataHandler<N>::GetDataHandler(	SimResultParser<N>& parser, 
-									SimCommandPort& simPort,
-									FixedBuffer<N>& buffer,
-									SimState& state
-									) :
-	DataHandler<N>(parser, simPort, buffer, state){
+
+GetDataHandler::GetDataHandler(	SimResultParser& parser, 
+								SimCommandPort& simPort,
+								FixedBufferBase& buffer,
+								SimState& state
+								) :
+	DataHandler(parser, simPort, buffer, state){
 		
 }
 
 
-template<int N>
-bool GetDataHandler<N>::send(){
+bool GetDataHandler::send(){
 	this->refPort.write('"');
 	this->refPort.writeEndOfCommand();
 			
@@ -26,7 +25,7 @@ bool GetDataHandler<N>::send(){
 	
 	bool result = readAndExpectSuccess(this->refPort, this->refParser);
 	if(result){
-		DataHandler<N>::send();
+		DataHandler::send();
 	}
 	
 	return result;

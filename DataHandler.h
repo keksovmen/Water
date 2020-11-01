@@ -3,7 +3,7 @@
 #include "CommandWriter.h"
 #include "SimResultParser.h"
 #include "SimCommandPort.h"
-#include "Buffer/FixedBuffer.h"
+#include "Buffer/FixedBufferBase.h"
 #include "Constants.h"
 #include "ResponceReader.h"
 #include "SimState.h"
@@ -15,13 +15,12 @@
 	Childs must override send() to use their codes etc.
 */
 
-template<int N>
-class DataHandler : public BaseWriter, public ResponceReader<N>, public LongCommandHandler
+class DataHandler : public BaseWriter, public ResponceReader, public LongCommandHandler
 {
 	public:
-		DataHandler(	SimResultParser<N>& parser, 
+		DataHandler(	SimResultParser& parser, 
 						SimCommandPort& simPort,
-						FixedBuffer<N>& buffer,
+						FixedBufferBase& buffer,
 						SimState& state
 						);
 		
@@ -79,8 +78,6 @@ class DataHandler : public BaseWriter, public ResponceReader<N>, public LongComm
 		
 		// bool readResponce();
 		
-		// FixedBuffer<N>& getBuffer(){ return refBuffer;};
-		
 	protected:
 		int getMinMessageLength() override;
 		void removeGarbage() override;
@@ -90,5 +87,3 @@ class DataHandler : public BaseWriter, public ResponceReader<N>, public LongComm
 		SimState& refState;
 	
 };
-
-template class DataHandler<FIXED_BUFFER_SIZE>;

@@ -48,10 +48,11 @@ int findDoubleLength(double val, int afterDot);
 
 */
 
-template<int N>
-bool readAndExpectSuccess(BaseReader& reader, SimResultParser<N>& parser, bool isComplex = false, int timeout = WRAPPER_MIN_DELAY){
-	return readAndGetCode(reader, parser, isComplex, timeout) == ANWSER_CODES::OK;
-}
+
+
+bool readAndExpectSuccess(BaseReader& reader, SimResultParser& parser, bool isComplex = false, int timeout = WRAPPER_MIN_DELAY);
+	// return readAndGetCode(reader, parser, isComplex, timeout) == ANWSER_CODES::OK;
+// }
 
 
 /**
@@ -67,25 +68,24 @@ bool readAndExpectSuccess(BaseReader& reader, SimResultParser<N>& parser, bool i
 
 */
 
-template<int N>
-ANWSER_CODES readAndGetCode(BaseReader& reader, SimResultParser<N>& parser, bool isComplex = false, int timeout = WRAPPER_MIN_DELAY){
-	if(!reader.readTimeout(timeout)){
-		return ANWSER_CODES::UNDEFINED;
-	}
+ANWSER_CODES readAndGetCode(BaseReader& reader, SimResultParser& parser, bool isComplex = false, int timeout = WRAPPER_MIN_DELAY);
+	// if(!reader.readTimeout(timeout)){
+		// return ANWSER_CODES::UNDEFINED;
+	// }
 	
-	bool rdy = false;
+	// bool rdy = false;
 	
-	if(isComplex){
-		rdy = parser.isComplexMessageReady();
-	}else{
-		rdy = parser.isSimpleMessageReady();
-	}
+	// if(isComplex){
+		// rdy = parser.isComplexMessageReady();
+	// }else{
+		// rdy = parser.isSimpleMessageReady();
+	// }
 	
-	if(!rdy){
-		if(!reader.read()){
-			return ANWSER_CODES::UNDEFINED;
-		}
-	}
+	// if(!rdy){
+		// if(!reader.read()){
+			// return ANWSER_CODES::UNDEFINED;
+		// }
+	// }
 	
-	return static_cast<ANWSER_CODES>(parser.fetchResultCode());
-}
+	// return static_cast<ANWSER_CODES>(parser.fetchResultCode());
+// }

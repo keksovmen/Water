@@ -1,5 +1,5 @@
 #pragma once
-#include "Buffer/FixedBuffer.h"
+
 #include "ResultParserState.h"
 #include "Enums.h"
 #include "Constants.h"
@@ -15,11 +15,10 @@
 */
 
 
-template<int N>
-class SimResultParser : public ResultParserStateBase<N>
+class SimResultParser : public ResultParserStateBase
 {
 	public:
-		explicit SimResultParser(FixedBuffer<N>& refBuffer);
+		explicit SimResultParser(FixedBufferBase& refBuffer);
 		
 		
 		/**
@@ -202,9 +201,6 @@ class SimResultParser : public ResultParserStateBase<N>
 		bool containShut();
 		
 	private:
-		ResultParserStateBase<N>* pState;
+		ResultParserStateBase* pState;
 		
 };
-
-
-template class SimResultParser<FIXED_BUFFER_SIZE>;

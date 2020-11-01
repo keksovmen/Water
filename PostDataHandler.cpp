@@ -2,19 +2,17 @@
 #include "Util.h"
 
 
-template <int N>
-PostDataHandler<N>::PostDataHandler(	SimResultParser<N>& parser, 
-										SimCommandPort& simPort,
-										FixedBuffer<N>& buffer,
-										SimState& state
-										) :
-	DataHandler<N>(parser, simPort, buffer, state){
+PostDataHandler::PostDataHandler(	SimResultParser& parser, 
+									SimCommandPort& simPort,
+									FixedBufferBase& buffer,
+									SimState& state
+									) :
+	DataHandler(parser, simPort, buffer, state){
 		
 }
 
 
-template<int N>
-bool PostDataHandler<N>::send(){
+bool PostDataHandler::send(){
 	this->refPort.writeEndOfCommand();
 	
 	if(!readAndExpectSuccess(this->refPort, this->refParser)){
@@ -25,7 +23,7 @@ bool PostDataHandler<N>::send(){
 	
 	bool result = readAndExpectSuccess(this->refPort, this->refParser);
 	if(result){
-		DataHandler<N>::send();
+		DataHandler::send();
 	}
 	
 	return result;

@@ -10,18 +10,15 @@
 	Write commands will write into URL body
 */
 
-template<int N>
-class GetDataHandler : public DataHandler<N>
+class GetDataHandler : public DataHandler
 {
 	public:
-		GetDataHandler(	SimResultParser<N>& parser, 
+		GetDataHandler(	SimResultParser& parser, 
 						SimCommandPort& simPort,
-						FixedBuffer<N>& buffer,
+						FixedBufferBase& buffer,
 						SimState& state
 						);
 		
 		bool send() override;
 		
 };
-
-template class GetDataHandler<128>;

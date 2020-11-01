@@ -3,10 +3,10 @@
 #include "Util.h"
 
 
-template<int N>
-GPRSHandler<N>::GPRSHandler(
+
+GPRSHandler::GPRSHandler(
 					SimCommandPort& simPort,
-					SimResultParser<N>& parser,
+					SimResultParser& parser,
 					SimState& state
 					) : 
 	refPort(simPort), refParser(parser),
@@ -16,8 +16,8 @@ GPRSHandler<N>::GPRSHandler(
 }
 
 
-template<int N>
-bool GPRSHandler<N>::handle(){
+
+bool GPRSHandler::handle(){
 	if(!refParser.isSimpleMessageReady()){
 		return false;
 	}
@@ -39,8 +39,8 @@ bool GPRSHandler<N>::handle(){
 }
 
 
-template<int N>
-BEARER_STATUS GPRSHandler<N>::isConnected(){
+
+BEARER_STATUS GPRSHandler::isConnected(){
 	int result = (retriveStatus());
 	
 	if(result == -1){
@@ -63,8 +63,8 @@ BEARER_STATUS GPRSHandler<N>::isConnected(){
 */
 
 
-template<int N>
-bool GPRSHandler<N>::connect(const char* apn){
+
+bool GPRSHandler::connect(const char* apn){
 	refPort.writeSAPBR(SET_PARAM_BEARER,
 						"Contype", "GPRS");
 	
@@ -93,8 +93,8 @@ bool GPRSHandler<N>::connect(const char* apn){
 	@return true is bearer is closing or already closed
 */
 
-template<int N>
-void GPRSHandler<N>::close(){
+
+void GPRSHandler::close(){
 	refPort.writeSAPBR(CLOSE_BEARER);
 	refState.setLongCmd(this);
 	lastCommandOpen = false;
@@ -105,8 +105,8 @@ void GPRSHandler<N>::close(){
 	@return -1 if there is error of some sort
 */
 
-template<int N>
-int GPRSHandler<N>::retriveStatus(){
+
+int GPRSHandler::retriveStatus(){
 	refPort.writeSAPBR(SAPBR_COMMANDS::QUERY_BEARER);
 	
 	if(!readAndExpectSuccess(refPort, refParser, true)){

@@ -3,20 +3,22 @@
 #include "Enums.h"
 
 
-template<int N>
-HTTPHandler<N>::HTTPHandler(
+
+HTTPHandler::HTTPHandler(
 			SimCommandPort& simPort,
-			SimResultParser<N>& parser
+			SimResultParser& parser,
+			SimState& state
 			) :
-	refPort(simPort), refParser(parser)
+	refPort(simPort), refParser(parser),
+	refState(state)
 {
 	
 	
 }
 
 
-template<int N>
-bool HTTPHandler<N>::initPostRequest(IPAddress& address, const char* url, int dataLength){
+
+bool HTTPHandler::initPostRequest(IPAddress& address, const char* url, int dataLength){
 	if(initSession() 				&&
 		setPostURL(address, url) 	&&
 		setContentForPHP() 			&&
@@ -28,8 +30,8 @@ bool HTTPHandler<N>::initPostRequest(IPAddress& address, const char* url, int da
 	return false;
 }
 
-template<int N>
-bool HTTPHandler<N>::initGetRequest(IPAddress& address, const char* url){
+
+bool HTTPHandler::initGetRequest(IPAddress& address, const char* url){
 	if(initSession()){
 		setGetURL(address, url);
 		return true;
@@ -45,12 +47,17 @@ bool HTTPHandler<N>::initGetRequest(IPAddress& address, const char* url){
 	and try to open new one
 */
 
-template<int N>
-bool HTTPHandler<N>::initSession(){
+
+bool HTTPHandler::initSession(){
+	if(refState.http.isBussy){
+		return false;
+	}
+	
 	refPort.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
 	ANWSER_CODES code = readAndGetCode(refPort, refParser);
 	switch (code){
 		case OK:
+			refState.http.isBussy = true;
 			return true;
 		
 		case ERROR:
@@ -68,25 +75,25 @@ bool HTTPHandler<N>::initSession(){
 	return false;
 }
 
-template<int N>
-bool HTTPHandler<N>::setPostURL(IPAddress& address, const char* url){
+
+bool HTTPHandler::setPostURL(IPAddress& address, const char* url){
 	refPort.writeHTTPURL(address, url);
 	return readAndExpectSuccess(refPort, refParser);
 }
 
-template<int N>
-void HTTPHandler<N>::setGetURL(IPAddress& address, const char* url){
+
+void HTTPHandler::setGetURL(IPAddress& address, const char* url){
 	refPort.writeHTTPURL(address, url, false);
 }
 
-template<int N>
-bool HTTPHandler<N>::setContentForPHP(){
+
+bool HTTPHandler::setContentForPHP(){
 	refPort.writeHTPPSetParam("CONTENT", "application/x-www-form-urlencoded");
 	return readAndExpectSuccess(refPort, refParser);
 }
 
-template<int N>
-bool HTTPHandler<N>::startDataTransmition(int dataLength){
+
+bool HTTPHandler::startDataTransmition(int dataLength){
 	refPort.writeHTPPData(dataLength);
 	if(!refPort.read()){
 		return false;
@@ -105,8 +112,8 @@ bool HTTPHandler<N>::startDataTransmition(int dataLength){
 }
 
 
-template<int N>
-bool HTTPHandler<N>::terminateSession(){
+
+bool HTTPHandler::terminateSession(){
 	refPort.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
 	return readAndExpectSuccess(refPort, refParser);
 }

@@ -5,9 +5,9 @@
 #include <Arduino.h>
 
 
-template<int N>
-UnexpectedHandler<N>::UnexpectedHandler(
-				FixedBuffer<N>& buffer,
+
+UnexpectedHandler::UnexpectedHandler(
+				FixedBufferBase& buffer,
 				BaseReader& reader,
 				SimState& state
 				) :
@@ -19,15 +19,15 @@ UnexpectedHandler<N>::UnexpectedHandler(
 
 
 
-template<int N>
-void UnexpectedHandler<N>::attachTCPHandler(TCPHandler<N>* tcpHandler){
-	this->tcpHandler = tcpHandler;
+
+void UnexpectedHandler::attachTCPHandler(TCPHandler* tcpHandler){
+	this->pTcpHandler = tcpHandler;
 }
 
 
 
-template<int N>
-bool UnexpectedHandler<N>::read(){
+
+bool UnexpectedHandler::read(){
 	if(!refReader.read()){
 		return false;
 	}
@@ -38,8 +38,8 @@ bool UnexpectedHandler<N>::read(){
 }
 
 
-template<int N>
-bool UnexpectedHandler<N>::readTimeout(unsigned long maxDelay){
+
+bool UnexpectedHandler::readTimeout(unsigned long maxDelay){
 	if(!refReader.readTimeout(maxDelay)){
 		return false;
 	}
@@ -50,8 +50,8 @@ bool UnexpectedHandler<N>::readTimeout(unsigned long maxDelay){
 }
 
 
-template<int N>
-void UnexpectedHandler<N>::handleSwitch(){
+
+void UnexpectedHandler::handleSwitch(){
 	
 	if(refBuffer.remove(RING_STRING)){
 		while(refBuffer.remove(RING_STRING)){}
@@ -82,7 +82,7 @@ void UnexpectedHandler<N>::handleSwitch(){
 	}
 	
 	
-	if(tcpHandler){
+	if(pTcpHandler){
 		if(refBuffer.remove(TCP_CONNECTE_OK)){
 			refState.tcp.state = TCP_STATE_CONNECTED;
 		}
@@ -130,8 +130,8 @@ void UnexpectedHandler<N>::handleSwitch(){
 }
 
 
-template<int N>
-void UnexpectedHandler<N>::handleIncomingCall(){
+
+void UnexpectedHandler::handleIncomingCall(){
 	int lastIndex = refBuffer.indexOfEnd(NO_CARRIER_STRING);
 
 	while(lastIndex == -1){
@@ -143,8 +143,8 @@ void UnexpectedHandler<N>::handleIncomingCall(){
 }
 
 
-template<int N>
-bool UnexpectedHandler<N>::readRemovingGarbage(){
+
+bool UnexpectedHandler::readRemovingGarbage(){
 	if(!refReader.read()){
 		return false;
 	}

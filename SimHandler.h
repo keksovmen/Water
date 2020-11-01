@@ -97,7 +97,7 @@ class SimHandler
 			@return post handler
 		*/
 		
-		DataHandler<N>* sendPostRequest(IPAddress& address, const char* url, int dataLength);
+		DataHandler* sendPostRequest(IPAddress& address, const char* url, int dataLength);
 		
 		
 		/**
@@ -106,7 +106,7 @@ class SimHandler
 			@return get handler
 		*/
 		
-		DataHandler<N>* sendGetRequest(IPAddress& address, const char* url);
+		DataHandler* sendGetRequest(IPAddress& address, const char* url);
 		
 		void handleReading();
 		
@@ -120,14 +120,14 @@ class SimHandler
 		
 		SimState state;
 		FixedBuffer<N> buffer;
-		SimIOWrapper<N> wrapper;
-		UnexpectedHandler<N> reader;
-		SimResultParser<N> parser;
+		SimIOWrapper wrapper;
+		UnexpectedHandler reader;
+		SimResultParser parser;
 		SimCommandPort simPort;
-		TCPHandler<N> tcpHandler;
-		GPRSHandler<N> gprsHandler;
-		HTTPHandler<N> httpHandler;
-		CgattHandler<N> cgattHandler;
+		TCPHandler tcpHandler;
+		GPRSHandler gprsHandler;
+		HTTPHandler httpHandler;
+		CgattHandler cgattHandler;
 		
 		ParameterHandler& refParams;
 		

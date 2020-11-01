@@ -59,7 +59,7 @@ class SimHandlerHelper
 			@return true only if successfuly sended data to the server
 		*/
 		
-		bool handleSendRootine(DataHandler<N>* dataHandler);
+		bool handleSendRootine(DataHandler* dataHandler);
 	
 	
 		SimHandler<N> handler;
