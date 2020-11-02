@@ -30,3 +30,15 @@ ANWSER_CODES SimTools::readAndGetCode(){
 bool SimTools::readAndExpectSuccess(){
 	return readAndGetCode() == OK;
 }
+
+
+
+
+ANWSER_CODES SimToolsProxy::readAndGetCode(){
+	ANWSER_CODES code = SimTools::readAndGetCode();
+	if(code == UNDEFINED){
+		state.encounterUndefinied();
+	}
+	
+	return code;
+}

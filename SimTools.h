@@ -29,7 +29,7 @@ class SimTools
 		
 		*/
 
-		ANWSER_CODES readAndGetCode();
+		virtual ANWSER_CODES readAndGetCode();
 		
 		
 		/**
@@ -40,8 +40,25 @@ class SimTools
 		
 		*/
 
-		bool readAndExpectSuccess();
+		virtual bool readAndExpectSuccess();
 		
 	
+	
+};
+
+
+class SimToolsProxy : public SimTools
+{
+	public:
+		SimToolsProxy(
+				CommandWriter& writer, 
+				BaseReader& reader,
+				FixedBufferBase& buffer
+				) :
+				SimTools(writer, reader, buffer){}
+				
+				
+		virtual ANWSER_CODES readAndGetCode() override;
+				
 	
 };

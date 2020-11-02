@@ -120,7 +120,7 @@ class SimHandler
 		FixedBuffer<N> buffer;
 		SimIOWrapper wrapper;
 		UnexpectedHandler reader;
-		SimTools tools;
+		SimToolsProxy tools;
 		GPRSHandler gprsHandler;
 		CgattHandler cgattHandler;
 		HTTPHandler httpHandler;

@@ -10,8 +10,8 @@ struct SimState
 		bool defaultsAreSet = false;
 		bool cpin = false;
 		bool networkRegistration = false;
-		BEARER_STATUS GPRS_Connection = GPRS_UNDEFINIED;
 		bool CGATT_Connection = false;
+		BEARER_STATUS GPRS_Connection = GPRS_UNDEFINIED;
 	} health;
 	
 	
@@ -36,8 +36,7 @@ struct SimState
 	} longCmd;
 	
 	
-	bool isReadyEncountered = false;
-	unsigned long readyTimeEncountered = 0;
+
 	TimeHandler timer;
 	
 	
@@ -82,11 +81,12 @@ struct SimState
 	}
 	
 	
-	void reset(){
-		health = StateHealth();
-		health.defaultsAreSet = true;
+	void encounterUndefinied(){
+		health.cpin = false;
+		health.networkRegistration = false;
+		health.GPRS_Connection = GPRS_UNDEFINIED;
+		health.CGATT_Connection = false;
 		
-		// http = StateHTTP();
 		tcp.state = TCP_STATE_UNDEFINIED;
 		
 	}

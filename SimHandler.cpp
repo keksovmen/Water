@@ -35,7 +35,7 @@ template<int N>
 bool SimHandler<N>::isModuleUp(){
 	tools.simPort.writeAT();
 	
-	bool result = readAndExpectSuccess(reader, tools.parser);
+	bool result = tools.readAndExpectSuccess();
 	buffer.clear();
 	
 	return result;
@@ -46,7 +46,7 @@ template<int N>
 bool SimHandler<N>::isModuleAlive(){
 	tools.simPort.writeCPIN();
 	
-	bool result = readAndExpectSuccess(reader, tools.parser);
+	bool result = tools.readAndExpectSuccess();
 	if(result){
 		result = tools.parser.isPinRdy();
 	}else{
@@ -87,7 +87,7 @@ NETWORK_CONNECTION SimHandler<N>::isConnectedToNetwork(){
 	tools.simPort.writeCREG();
 	
 	NETWORK_CONNECTION status = NETWORK_CONNECTION::UNKNOWN;
-	if(readAndExpectSuccess(reader, tools.parser, true)){
+	if(tools.readAndExpectSuccess()){
 		//if minimum time has passed and there is still no anwser
 		status = static_cast<NETWORK_CONNECTION>(
 					tools.parser.fetchNetworkRegistration()
@@ -95,7 +95,7 @@ NETWORK_CONNECTION SimHandler<N>::isConnectedToNetwork(){
 	}
 	
 	buffer.clear();
-	tools.state.health.networkRegistration = status == REGISTERED;
+	tools.state.health.networkRegistration = (status == REGISTERED);
 	return status;
 }
 
@@ -190,34 +190,6 @@ DataHandler* SimHandler<N>::sendGetRequest(
 
 template<int N>
 void SimHandler<N>::handleReading(){
-	// if(!tcpHandler.isConnected()){
-		// if(isModuleAlive()){
-			// tcpHandler.connect();
-		// }else{
-			// tcpHandler.reset();
-		// }
-	// }
-	
-	// if(tcpHandler.isMessageWaiting()){
-		//handle message
-		// handleTCPMessage();
-		// tcpHandler.clearMessage();
-	// }
-	
-	// if(!wrapper.lazyRead()){
-		// return;
-	// }
-	
-	// reader.handleSwitch();
-	
-	//if will contain a message try to read and parse
-	//through UnexpectedHandler
-	// if(tools.parser.isPossibleMessage()){
-		// reader.read();
-	// }
-	
-	//clear possible garbage
-	// buffer.clear();
 }
 
 
@@ -343,7 +315,7 @@ bool SimHandler<N>::tryToSetDefaultParam(int id){
 	writeDefaultParam(id);
 	if(readAndGetCode(reader, tools.parser) == ANWSER_CODES::UNDEFINED){
 		writeDefaultParam(id);
-		result = readAndExpectSuccess(reader, tools.parser);
+		result = tools.readAndExpectSuccess();
 	}
 	
 	
