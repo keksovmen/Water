@@ -104,4 +104,12 @@ struct SimState
 		setDefault();
 		timer.sheduleDelay(7000);
 	}
+	
+	
+	bool isAbleToSendHttp(){
+		return !http.isBussy && 
+				longCmd.cmdHandler == nullptr &&
+				isMinimumEstablished() &&
+				isGPRS_Connected();
+	}
 };

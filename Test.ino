@@ -117,15 +117,25 @@ void loop(){
 	
 	// if button 8 pressed
 	if(digitalRead(BUTTON_TIME) == LOW){
-		printMessage("Asking time");
-		simHelper.askTime();
+		// printMessage("Asking time");
+		if(!simHelper.isAbleToUseHttp()){
+			printMessage("HTTP UNAVAILABLE");
+			delay(1000);
+		}else{
+			askTime();
+		}
 	}
 	
 	
 	//if button 9 pressed
 	if(digitalRead(BUTTON_SEND) == LOW){
-		printMessage("Sending data");
-		sendSensorData();
+		if(!simHelper.isAbleToUseHttp()){
+			printMessage("HTTP UNAVAILABLE");
+			delay(1000);
+		}else{
+			sendSensorData();
+		}
+		
 	}
 	
 	
@@ -141,65 +151,18 @@ void loop(){
 	if(cardReader.readCard()){
 		// Serial.print("Counter: ");
 		// Serial.println(cardReader.getCounter());
-		Parameter<PrimitivIntParameter<int>> volume(4);
-		volume.getValue().getValue() = cardReader.getCounter();
-		simHelper.sendVolume(volume, parameters);
+		// Parameter<PrimitivIntParameter<int>> volume(4);
+		// volume.getValue().getValue() = cardReader.getCounter();
+		// simHelper.sendVolume(volume, parameters);
+		if(!simHelper.isAbleToUseHttp()){
+			printMessage("HTTP UNAVAILABLE");
+			delay(1000);
+		}else{
+			sendVolume();
+		}
 	}
 	
 }
-
-
-//Tries to get time frome server
-//And update current clock
-// void askForTime(){
-	// if(!checkSimModuleReady()){
-		// Serial.println("ASK TIME FAILED!");
-		// return;
-	// }
-	
-	// DataHandler<FIXED_BUFFER_SIZE>* getHandler = simHandler.sendGetRequest();
-	
-	// if(!getHandler){
-		// Serial.println("Handler is null");
-		// return;
-	// }
-	
-	// getHandler->write("http://128.69.240.186/GetTime.php");
-	
-	// if(getHandler->send()){
-		// while(!getHandler->isSended()){
-			// delay(1000);
-			// Serial.println("Send took 1 sec");
-		// }
-	// }else{
-		// Serial.println("SEND FAILED");
-		// getHandler->finish();
-		// return;
-	// }
-	
-	// if(!getHandler->isSendedSuccesfully()){
-		// Serial.println("SEND FINISHED NO SUCCESS CODE");
-		// getHandler->finish();
-		// return;
-	// }
-	
-	// getHandler->getBuffer().clear();
-	// if(getHandler->readResponce()){
-		// auto& b = getHandler->getBuffer();
-		// if(!clk.parse(b.begin())){
-			// Serial.println("CLOCK PARSE FAILED BUFFER:");
-			// Serial.println(b.begin());
-			// getHandler->finish();
-			// return;
-		// }
-	// }
-	
-	// getHandler->finish();
-	
-	// if(!simHandler.disconnectFromGPRS()){
-		// Serial.println("Failed close GPRS");
-	// }
-// }
 
 
 //Pretty time format printing
@@ -227,12 +190,43 @@ void printTime(const Clock& clk){
 //to server, also displays what was send
 void sendSensorData(){
 	updateParams();
-	simHelper.sendParams(parameters);
+	if(!simHelper.sendParams(parameters)){
+		printMessage("Network Error");
+		delay(1000);
+		return;
+	}
+	
+	waitForResult();
 	
 	showEntry(
 		parameters.getTemp().getValue().getValue(),
 		parameters.getPressure().getValue().getValue()
 		);
+}
+
+
+void sendVolume(){
+	Parameter<PrimitivIntParameter<int>> volume(4);
+	volume.getValue().getValue() = cardReader.getCounter();
+		
+	if(!simHelper.sendVolume(volume, parameters)){
+		printMessage("Network Error");
+		delay(1000);
+		return;
+	}
+	
+	waitForResult();
+}
+
+
+void askTime(){
+	if(!simHelper.askTime()){
+		printMessage("Network Error");
+		delay(1000);
+		return;
+	}
+	
+	waitForResult();
 }
 
 
@@ -253,119 +247,6 @@ void showEntry(int temp, int pressure){
 }
 
 
-//Tries to get raw sensor data from server
-//Also displays it
-// void askServerData(){
-	// if(!checkSimModuleReady()){
-		// Serial.println("ASK DATA FAILED!");
-		// return;
-	// }
-	
-	// DataHandler<FIXED_BUFFER_SIZE>* getHandler = simHandler.sendGetRequest();
-	
-	// if(!getHandler){
-		// Serial.println("Handler is null");
-		// return;
-	// }
-	
-	// getHandler->write("http://128.69.240.186/ReadRaw.php");
-	
-	// if(getHandler->send()){
-		// while(!getHandler->isSended()){
-			// delay(1000);
-			// Serial.println("Send took 1 sec");
-		// }
-	// }else{
-		// Serial.println("SEND FAILED");
-		// getHandler->finish();
-		// return;
-	// }
-	
-	// if(!getHandler->isSendedSuccesfully()){
-		// Serial.println("SEND FINISHED NO SUCCESS CODE");
-		// getHandler->finish();
-		// return;
-	// }
-	
-	// getHandler->getBuffer().clear();
-	// while(getHandler->readResponce()){
-		// auto& b = getHandler->getBuffer();
-		// int index;
-		
-		// while((index = b.indexOf("\n")) != -1){
-			// if(index == -1)
-				// continue;
-			
-			// int startIndex = b.indexOf("Temperature");
-			// int temp = atof(&b[startIndex + 17]);
-			
-			// startIndex = b.indexOf("Pressure");
-			// int pressure = atof(&b[startIndex + 15]);
-			
-			// showEntry(temp, pressure);
-			
-			// startIndex = b.indexOf("Time: ");
-			// if(startIndex != -1){
-				// Clock tmpClock;
-				// if(tmpClock.parse(&b[startIndex + 6])){
-					// printTime(tmpClock);
-					// delay(1500);
-				// }
-				
-			// }
-			
-			// b.substring(index);	//substring from /nTemperature of new line
-			// b.remove(0, 1);	//delete /n symbol
-			
-		// }
-		
-	// }
-	
-	// getHandler->finish();
-	
-	// if(!simHandler.disconnectFromGPRS()){
-		// Serial.println("Failed close GPRS");
-	// }
-// }
-
-
-//Check if sim module is working and tries to open GPRS connection
-// bool checkSimModuleReady(){
-	// if(!simHandler.isModuleUp()){
-		// delay(5000);
-		// if(!simHandler.isModuleUp()){
-			// Serial.println("Module offline");
-			// return false;
-		// }
-	// }
-	
-	// if(!simHandler.isModuleAlive()){
-		// Serial.println("Module not alive");
-			// return false;
-	// }
-	
-	// if(simHandler.isConnectedToNetwork() != 
-						// NETWORK_CONNECTION::REGISTERED){
-		// delay(5000);
-		// if(simHandler.isConnectedToNetwork() != 
-						// NETWORK_CONNECTION::REGISTERED){
-			// Serial.println("Can't connect to network");
-			// return false;
-		// }
-	// }
-	
-	// if(!simHandler.connectToGPRS("internet")){
-		// delay(5000);
-		// if(!simHandler.connectToGPRS("internet")){
-			// Serial.println("Can't connect to GPRS");
-			// return false;
-		// }
-	// }
-	
-	// return true;
-// }
-
-
 //CAUTION max length of str is 16 symbols
 void printMessage(const char* str){
 	lcd.clear();
@@ -379,4 +260,26 @@ void updateParams(){
 	double press = dev.getPressure();
 	parameters.getTemp().getValue().getValue() = temp;
 	parameters.getPressure().getValue().getValue() = press;
+}
+
+void waitForResult(){
+	printMessage("Sending data");
+	unsigned long t = millis();
+	bool b = false;
+	while(!simHelper.isAnwserRdy()){
+		if((millis() - t) > 500){
+			t = millis();
+			if(b)
+				printMessage("Sending data..");
+			else
+				printMessage("Sending data.");
+			b = !b;
+		}
+	}
+	
+	if(!simHelper.isAnwserSuccess()){
+		printMessage("Server Fail");
+		delay(1000);
+		return;
+	}
 }

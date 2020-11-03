@@ -8,49 +8,13 @@ SimHandlerHelper<N>::SimHandlerHelper(Stream& connection, ParameterHandler& para
 	handler(connection, buffer, parameters),
 	refParameters(parameters)
 {
-	
+
 }
 
-template<int N>
-bool SimHandlerHelper<N>::init(){
-	if(isInit)
-		return true;
-	
-	if(!handler.isModuleUp()){
-		Serial.println("Module is offline");
-		return false;
-	}
-	
-	
-	if(!handler.setDefaultParams()){
-		Serial.println("Defaults are not set");
-		return false;
-	}
-	
-	//dosn't retun false because technically module is working
-	//and default are set so initialized successfully
-	//here just for debug purposes mainly
-	//prevent early than too late
-	if(!handler.isModuleAlive()){
-		Serial.println("Sim is not inserted");
-	}
-	
-	isInit = true;
-	return true;
-}
 
 template<int N>
 bool SimHandlerHelper<N>::sendParams(ParameterHandler& params){
-	if(!initRotine()){
-		return false;
-	}
-	
-	if(!checkReadyToSend()){
-		return false;
-	}
-	
-	
-	auto* dataHandler = handler.sendPostRequest(
+	dataHandler = handler.sendPostRequest(
 			params.getAddress().getValue(),
 			"Send.php", 
 			params.getLength()
@@ -63,32 +27,30 @@ bool SimHandlerHelper<N>::sendParams(ParameterHandler& params){
 	
 	params.handleWritingValue(*dataHandler);
 	
-	bool result = false;
-	if(handleSendRootine(dataHandler)){
-		result = true;
-	}
+	// bool result = false;
+	// if(handleSendRootine(dataHandler)){
+		// result = true;
+	// }
 	
-	dataHandler->finish();
+	lastRequest = HTTP_SCRIPT_SEND_PARAMS;
 	
-	return result;
+	// dataHandler->finish();
+	
+	return handleSendRootine();
 }
 
 
 //TODO: finish it made volume as local param with id and so on
 template<int N>
-bool SimHandlerHelper<N>::sendVolume(Parameter<PrimitivIntParameter<int>>& volume, ParameterHandler& params){
-	if(!initRotine()){
-		return false;
-	}
-	
-	if(!checkReadyToSend()){
-		return false;
-	}
-	
+bool SimHandlerHelper<N>::sendVolume(
+		Parameter<PrimitivIntParameter<int>>& volume, 
+		ParameterHandler& params
+		)
+{
 	int length = volume.getLength() + 
 					params.getClock().getLength() + 1;
 	
-	auto* dataHandler = handler.sendPostRequest(
+	dataHandler = handler.sendPostRequest(
 			params.getAddress().getValue(),
 			"SendVolume.php", 
 			length
@@ -102,22 +64,23 @@ bool SimHandlerHelper<N>::sendVolume(Parameter<PrimitivIntParameter<int>>& volum
 	dataHandler->write('&');
 	volume.handleWritingValue(*dataHandler);
 	
-	// params.handleWritingValue(*dataHandler);
 	
-	bool result = false;
-	if(handleSendRootine(dataHandler)){
-		result = true;
-	}
+	// bool result = false;
+	// if(handleSendRootine(dataHandler)){
+		// result = true;
+	// }
 	
-	dataHandler->finish();
+	lastRequest = HTTP_SCRIPT_SEND_VOLUME;
 	
-	return result;
+	// dataHandler->finish();
+	
+	return handleSendRootine();
 }
 
 
 template<int N>
 bool SimHandlerHelper<N>::askTime(){
-	auto* dataHandler = handler.sendGetRequest(
+	dataHandler = handler.sendGetRequest(
 			refParameters.getAddress().getValue(),
 			"/GetTime.php"
 			);
@@ -130,102 +93,96 @@ bool SimHandlerHelper<N>::askTime(){
 	// dataHandler->write("?a=1&b=2");
 	
 	
-	bool result = false;
-	if(handleSendRootine(dataHandler)){
-		result = true;
+	// bool result = false;
+	// if(handleSendRootine(dataHandler)){
+		// result = true;
+	// }
+	
+	lastRequest = HTTP_SCRIPT_GET_TIME;
+	
+	// dataHandler->getBuffer().clear();
+	// if(dataHandler->readResponce()){
+		// auto& b = dataHandler->getBuffer();
+		// refParameters.getClock().getValue().parse(b.begin());
+	// }
+	
+	// dataHandler->finish();
+	
+	return handleSendRootine();
+}
+
+
+template<int N>
+bool SimHandlerHelper<N>::isAbleToUseHttp(){
+	return handler.tools.state.isAbleToSendHttp();
+}
+
+
+template<int N>
+bool SimHandlerHelper<N>::isAnwserRdy(){
+	bool result = dataHandler->isSended();
+	if(!result){
+		handler.doActivity();
 	}
 	
-	dataHandler->getBuffer().clear();
-	if(dataHandler->readResponce()){
-		auto& b = dataHandler->getBuffer();
-		if(!refParameters.getClock().getValue().parse(b.begin())){
-			Serial.println("CLOCK PARSE FAILED BUFFER:");
-			Serial.println(b.begin());
-			dataHandler->finish();
-			// result = false;
+	return result;
+}
+
+
+template<int N>
+bool SimHandlerHelper<N>::isAnwserSuccess(){
+	bool result = dataHandler->isSendedSuccesfully();
+	if(result){
+		//handle what was send here
+		switch(lastRequest){
+			case HTTP_SCRIPT_GET_TIME:
+				dataHandler->getBuffer().clear();
+				if(dataHandler->readResponce()){
+					auto& b = dataHandler->getBuffer();
+					refParameters.getClock().getValue().parse(b.begin());
+				}
+				break;
+				
+			case HTTP_SCRIPT_GET_VOLUME:
+				
+				break;
+				
+			case HTTP_SCRIPT_SEND_PARAMS:
+			case HTTP_SCRIPT_SEND_VOLUME:
+				
+				break;
+				
+			default: break;
 		}
 	}
 	
-	dataHandler->finish();
+	finishSession();
 	
 	return result;
 }
 
 
 
-
-
 template<int N>
-bool SimHandlerHelper<N>::initRotine(){
-	if(!isInit)
-		init();
-	
-	return isInit;
-}
-
-template<int N>
-bool SimHandlerHelper<N>::checkReadyToSend(){
-	if(!handler.isModuleAlive()){
-		Serial.println("Sim is not inserted");
-		return false;
-	}
-	
-	if(!handleNetworkStatus(handler.isConnectedToNetwork())){
-		Serial.println("Network is not registered");
-		return false;
-	}
-	
-	if(!handler.connectToGPRS("internet")){
-		Serial.println("GPRS is not connected");
-		return false;
-	}
-	
-	return true;
-}
-
-template<int N>
-bool SimHandlerHelper<N>::handleNetworkStatus(NETWORK_CONNECTION status){
-	switch(status){
-		case REGISTERED:
-			return true;
-			
-			
-		case NOT_REGISTERED_SEARCHING:
-				//wait for 3 sec and check if registered
-				for(int i = 0; i < 10; i++){
-					delay(300);
-					if(handler.isConnectedToNetwork() 
-							== REGISTERED)
-						return true;
-				}
-				
-			return false;
-			
-			
-		default : return false;
-	}
-}
-
-
-template<int N>
-bool SimHandlerHelper<N>::handleSendRootine(DataHandler* dataHandler){
+bool SimHandlerHelper<N>::handleSendRootine(){
 	if(!dataHandler->send()){
 		Serial.println("Send failed");
+		finishSession();
 		return false;
 	}
 	
-	while(!dataHandler->isSended()){
-		handler.doActivity();
-		//just wait or could add some interapt
-		//so you could break from here and
-		//somehow later continue from here
-		// delay(100);
-	}
-	
-	if(!dataHandler->isSendedSuccesfully()){
-		Serial.println("Sended with unsuccess code");
-		return false;
-	}
+	this->dataHandler = dataHandler;
 	
 	return true;
+}
+
+
+template<int N>
+void SimHandlerHelper<N>::finishSession(){
+	lastRequest = HTTP_SCRIPT_NAN;
+	if(dataHandler){
+		dataHandler->finish();
+	}
+	
+	dataHandler = nullptr;
 }

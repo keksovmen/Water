@@ -2,9 +2,9 @@
 
 #include <Stream.h>
 #include <IPAddress.h>
+// #include "SimHandlerHelper.h"
 #include "Enums.h"
 #include "Constants.h"
-#include "ParameterHandler.h"
 #include "Buffer/FixedBufferBase.h"
 #include "SimIOWrapper.h"
 #include "UnexpectedHandler.h"
@@ -14,6 +14,7 @@
 #include "HTTPHandler.h"
 #include "TCPHandler.h"
 #include "DataHandler.h"
+#include "ParameterHandler.h"
 
 
 
@@ -24,10 +25,17 @@
 
 */
 
+template<int N>
+class SimHandlerHelper;
+// template class SimHandlerHelper<FIXED_BUFFER_SIZE>;
+// template<> class SimHandlerHelper<128>;
 
 class SimHandler
 {
 	public:
+		template<int N>
+		friend class SimHandlerHelper;
+	
 		SimHandler(
 				Stream& refPort,
 				FixedBufferBase& buffer,
