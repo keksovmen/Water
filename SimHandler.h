@@ -5,7 +5,7 @@
 #include "Enums.h"
 #include "Constants.h"
 #include "ParameterHandler.h"
-#include "Buffer/FixedBuffer.h"
+#include "Buffer/FixedBufferBase.h"
 #include "SimIOWrapper.h"
 #include "UnexpectedHandler.h"
 #include "SimTools.h"
@@ -25,11 +25,14 @@
 */
 
 
-template<int N>
 class SimHandler
 {
 	public:
-		SimHandler(Stream& refPort, ParameterHandler& parameters);
+		SimHandler(
+				Stream& refPort,
+				FixedBufferBase& buffer,
+				ParameterHandler& parameters
+				);
 		
 		/**
 			@return true if module can anwser
@@ -117,7 +120,7 @@ class SimHandler
 		bool handleLongMessages();
 		
 
-		FixedBuffer<N> buffer;
+		FixedBufferBase& refBuffer;
 		SimIOWrapper wrapper;
 		UnexpectedHandler reader;
 		SimToolsProxy tools;
@@ -129,8 +132,6 @@ class SimHandler
 		ParameterHandler& refParams;
 		
 };
-
-template class SimHandler<FIXED_BUFFER_SIZE>;
 
 
 

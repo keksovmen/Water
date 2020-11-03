@@ -44,7 +44,7 @@ unsigned long timeBefore;
 
 // SimHandler<FIXED_BUFFER_SIZE> simHandler(sim, parameters);
 SimHandlerHelper<FIXED_BUFFER_SIZE> simHelper(sim, parameters);
- SimHandler<FIXED_BUFFER_SIZE>& simHandler = simHelper.getHandler();
+SimHandler& simHandler = simHelper.getHandler();
 
 
 

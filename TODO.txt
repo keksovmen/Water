@@ -10,14 +10,11 @@
 
 bool lazyRead() as super class method ???
 
-16	-	Add check for RDY statement and when you recieve it
-			made global error to restart
 
 17	-	Made all string to be in flash memory
 
 18	-	Add check if i am able to send right now http request
-19	-	SimState flag for undefinied state, when you didn't
-			recieve result
 20	-	Check unsigned long SMALL - same but BIG. Will
 			return delta time?
-21	-	Remove all template params and pass buffer to SimHandler
+22	-	Will sim module anwser when doing long command such as
+			sending http or connecting to services?

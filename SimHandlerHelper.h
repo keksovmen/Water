@@ -1,5 +1,6 @@
 #pragma once
 #include <Stream.h>
+#include "Buffer/FixedBuffer.h"
 #include "SimHandler.h"
 #include "ParameterHandler.h"
 #include "Parameter.h"
@@ -20,7 +21,7 @@ class SimHandlerHelper
 		bool askTime();
 		
 		
-		SimHandler<N>& getHandler(){return handler;}
+		SimHandler& getHandler(){return handler;}
 		
 	private:
 		
@@ -61,9 +62,8 @@ class SimHandlerHelper
 		
 		bool handleSendRootine(DataHandler* dataHandler);
 	
-	
-		SimHandler<N> handler;
-		// TCPHandler<N> tcpHandler;
+		FixedBuffer<N> buffer;
+		SimHandler handler;
 		ParameterHandler& refParameters;
 		
 		bool isInit = false;

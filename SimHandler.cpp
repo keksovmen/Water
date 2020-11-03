@@ -14,14 +14,16 @@ static char dynamicMemory[21];
 
 
 
-template<int N>
-SimHandler<N>::SimHandler(
+
+SimHandler::SimHandler(
 				Stream& refPort, 
+				FixedBufferBase& buffer,
 				ParameterHandler& parameters
 				) :
-		wrapper(refPort, buffer), 
-		reader(buffer, wrapper, tools.state),
-		tools(wrapper, reader, buffer),
+		refBuffer(buffer),
+		wrapper(refPort, refBuffer),
+		reader(refBuffer, wrapper, tools.state),
+		tools(wrapper, reader, refBuffer),
 		gprsHandler(tools), 
 		cgattHandler(tools),
 		httpHandler(tools),
@@ -31,19 +33,19 @@ SimHandler<N>::SimHandler(
 	reader.attachTCPHandler(&tcpHandler);
 }
 
-template<int N>
-bool SimHandler<N>::isModuleUp(){
+
+bool SimHandler::isModuleUp(){
 	tools.simPort.writeAT();
 	
 	bool result = tools.readAndExpectSuccess();
-	buffer.clear();
+	refBuffer.clear();
 	
 	return result;
 }
 
 
-template<int N>
-bool SimHandler<N>::isModuleAlive(){
+
+bool SimHandler::isModuleAlive(){
 	tools.simPort.writeCPIN();
 	
 	bool result = tools.readAndExpectSuccess();
@@ -57,7 +59,7 @@ bool SimHandler<N>::isModuleAlive(){
 	}
 	
 	
-	buffer.clear();
+	refBuffer.clear();
 	
 	tools.state.health.cpin = result;
 	return result;
@@ -82,8 +84,8 @@ bool SimHandler<N>::isModuleAlive(){
 			5 - registered, romaning
 */
 
-template<int N>
-NETWORK_CONNECTION SimHandler<N>::isConnectedToNetwork(){
+
+NETWORK_CONNECTION SimHandler::isConnectedToNetwork(){
 	tools.simPort.writeCREG();
 	
 	NETWORK_CONNECTION status = NETWORK_CONNECTION::UNKNOWN;
@@ -94,14 +96,14 @@ NETWORK_CONNECTION SimHandler<N>::isConnectedToNetwork(){
 					);
 	}
 	
-	buffer.clear();
+	refBuffer.clear();
 	tools.state.health.networkRegistration = (status == REGISTERED);
 	return status;
 }
 
 
-template<int N>
-bool SimHandler<N>::setDefaultParams(){
+
+bool SimHandler::setDefaultParams(){
 	if(!tryToSetDefaultParam(0)){
 		return false;
 	}
@@ -128,74 +130,74 @@ bool SimHandler<N>::setDefaultParams(){
 }
 
 
-template<int N>
-bool SimHandler<N>::connectToGPRS(const char* apn){
+
+bool SimHandler::connectToGPRS(const char* apn){
 	bool result = gprsHandler.isConnected() == GPRS_CONNECTED;
 	if(!result){
 		result = gprsHandler.connect(apn);
 	}
 	
-	buffer.clear();
+	refBuffer.clear();
 	
 	return result;
 }
 
-template<int N>
-bool SimHandler<N>::disconnectFromGPRS(){
+
+bool SimHandler::disconnectFromGPRS(){
 	bool result = gprsHandler.isConnected() == GPRS_CONNECTED;
 	// if(result){
 		// result = gprsHandler.close();
 	// }
 	
-	// buffer.clear();
+	// refBuffer.clear();
 	
 	return result;
 }
 
 
-template<int N>
-DataHandler* SimHandler<N>::sendPostRequest(
+
+DataHandler* SimHandler::sendPostRequest(
 							IPAddress& address, 
 							const char* url, 
 							int dataLength)
 {
 	if(httpHandler.initPostRequest(address, url, dataLength)){
-		buffer.clear();
+		refBuffer.clear();
 		return new(dynamicMemory) 
-				PostDataHandler(tools.parser, tools.simPort, buffer, tools.state);
+				PostDataHandler(tools.parser, tools.simPort, refBuffer, tools.state);
 	}
 	
-	buffer.clear();
+	refBuffer.clear();
 	
 	return nullptr;
 }
 
 
-template<int N>
-DataHandler* SimHandler<N>::sendGetRequest(
+
+DataHandler* SimHandler::sendGetRequest(
 							IPAddress& address, 
 							const char* url
 							){
 	if(httpHandler.initGetRequest(address, url)){
-		buffer.clear();
+		refBuffer.clear();
 		return new(dynamicMemory)
-				GetDataHandler(tools.parser, tools.simPort, buffer, tools.state);
+				GetDataHandler(tools.parser, tools.simPort, refBuffer, tools.state);
 	}
 	
-	buffer.clear();
+	refBuffer.clear();
 	
 	return nullptr;
 }
 
 
-template<int N>
-void SimHandler<N>::handleReading(){
+
+void SimHandler::handleReading(){
 }
 
 
 //TODO: Cut into bool functions big blocks of handling
-template<int N>
-void SimHandler<N>::doActivity(){
+
+void SimHandler::doActivity(){
 	if(!tools.state.timer.isOpen()){
 		goto B;
 	}
@@ -279,13 +281,13 @@ void SimHandler<N>::doActivity(){
 	}
 	
 	//clear possible garbage
-	buffer.clear();
+	refBuffer.clear();
 	
 }
 
 
-template<int N>
-void SimHandler<N>::writeDefaultParam(int id){
+
+void SimHandler::writeDefaultParam(int id){
 	switch(id){
 		case 0:
 			tools.simPort.writeEcho(false);
@@ -308,8 +310,8 @@ void SimHandler<N>::writeDefaultParam(int id){
 }
 
 
-template<int N>
-bool SimHandler<N>::tryToSetDefaultParam(int id){
+
+bool SimHandler::tryToSetDefaultParam(int id){
 	bool result = true;
 	
 	writeDefaultParam(id);
@@ -319,25 +321,25 @@ bool SimHandler<N>::tryToSetDefaultParam(int id){
 	}
 	
 	
-	buffer.clear();
+	refBuffer.clear();
 	return result;
 }
 
 
-template<int N>
-void SimHandler<N>::handleTCPMessage(){
-	auto tmp = tcpHandler.readMessage(buffer);
+
+void SimHandler::handleTCPMessage(){
+	auto tmp = tcpHandler.readMessage(refBuffer);
 	TCPIncomingHandler handler;
 	while(tmp.readResponce()){
-		handler.handleMessage(buffer, refParams, tools.simPort, tools.parser);
+		handler.handleMessage(refBuffer, refParams, tools.simPort, tools.parser);
 	}
 	
 	tools.state.tcp.hasMessage = false;
 }
 
 
-template<int N>
-bool SimHandler<N>::handleLongMessages(){
+
+bool SimHandler::handleLongMessages(){
 	if(tools.state.longCmd.cmdHandler){
 		if(tools.state.longCmd.isAnwserReady){
 			if(tools.state.longCmd.cmdHandler->handle()){
