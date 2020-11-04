@@ -196,7 +196,8 @@ bool TCPHandler::handleIpStatus(){
 
 bool TCPHandler::handlePDPDeact(){
 	refTools.simPort.writeCIPSHUT();
-	refTools.state.longCmd.cmdHandler = this;
+	// refTools.state.longCmd.cmdHandler = this;
+	refTools.state.setLongCmd(this);
 	isLastCommandCIICR = false;
 	
 	return true;

@@ -34,7 +34,7 @@ bool CardReader::init(){
 }
 
 
-bool CardReader::readCard(){
+bool CardReader::readCard(int volume){
 	if(read()){
 		counter = 0;
 		printCounter();
@@ -48,6 +48,9 @@ bool CardReader::readCard(){
 			if(oldVal != counter){
 				printCounter();
 				oldVal = counter;
+				if(oldVal >= volume){
+					break;
+				}
 			}
 		}
 		//detach interrupt

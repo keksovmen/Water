@@ -49,6 +49,10 @@ SimHandler& simHandler = simHelper.getHandler();
 
 
 
+bool waitForResult(const char* str = "Sending data");
+
+
+
 void setup(){
 	Serial.begin(115200);
 	sim.begin(115200);
@@ -148,18 +152,41 @@ void loop(){
 	// simHandler.handleReading();
 	simHandler.doActivity();
 	
-	if(cardReader.readCard()){
+	if(cardReader.read()){
+		if(!simHelper.isAbleToUseHttp()){
+			printMessage("HTTP UNAVAILABLE");
+			delay(1000);
+		}else{
+			if(askVolume()){
+				if(parameters.getUserVolume().getValue().getValue() == 0){
+					printMessage("Zero Volume");
+					delay(1000);
+				}else{
+					if(cardReader.readCard(parameters.getUserVolume().getValue().getValue())){
+						if(parameters.getGivenVolume().getValue().getValue() > 0){
+							sendVolume();
+							printMessage("Sended");
+							delay(2000);
+						}
+					}
+				}
+			}else{
+				printMessage("Server Error");
+				delay(1000);
+			}
+		}
 		// Serial.print("Counter: ");
 		// Serial.println(cardReader.getCounter());
 		// Parameter<PrimitivIntParameter<int>> volume(4);
 		// volume.getValue().getValue() = cardReader.getCounter();
 		// simHelper.sendVolume(volume, parameters);
-		if(!simHelper.isAbleToUseHttp()){
-			printMessage("HTTP UNAVAILABLE");
-			delay(1000);
-		}else{
-			sendVolume();
-		}
+		
+		// if(!simHelper.isAbleToUseHttp()){
+			// printMessage("HTTP UNAVAILABLE");
+			// delay(1000);
+		// }else{
+			
+		// }
 	}
 	
 }
@@ -205,17 +232,64 @@ void sendSensorData(){
 }
 
 
-void sendVolume(){
-	Parameter<PrimitivIntParameter<int>> volume(4);
-	volume.getValue().getValue() = cardReader.getCounter();
+bool askVolume(){
+	// printMessage("Asking Volume");
+	if(!simHelper.askVolume()){
+		printMessage("Network Error");
+		delay(1000);
+		return false;
+	}
+	
+	const char* str = "Asking Volume";
+	
+	printMessage(str);
+	lcd.setCursor(strlen(str), 0);
+	
+	unsigned long t = millis();
+	bool b = false;
+	
+	while(!simHelper.isAnwserRdy()){
+		if(!cardReader.read()){
+			simHelper.abort();
+			return false;
+		}
 		
-	if(!simHelper.sendVolume(volume, parameters)){
+		if((millis() - t) > 500){
+			t = millis();
+			lcd.setCursor(strlen(str), 0);
+			lcd.print("  ");
+			
+			if(b)
+				lcd.print("..");
+			else
+				lcd.print(".");
+			
+			b = !b;
+		}
+	}
+	
+	if(!simHelper.isAnwserSuccess()){
+		printMessage("Server Fail");
+		delay(1000);
+		return false;
+	}
+	
+	return true;
+	
+	// return waitForResult("Asking Volume");
+}
+
+
+void sendVolume(){
+	parameters.getGivenVolume().getValue().getValue() = cardReader.getCounter();
+		
+	if(!simHelper.sendVolume(parameters)){
 		printMessage("Network Error");
 		delay(1000);
 		return;
 	}
 	
-	waitForResult();
+	waitForResult("Sending Volume");
 }
 
 
@@ -226,7 +300,7 @@ void askTime(){
 		return;
 	}
 	
-	waitForResult();
+	waitForResult("Asking Time");
 }
 
 
@@ -262,17 +336,23 @@ void updateParams(){
 	parameters.getPressure().getValue().getValue() = press;
 }
 
-void waitForResult(){
-	printMessage("Sending data");
+bool waitForResult(const char* str){
+	printMessage(str);
+	
 	unsigned long t = millis();
 	bool b = false;
+	
 	while(!simHelper.isAnwserRdy()){
 		if((millis() - t) > 500){
 			t = millis();
+			lcd.setCursor(strlen(str), 0);
+			lcd.print("  ");
+			
 			if(b)
-				printMessage("Sending data..");
+				lcd.print("..");
 			else
-				printMessage("Sending data.");
+				lcd.print(".");
+			
 			b = !b;
 		}
 	}
@@ -280,6 +360,8 @@ void waitForResult(){
 	if(!simHelper.isAnwserSuccess()){
 		printMessage("Server Fail");
 		delay(1000);
-		return;
+		return false;
 	}
+	
+	return true;
 }

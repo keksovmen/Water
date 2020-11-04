@@ -16,13 +16,14 @@ class CardReader
 				);
 		
 		bool init();
-		bool readCard();
+		bool readCard(int volume);
 		
 		
 		int getCounter();
 		
-	private:
 		bool read();
+		
+	private:
 		void printCounter();
 	
 		const int interruptPin;

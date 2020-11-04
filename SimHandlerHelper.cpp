@@ -24,17 +24,9 @@ bool SimHandlerHelper<N>::sendParams(ParameterHandler& params){
 		return false;
 	}
 	
-	
 	params.handleWritingValue(*dataHandler);
-	
-	// bool result = false;
-	// if(handleSendRootine(dataHandler)){
-		// result = true;
-	// }
-	
 	lastRequest = HTTP_SCRIPT_SEND_PARAMS;
 	
-	// dataHandler->finish();
 	
 	return handleSendRootine();
 }
@@ -43,11 +35,11 @@ bool SimHandlerHelper<N>::sendParams(ParameterHandler& params){
 //TODO: finish it made volume as local param with id and so on
 template<int N>
 bool SimHandlerHelper<N>::sendVolume(
-		Parameter<PrimitivIntParameter<int>>& volume, 
+		// Parameter<PrimitivIntParameter<int>>& volume, 
 		ParameterHandler& params
 		)
 {
-	int length = volume.getLength() + 
+	int length = params.getGivenVolume().getLength() + 
 					params.getClock().getLength() + 1;
 	
 	dataHandler = handler.sendPostRequest(
@@ -62,17 +54,28 @@ bool SimHandlerHelper<N>::sendVolume(
 	
 	params.getClock().handleWritingValue(*dataHandler);
 	dataHandler->write('&');
-	volume.handleWritingValue(*dataHandler);
-	
-	
-	// bool result = false;
-	// if(handleSendRootine(dataHandler)){
-		// result = true;
-	// }
+	params.getGivenVolume().handleWritingValue(*dataHandler);
 	
 	lastRequest = HTTP_SCRIPT_SEND_VOLUME;
 	
-	// dataHandler->finish();
+	
+	return handleSendRootine();
+}
+
+
+template<int N>
+bool SimHandlerHelper<N>::askVolume(){
+	dataHandler = handler.sendGetRequest(
+			refParameters.getAddress().getValue(),
+			"/GetVolume.php"
+			);
+	
+	if(!dataHandler){
+		return false;
+	}
+	
+	lastRequest = HTTP_SCRIPT_GET_VOLUME;
+	
 	
 	return handleSendRootine();
 }
@@ -92,21 +95,8 @@ bool SimHandlerHelper<N>::askTime(){
 	//write your query string
 	// dataHandler->write("?a=1&b=2");
 	
-	
-	// bool result = false;
-	// if(handleSendRootine(dataHandler)){
-		// result = true;
-	// }
-	
 	lastRequest = HTTP_SCRIPT_GET_TIME;
 	
-	// dataHandler->getBuffer().clear();
-	// if(dataHandler->readResponce()){
-		// auto& b = dataHandler->getBuffer();
-		// refParameters.getClock().getValue().parse(b.begin());
-	// }
-	
-	// dataHandler->finish();
 	
 	return handleSendRootine();
 }
@@ -136,15 +126,11 @@ bool SimHandlerHelper<N>::isAnwserSuccess(){
 		//handle what was send here
 		switch(lastRequest){
 			case HTTP_SCRIPT_GET_TIME:
-				dataHandler->getBuffer().clear();
-				if(dataHandler->readResponce()){
-					auto& b = dataHandler->getBuffer();
-					refParameters.getClock().getValue().parse(b.begin());
-				}
+				parseTime();
 				break;
 				
 			case HTTP_SCRIPT_GET_VOLUME:
-				
+				parseVolume();
 				break;
 				
 			case HTTP_SCRIPT_SEND_PARAMS:
@@ -162,6 +148,12 @@ bool SimHandlerHelper<N>::isAnwserSuccess(){
 }
 
 
+template<int N>
+void SimHandlerHelper<N>::abort(){
+	finishSession();
+	handler.gprsHandler.close();
+	// finishSession();
+}
 
 template<int N>
 bool SimHandlerHelper<N>::handleSendRootine(){
@@ -171,7 +163,7 @@ bool SimHandlerHelper<N>::handleSendRootine(){
 		return false;
 	}
 	
-	this->dataHandler = dataHandler;
+	// this->dataHandler = dataHandler;
 	
 	return true;
 }
@@ -185,4 +177,51 @@ void SimHandlerHelper<N>::finishSession(){
 	}
 	
 	dataHandler = nullptr;
+}
+
+
+template<int N>
+void SimHandlerHelper<N>::parseTime(){
+	dataHandler->getBuffer().clear();
+	
+	while(dataHandler->readResponce()){
+		auto& b = dataHandler->getBuffer();
+		int index = b.indexOf("#");
+		if(index == -1){
+			continue;
+		}
+		
+		int end = b.indexOfFrom(index, "$");
+		if(end == -1){
+			continue;
+		}
+		
+		refParameters.getClock().getValue().parse(&b[index + 1]);
+		break;
+	}
+}
+
+
+template<int N>
+void SimHandlerHelper<N>::parseVolume(){
+	dataHandler->getBuffer().clear();
+	
+	while(dataHandler->readResponce()){
+		auto& b = dataHandler->getBuffer();
+		int index = b.indexOf("#");
+		if(index == -1){
+			continue;
+		}
+		
+		int end = b.indexOfFrom(index, "$");
+		if(end == -1){
+			continue;
+		}
+		
+		refParameters.
+			getUserVolume().
+					getValue().
+						getValue() = atoi(&b[index + 1]);
+		break;
+	}
 }

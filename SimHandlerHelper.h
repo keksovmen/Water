@@ -32,11 +32,13 @@ class SimHandlerHelper
 		SimHandlerHelper(Stream& connection, ParameterHandler& parameters);
 		
 		bool sendParams(ParameterHandler& params);
-		bool sendVolume(Parameter<PrimitivIntParameter<int>>& volume, ParameterHandler& params);
+		bool sendVolume(ParameterHandler& params);
 		bool askTime();
+		bool askVolume();
 		bool isAbleToUseHttp();
 		bool isAnwserRdy();
 		bool isAnwserSuccess();
+		void abort();
 		
 		
 		SimHandler& getHandler(){return handler;}
@@ -81,6 +83,8 @@ class SimHandlerHelper
 		*/
 		
 		bool handleSendRootine();
+		void parseTime();
+		void parseVolume();
 	
 		FixedBuffer<N> buffer;
 		SimHandler handler;
