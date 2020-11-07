@@ -2,26 +2,24 @@
 #include "Util.h"
 
 
-PostDataHandler::PostDataHandler(	SimResultParser& parser, 
-									SimCommandPort& simPort,
-									FixedBufferBase& buffer,
-									SimState& state
+PostDataHandler::PostDataHandler(	SimTools& tools,
+									FixedBufferBase& buffer
 									) :
-	DataHandler(parser, simPort, buffer, state){
+	DataHandler(tools, buffer){
 		
 }
 
 
 bool PostDataHandler::send(){
-	this->refPort.writeEndOfCommand();
+	this->refTools.simPort.writeEndOfCommand();
 	
-	if(!readAndExpectSuccess(this->refPort, this->refParser)){
+	if(!this->refTools.readAndExpectSuccess()){
 		return false;
 	}
 		
-	this->refPort.writeHTPPAction(HTTP_REQUESTS::HTTP_POST);
+	this->refTools.simPort.writeHTPPAction(HTTP_REQUESTS::HTTP_POST);
 	
-	bool result = readAndExpectSuccess(this->refPort, this->refParser);
+	bool result = this->refTools.readAndExpectSuccess();
 	if(result){
 		DataHandler::send();
 	}

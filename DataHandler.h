@@ -1,12 +1,8 @@
 #pragma once
 
 #include "CommandWriter.h"
-#include "SimResultParser.h"
-#include "SimCommandPort.h"
-#include "Buffer/FixedBufferBase.h"
 #include "Constants.h"
 #include "ResponceReader.h"
-#include "SimState.h"
 #include "LongCommandHandler.h"
 
 
@@ -18,10 +14,8 @@
 class DataHandler : public BaseWriter, public ResponceReader, public LongCommandHandler
 {
 	public:
-		DataHandler(	SimResultParser& parser, 
-						SimCommandPort& simPort,
-						FixedBufferBase& buffer,
-						SimState& state
+		DataHandler(	SimTools& tools,
+						FixedBufferBase& buffer
 						);
 		
 		
@@ -84,6 +78,5 @@ class DataHandler : public BaseWriter, public ResponceReader, public LongCommand
 		bool isMessageFull() override;
 		void askForData(int index, int amount) override;
 		
-		SimState& refState;
 	
 };

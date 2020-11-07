@@ -3,27 +3,25 @@
 
 
 
-GetDataHandler::GetDataHandler(	SimResultParser& parser, 
-								SimCommandPort& simPort,
-								FixedBufferBase& buffer,
-								SimState& state
+GetDataHandler::GetDataHandler(	SimTools& tools,
+								FixedBufferBase& buffer
 								) :
-	DataHandler(parser, simPort, buffer, state){
+	DataHandler(tools, buffer){
 		
 }
 
 
 bool GetDataHandler::send(){
-	this->refPort.write('"');
-	this->refPort.writeEndOfCommand();
+	this->refTools.simPort.write('"');
+	this->refTools.simPort.writeEndOfCommand();
 			
-	if(!readAndExpectSuccess(this->refPort, this->refParser)){
+	if(!this->refTools.readAndExpectSuccess()){
 		return false;
 	}
 		
-	this->refPort.writeHTPPAction(HTTP_REQUESTS::HTTP_GET);
+	this->refTools.simPort.writeHTPPAction(HTTP_REQUESTS::HTTP_GET);
 	
-	bool result = readAndExpectSuccess(this->refPort, this->refParser);
+	bool result = this->refTools.readAndExpectSuccess();
 	if(result){
 		DataHandler::send();
 	}

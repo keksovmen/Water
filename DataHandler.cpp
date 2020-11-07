@@ -6,13 +6,11 @@
 
 
 
-DataHandler::DataHandler(	SimResultParser& parser, 
-								SimCommandPort& simPort,
-								FixedBufferBase& buffer,
-								SimState& state
-								) :
-	ResponceReader(parser, simPort, buffer),
-	refState(state)
+DataHandler::DataHandler(	SimTools& tools,
+							FixedBufferBase& buffer
+							) :
+	ResponceReader(tools, buffer)
+	// this->refTools.state(state)
 {
 	
 }
@@ -21,18 +19,18 @@ DataHandler::DataHandler(	SimResultParser& parser,
 
 
 bool DataHandler::send(){
-	refState.setLongCmd(this);
+	this->refTools.state.setLongCmd(this);
 	return false;
 }
 
 
 
 bool DataHandler::handle(){
-	if(this->refParser.isHttpActionPresents()){
-		this->responceLength = this->refParser.fetchHttpResponceLength();
-		refState.http.responseLength = this->responceLength;
-		refState.http.responseCode = this->refParser.fetchHTTPStatus();
-		refState.http.isAnwserReady = true;
+	if(this->refTools.parser.isHttpActionPresents()){
+		this->responceLength = this->refTools.parser.fetchHttpResponceLength();
+		this->refTools.state.http.responseLength = this->responceLength;
+		this->refTools.state.http.responseCode = this->refTools.parser.fetchHTTPStatus();
+		this->refTools.state.http.isAnwserReady = true;
 		return true;
 	}
 	
@@ -42,51 +40,51 @@ bool DataHandler::handle(){
 
 
 void DataHandler::write(const char* str){
-	this->refPort.write(str);
+	this->refTools.simPort.write(str);
 }
 
 
 void DataHandler::write(char c){
-	this->refPort.write(c);
+	this->refTools.simPort.write(c);
 }
 
 
 void DataHandler::write(int i){
-	this->refPort.write(i);
+	this->refTools.simPort.write(i);
 }
 
 
 
 void DataHandler::write(long l){
-	this->refPort.write(l);
+	this->refTools.simPort.write(l);
 }
 
 
 void DataHandler::write(double d, int amountAfterDot){
-	this->refPort.write(d, amountAfterDot);
+	this->refTools.simPort.write(d, amountAfterDot);
 }
 
 
 
 bool DataHandler::isSended(){
-	return refState.http.isAnwserReady;
+	return this->refTools.state.http.isAnwserReady;
 }
 
 
 
 bool DataHandler::isSendedSuccesfully(){
-	return refState.http.responseCode == 
+	return this->refTools.state.http.responseCode == 
 		static_cast<int>(HTTP_STATUS_CODES::HTTP_STATUS_SUCCESS);
 }
 
 
 
 void DataHandler::finish(){
-	this->refPort.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
-	readAndExpectSuccess(this->refPort, this->refParser);
+	this->refTools.simPort.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
+	this->refTools.readAndExpectSuccess();
 	
 	this->refBuffer.clear();
-	refState.clearHTTP();
+	this->refTools.state.clearHTTP();
 	
 }
 
@@ -99,18 +97,18 @@ int DataHandler::getMinMessageLength(){
 
 
 void DataHandler::removeGarbage(){
-	this->refParser.removeReadGarbage(READ_TYPE_HTTP);
+	this->refTools.parser.removeReadGarbage(READ_TYPE_HTTP);
 }
 
 
 
 bool DataHandler::isMessageFull(){
-	return this->refParser.isReadMessageFull(READ_TYPE_HTTP);
+	return this->refTools.parser.isReadMessageFull(READ_TYPE_HTTP);
 }
 
 
 
 void DataHandler::askForData(int index, int amount){
-	this->refPort.writeReadHTTP(index, amount);
+	this->refTools.simPort.writeReadHTTP(index, amount);
 }
 

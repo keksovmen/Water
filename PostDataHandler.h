@@ -13,10 +13,8 @@
 class PostDataHandler : public DataHandler
 {
 	public:
-		PostDataHandler(	SimResultParser& parser, 
-							SimCommandPort& simPort,
-							FixedBufferBase& buffer,
-							SimState& state
+		PostDataHandler(	SimTools& tools,
+							FixedBufferBase& buffer
 							);
 
 		bool send() override;

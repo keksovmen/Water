@@ -10,7 +10,7 @@
 
 //For new Post/GetDataHandler to return a pointer
 //Caution first check or calculate sizeof(Post/GetDataHandler)
-static char dynamicMemory[21];
+static char dynamicMemory[17];
 
 
 
@@ -164,7 +164,7 @@ DataHandler* SimHandler::sendPostRequest(
 	if(httpHandler.initPostRequest(address, url, dataLength)){
 		refBuffer.clear();
 		return new(dynamicMemory) 
-				PostDataHandler(tools.parser, tools.simPort, refBuffer, tools.state);
+				PostDataHandler(tools, refBuffer);
 	}
 	
 	refBuffer.clear();
@@ -181,7 +181,7 @@ DataHandler* SimHandler::sendGetRequest(
 	if(httpHandler.initGetRequest(address, url)){
 		refBuffer.clear();
 		return new(dynamicMemory)
-				GetDataHandler(tools.parser, tools.simPort, refBuffer, tools.state);
+				GetDataHandler(tools, refBuffer);
 	}
 	
 	refBuffer.clear();
@@ -315,7 +315,7 @@ bool SimHandler::tryToSetDefaultParam(int id){
 	bool result = true;
 	
 	writeDefaultParam(id);
-	if(readAndGetCode(reader, tools.parser) == ANWSER_CODES::UNDEFINED){
+	if(tools.readAndGetCode() == ANWSER_CODES::UNDEFINED){
 		writeDefaultParam(id);
 		result = tools.readAndExpectSuccess();
 	}

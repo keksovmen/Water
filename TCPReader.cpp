@@ -6,12 +6,11 @@
 
 
 
-TCPReader::TCPReader(	SimResultParser& parser, 
-						SimCommandPort& simPort,
+TCPReader::TCPReader(	SimTools& tools,
 						FixedBufferBase& buffer,
 						unsigned long length
 						) :
-	ResponceReader(parser, simPort, buffer)
+	ResponceReader(tools, buffer)
 {
 	this->responceLength = length;
 }
@@ -25,17 +24,17 @@ int TCPReader::getMinMessageLength(){
 
 
 void TCPReader::removeGarbage(){
-	this->refParser.removeReadGarbage(READ_TYPE_TCP);
+	this->refTools.parser.removeReadGarbage(READ_TYPE_TCP);
 }
 
 
 
 bool TCPReader::isMessageFull(){
-	return this->refParser.isReadMessageFull(READ_TYPE_TCP);
+	return this->refTools.parser.isReadMessageFull(READ_TYPE_TCP);
 }
 
 
 
 void TCPReader::askForData(int index, int amount){
-	this->refPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_GET_NORMAL, amount);
+	this->refTools.simPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_GET_NORMAL, amount);
 }

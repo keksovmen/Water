@@ -13,10 +13,8 @@
 class GetDataHandler : public DataHandler
 {
 	public:
-		GetDataHandler(	SimResultParser& parser, 
-						SimCommandPort& simPort,
-						FixedBufferBase& buffer,
-						SimState& state
+		GetDataHandler(	SimTools& tools,
+						FixedBufferBase& buffer
 						);
 		
 		bool send() override;

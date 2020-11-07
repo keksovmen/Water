@@ -6,11 +6,10 @@
 
 
 ResponceReader::ResponceReader(		
-					SimResultParser& parser, 
-					SimCommandPort& simPort,
+					SimTools& tools,
 					FixedBufferBase& buffer
 					) :
-	refParser(parser), refPort(simPort),
+	refTools(tools),
 	refBuffer(buffer)
 {
 	
@@ -72,14 +71,14 @@ bool ResponceReader::readResponce(){
 	readIndex += readAmount;
 	
 	while(1){
-		if(!refPort.read()){
+		if(!refTools.simPort.read()){
 			return false;
 		}
 			
 		if(isMessageFull()){
 			break;
 		}else{
-			if(refParser.checkError()){
+			if(refTools.parser.checkError()){
 				return false;
 			}
 		}

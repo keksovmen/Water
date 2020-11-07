@@ -1,16 +1,15 @@
 #pragma once
 
-#include "SimResultParser.h"
-#include "SimCommandPort.h"
-#include "Buffer/FixedBufferBase.h"
+
 #include "Constants.h"
+#include "SimTools.h"
+#include "Buffer/FixedBufferBase.h"
 
 
 class ResponceReader
 {
 	public:
-		ResponceReader(	SimResultParser& parser, 
-						SimCommandPort& simPort,
+		ResponceReader(	SimTools& tools,
 						FixedBufferBase& buffer
 						);
 						
@@ -30,8 +29,7 @@ class ResponceReader
 		//meybe not neccessery
 		bool firstRead = true;
 		
-		SimResultParser& refParser;
-		SimCommandPort& refPort;
+		SimTools& refTools;
 		FixedBufferBase& refBuffer;
 		
 	

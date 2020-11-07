@@ -38,30 +38,3 @@ int findLongLength(long val){
 int findDoubleLength(double val, int afterDot){
 	return findLongLength(val) + afterDot + 1;	//1 for dot character
 }
-
-bool readAndExpectSuccess(BaseReader& reader, SimResultParser& parser, bool isComplex, int timeout){
-	return readAndGetCode(reader, parser, isComplex, timeout) == ANWSER_CODES::OK;
-}
-
-
-ANWSER_CODES readAndGetCode(BaseReader& reader, SimResultParser& parser, bool isComplex, int timeout){
-	if(!reader.readTimeout(timeout)){
-		return ANWSER_CODES::UNDEFINED;
-	}
-	
-	bool rdy = false;
-	
-	if(isComplex){
-		rdy = parser.isComplexMessageReady();
-	}else{
-		rdy = parser.isSimpleMessageReady();
-	}
-	
-	if(!rdy){
-		if(!reader.read()){
-			return ANWSER_CODES::UNDEFINED;
-		}
-	}
-	
-	return static_cast<ANWSER_CODES>(parser.fetchResultCode());
-}

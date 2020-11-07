@@ -8,8 +8,7 @@
 class TCPReader : public ResponceReader
 {
 	public:
-		TCPReader(	SimResultParser& parser, 
-					SimCommandPort& simPort,
+		TCPReader(	SimTools& tools,
 					FixedBufferBase& buffer,
 					unsigned long length
 					);
