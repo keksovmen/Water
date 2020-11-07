@@ -62,16 +62,6 @@ class DataHandler : public BaseWriter, public ResponceReader, public LongCommand
 		void finish();
 		
 		
-		/**
-			Tries read data from server
-			
-			//TODO: made return status of buffer read, full or no more data
-			@return true if at least 1 character was read
-					or buffer full;
-		*/
-		
-		// bool readResponce();
-		
 	protected:
 		int getMinMessageLength() override;
 		void removeGarbage() override;

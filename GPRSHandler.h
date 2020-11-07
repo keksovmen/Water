@@ -22,8 +22,6 @@ class GPRSHandler : public LongCommandHandler
 		/**
 			Check if module is connected to network
 			
-			//TODO: made instead of bool use enum,
-			//there is CONNECTING status that can fail
 			@return network connection status
 		*/	
 		

@@ -29,8 +29,6 @@ ResponceReader::ResponceReader(
 	
 	So should ask for 64 - 21 = 41 bytes of data,
 	because of UART 64 bytes buffer
-	//TODO: there could be undervoltage and other shit messages
-	//handle it somehow
 	
 */
 

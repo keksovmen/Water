@@ -32,7 +32,6 @@ bool SimHandlerHelper<N>::sendParams(ParameterHandler& params){
 }
 
 
-//TODO: finish it made volume as local param with id and so on
 template<int N>
 bool SimHandlerHelper<N>::sendVolume(
 		// Parameter<PrimitivIntParameter<int>>& volume, 
