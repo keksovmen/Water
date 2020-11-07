@@ -35,7 +35,7 @@ Clock& clk = parameters.getClock().getValue();
 
 
 //NFC
-CardReader cardReader(3, Serial2, lcd);
+CardReader cardReader(3, Serial2, lcd, parameters.getCard().getValue());
 
 
 //For proper calculation of time
@@ -163,6 +163,7 @@ void loop(){
 					delay(1000);
 				}else{
 					if(cardReader.readCard(parameters.getUserVolume().getValue().getValue())){
+						parameters.getGivenVolume().getValue().getValue() = cardReader.getCounter();
 						if(parameters.getGivenVolume().getValue().getValue() > 0){
 							sendVolume();
 							printMessage("Sended");
@@ -258,6 +259,7 @@ bool askVolume(){
 			t = millis();
 			lcd.setCursor(strlen(str), 0);
 			lcd.print("  ");
+			lcd.setCursor(strlen(str), 0);
 			
 			if(b)
 				lcd.print("..");
@@ -281,7 +283,7 @@ bool askVolume(){
 
 
 void sendVolume(){
-	parameters.getGivenVolume().getValue().getValue() = cardReader.getCounter();
+	// parameters.getGivenVolume().getValue().getValue() = cardReader.getCounter();
 		
 	if(!simHelper.sendVolume(parameters)){
 		printMessage("Network Error");
@@ -342,11 +344,13 @@ bool waitForResult(const char* str){
 	unsigned long t = millis();
 	bool b = false;
 	
+	//TODO: when module dies it loops forever
 	while(!simHelper.isAnwserRdy()){
 		if((millis() - t) > 500){
 			t = millis();
 			lcd.setCursor(strlen(str), 0);
 			lcd.print("  ");
+			lcd.setCursor(strlen(str), 0);
 			
 			if(b)
 				lcd.print("..");

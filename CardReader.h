@@ -4,6 +4,7 @@
 #include <PN532.h>
 #include <HardwareSerial.h>
 #include <LiquidCrystal_I2C.h>
+#include "CardParameter.h"
 
 
 class CardReader
@@ -12,7 +13,8 @@ class CardReader
 		CardReader(
 				int interruptPin, 
 				HardwareSerial& port, 
-				LiquidCrystal_I2C& display
+				LiquidCrystal_I2C& display,
+				CardParameter& card
 				);
 		
 		bool init();
@@ -31,5 +33,6 @@ class CardReader
 		PN532 nfc;
 		
 		LiquidCrystal_I2C& display;
+		CardParameter& refCard;
 	
 };

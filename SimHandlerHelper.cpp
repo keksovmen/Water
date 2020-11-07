@@ -40,7 +40,8 @@ bool SimHandlerHelper<N>::sendVolume(
 		)
 {
 	int length = params.getGivenVolume().getLength() + 
-					params.getClock().getLength() + 1;
+					params.getClock().getLength() +
+					params.getCard().getLength() + 2;
 	
 	dataHandler = handler.sendPostRequest(
 			params.getAddress().getValue(),
@@ -55,6 +56,8 @@ bool SimHandlerHelper<N>::sendVolume(
 	params.getClock().handleWritingValue(*dataHandler);
 	dataHandler->write('&');
 	params.getGivenVolume().handleWritingValue(*dataHandler);
+	dataHandler->write('&');
+	params.getCard().handleWritingValue(*dataHandler);
 	
 	lastRequest = HTTP_SCRIPT_SEND_VOLUME;
 	

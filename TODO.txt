@@ -18,3 +18,11 @@ bool lazyRead() as super class method ???
 			return delta time?
 22	-	Will sim module anwser when doing long command such as
 			sending http or connecting to services?
+23	-	SimHandler made many functions instead of 1 big to
+			handle acting
+24	-	There is a bug, when you ask volume, for some reason
+			it's not waiting for responce and immidiatly terminates
+25	-	When get from CREG shit add some timeout
+26	-	Made APN as param String
+27	-	Util.h remove unnessessary funcitons
+28	-	Made counter for params to not count manually

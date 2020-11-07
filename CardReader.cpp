@@ -9,9 +9,15 @@ static volatile int counter;
 
 
 
-CardReader::CardReader(int interruptPin, HardwareSerial& port, LiquidCrystal_I2C& display) : 
+CardReader::CardReader(
+				int interruptPin, 
+				HardwareSerial& port, 
+				LiquidCrystal_I2C& display,
+				CardParameter& card
+				) : 
 	interruptPin (interruptPin), pn532hsu(port),
-	nfc(pn532hsu), display(display)
+	nfc(pn532hsu), display(display),
+	refCard(card)
 {
 	
 }
@@ -77,6 +83,10 @@ bool CardReader::read(){
 	uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
 
 	success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength, 50);
+	if(success){
+		refCard = CardParameter(uid, uidLength);
+	}
+	
 	if(nfc.inRelease(0) < 0){
 		Serial.println("Failed to release nfc");
 	}

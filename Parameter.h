@@ -4,6 +4,8 @@
 #include "BaseParameter.h"
 #include "Enums.h"
 #include "Clock.h"
+#include "CardParameter.h"
+
 
 
 template<typename T>
@@ -36,5 +38,6 @@ template class Parameter<PrimitivFloatParameter<double>>;
 template class Parameter<Clock>;
 template class Parameter<IPAddressParam>;
 template class Parameter<PrimitivIntParameter<int>>;
+template class Parameter<CardParameter>;
 // template class Parameter<Clock>;
 // template class Parameter<double>;
