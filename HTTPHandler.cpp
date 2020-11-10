@@ -18,6 +18,7 @@ bool HTTPHandler::initPostRequest(IPAddress& address, const char* url, int dataL
 		setContentForPHP() 			&&
 		startDataTransmition(dataLength))
 	{
+		refTools.state.http.isBussy = true;
 		return true;
 	}
 	
@@ -28,6 +29,7 @@ bool HTTPHandler::initPostRequest(IPAddress& address, const char* url, int dataL
 bool HTTPHandler::initGetRequest(IPAddress& address, const char* url){
 	if(initSession()){
 		setGetURL(address, url);
+		refTools.state.http.isBussy = true;
 		return true;
 	}
 	
@@ -51,7 +53,6 @@ bool HTTPHandler::initSession(){
 	ANWSER_CODES code = refTools.readAndGetCode();
 	switch (code){
 		case OK:
-			refTools.state.http.isBussy = true;
 			return true;
 		
 		case ERROR:
