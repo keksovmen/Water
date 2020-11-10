@@ -6,23 +6,16 @@
 			Could be problems with data length when sending to server
 9	-	Add as default parameter AT+CFUN=1
 12	-	Buffer overflow is real pain, fix it somehow
-15	-	Made APN as a parameter for ParameterHandler
 
 bool lazyRead() as super class method ???
 
 
 17	-	Made all string to be in flash memory
 
-18	-	Add check if i am able to send right now http request
 20	-	Check unsigned long SMALL - same but BIG. Will
 			return delta time?
 22	-	Will sim module anwser when doing long command such as
 			sending http or connecting to services?
 23	-	SimHandler made many functions instead of 1 big to
 			handle acting
-24	-	There is a bug, when you ask volume, for some reason
-			it's not waiting for responce and immidiatly terminates
 25	-	When get from CREG shit add some timeout
-26	-	Made APN as param String
-27	-	Util.h remove unnessessary funcitons
-28	-	Made counter for params to not count manually

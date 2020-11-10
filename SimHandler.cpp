@@ -248,7 +248,9 @@ void SimHandler::doActivity(){
 				
 			case GPRS_CLOSED:
 				//take APN from params
-				gprsHandler.connect("internet");
+				gprsHandler.connect(
+					refParams.getApn().getValue().getValue()
+					);
 				return;
 				
 			default: return;	//wait for result

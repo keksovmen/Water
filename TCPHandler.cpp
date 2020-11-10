@@ -159,7 +159,9 @@ bool TCPHandler::handleInitial(){
 		}
 	}
 	
-	refTools.simPort.writeCSTT("internet");	//take from params
+	refTools.simPort.writeCSTT(
+		refParameters.getApn().getValue().getValue()
+		);
 	
 	return refTools.readAndExpectSuccess();
 }

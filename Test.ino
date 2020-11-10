@@ -96,6 +96,7 @@ void setup(){
 	
 	//set IP
 	parameters.getAddress().getValue().fromString("37.146.149.79");
+	parameters.getApn().getValue().setValue("internet");
 	
 	// sim.write("AT+CGATT=0\r");
 	// delay(3000);

@@ -1,10 +1,8 @@
 #pragma once
 
-#include "IPAddressParam.h"
 #include "BaseParameter.h"
 #include "Enums.h"
-#include "Clock.h"
-#include "CardParameter.h"
+#include "Util.h"
 
 
 
@@ -12,15 +10,25 @@ template<typename T>
 class Parameter : public BaseParameter
 {
 	public:
-		Parameter(int id);
+		Parameter(int id) : id(id){}
 		
 		
 		/**
 			@return length in characters: id + value
 		*/
 		
-		int getLength() override;
-		void handleWritingValue(BaseWriter& writer) override;
+		int getLength() override{
+			int idLength = findLongLength(id);
+			//+ 1 from = sign between them
+			return idLength + value.getLength() + 1;
+		}
+		
+		
+		void handleWritingValue(BaseWriter& writer) override{
+			writer.write(id);
+			writer.write('=');
+			value.handleWritingValue(writer);
+		}
 		
 		int getId(){return id;}
 		T& getValue(){return value;}
@@ -34,10 +42,10 @@ class Parameter : public BaseParameter
 
 
 // template class Parameter<int>;
-template class Parameter<PrimitivFloatParameter<double>>;
-template class Parameter<Clock>;
-template class Parameter<IPAddressParam>;
-template class Parameter<PrimitivIntParameter<int>>;
-template class Parameter<CardParameter>;
+// template class Parameter<PrimitivFloatParameter<double>>;
+// template class Parameter<Clock>;
+// template class Parameter<IPAddressParam>;
+// template class Parameter<PrimitivIntParameter<int>>;
+// template class Parameter<CardParameter>;
 // template class Parameter<Clock>;
 // template class Parameter<double>;

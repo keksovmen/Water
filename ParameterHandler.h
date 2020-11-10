@@ -2,6 +2,10 @@
 
 #include "Parameter.h"
 #include "Enums.h"
+#include "Clock.h"
+#include "CardParameter.h"
+#include "IPAddressParam.h"
+#include "StringParameter.h"
 
 
 class ParameterHandler
@@ -21,6 +25,7 @@ class ParameterHandler
 		Parameter<PrimitivIntParameter<int>>& getGivenVolume(){return givenVolume;}
 		
 		Parameter<CardParameter>& getCard(){return card;}
+		Parameter<StringParameter>& getApn(){return apn;}
 		
 	private:
 		Parameter<PrimitivFloatParameter<double>> temp =
@@ -39,4 +44,6 @@ class ParameterHandler
 								Parameter<PrimitivIntParameter<int>>(5);
 	
 		Parameter<CardParameter> card = Parameter<CardParameter>(6);
+		
+		Parameter<StringParameter> apn = Parameter<StringParameter>(7);
 };
