@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "SimHandlerHelper.h"
-
+#include "ParameterWriter.h"
 
 
 template<int N>
@@ -13,18 +13,23 @@ SimHandlerHelper<N>::SimHandlerHelper(Stream& connection, ParameterHandler& para
 
 
 template<int N>
-bool SimHandlerHelper<N>::sendParams(ParameterHandler& params){
+bool SimHandlerHelper<N>::sendParams(){
+	ParameterWriter paramWriter;
+	paramWriter.add(&refParameters.getClock());
+	paramWriter.add(&refParameters.getTemp());
+	paramWriter.add(&refParameters.getPressure());
+	
 	dataHandler = handler.sendPostRequest(
-			params.getAddress().getValue(),
+			refParameters.getAddress().getValue(),
 			"Send.php", 
-			params.getLength()
+			paramWriter.getLength()
 		);
 	
 	if(!dataHandler){
 		return false;
 	}
 	
-	params.handleWritingValue(*dataHandler);
+	paramWriter.handleWritingValue(*dataHandler);
 	lastRequest = HTTP_SCRIPT_SEND_PARAMS;
 	
 	
@@ -33,31 +38,24 @@ bool SimHandlerHelper<N>::sendParams(ParameterHandler& params){
 
 
 template<int N>
-bool SimHandlerHelper<N>::sendVolume(
-		// Parameter<PrimitivIntParameter<int>>& volume, 
-		ParameterHandler& params
-		)
+bool SimHandlerHelper<N>::sendVolume()
 {
-	int length = params.getGivenVolume().getLength() + 
-					params.getClock().getLength() +
-					params.getCard().getLength() + 2;
+	ParameterWriter paramWriter;
+	paramWriter.add(&refParameters.getGivenVolume());
+	paramWriter.add(&refParameters.getClock());
+	paramWriter.add(&refParameters.getCard());
 	
 	dataHandler = handler.sendPostRequest(
-			params.getAddress().getValue(),
+			refParameters.getAddress().getValue(),
 			"SendVolume.php", 
-			length
+			paramWriter.getLength()
 		);
 	
 	if(!dataHandler){
 		return false;
 	}
 	
-	params.getClock().handleWritingValue(*dataHandler);
-	dataHandler->write('&');
-	params.getGivenVolume().handleWritingValue(*dataHandler);
-	dataHandler->write('&');
-	params.getCard().handleWritingValue(*dataHandler);
-	
+	paramWriter.handleWritingValue(*dataHandler);
 	lastRequest = HTTP_SCRIPT_SEND_VOLUME;
 	
 	

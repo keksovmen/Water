@@ -31,8 +31,8 @@ class SimHandlerHelper
 		
 		SimHandlerHelper(Stream& connection, ParameterHandler& parameters);
 		
-		bool sendParams(ParameterHandler& params);
-		bool sendVolume(ParameterHandler& params);
+		bool sendParams();
+		bool sendVolume();
 		bool askTime();
 		bool askVolume();
 		bool isAbleToUseHttp();

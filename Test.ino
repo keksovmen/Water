@@ -176,18 +176,7 @@ void loop(){
 				delay(1000);
 			}
 		}
-		// Serial.print("Counter: ");
-		// Serial.println(cardReader.getCounter());
-		// Parameter<PrimitivIntParameter<int>> volume(4);
-		// volume.getValue().getValue() = cardReader.getCounter();
-		// simHelper.sendVolume(volume, parameters);
-		
-		// if(!simHelper.isAbleToUseHttp()){
-			// printMessage("HTTP UNAVAILABLE");
-			// delay(1000);
-		// }else{
-			
-		// }
+
 	}
 	
 }
@@ -218,7 +207,7 @@ void printTime(const Clock& clk){
 //to server, also displays what was send
 void sendSensorData(){
 	updateParams();
-	if(!simHelper.sendParams(parameters)){
+	if(!simHelper.sendParams()){
 		printMessage("Network Error");
 		delay(1000);
 		return;
@@ -285,7 +274,7 @@ bool askVolume(){
 void sendVolume(){
 	// parameters.getGivenVolume().getValue().getValue() = cardReader.getCounter();
 		
-	if(!simHelper.sendVolume(parameters)){
+	if(!simHelper.sendVolume()){
 		printMessage("Network Error");
 		delay(1000);
 		return;

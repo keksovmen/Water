@@ -5,3 +5,6 @@
 
 //in millis
 #define WRAPPER_MIN_DELAY 25
+
+
+#define SIZE_OF_PARAMETER_WRITER 10
