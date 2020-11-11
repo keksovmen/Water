@@ -11,6 +11,7 @@
 #define BUTTON_TIME 8
 #define BUTTON_SEND 9
 #define BUTTON_SHOW 10
+#define HEATER_PIN 53
 
 //Barrometr, termometr
 Device dev;
@@ -61,12 +62,14 @@ void setup(){
 	pinMode(BUTTON_TIME, INPUT);
 	pinMode(BUTTON_SEND, INPUT);
 	pinMode(BUTTON_SHOW, INPUT);
+	pinMode(HEATER_PIN, OUTPUT);
 	
 	
 	//Set them on HIGH, to short after
 	digitalWrite(BUTTON_TIME, HIGH);
 	digitalWrite(BUTTON_SEND, HIGH);
 	digitalWrite(BUTTON_SHOW, HIGH);
+	digitalWrite(HEATER_PIN, LOW);
 	
 	
 	lcd.init();
@@ -97,6 +100,8 @@ void setup(){
 	//set IP
 	parameters.getAddress().getValue().fromString("37.146.149.79");
 	parameters.getApn().getValue().setValue("internet");
+	parameters.getTempUp().getValue().getValue() = 40;
+	parameters.getTempDown().getValue().getValue() = 30;
 	
 	// sim.write("AT+CGATT=0\r");
 	// delay(3000);
@@ -108,11 +113,6 @@ void loop(){
 	unsigned long timeNow = millis();
 	int timePassed = timeNow - timeBefore;
 	timeBefore = timeNow;
-	
-	// while(1){
-		// simHandler.connectToGPRS("internet");
-		// simHandler.disconnectFromGPRS();
-	// }
 	
 	//check if summ of millis exceeded 1 sec
 	if(clk.addMillis(timePassed)){
@@ -146,11 +146,10 @@ void loop(){
 	
 	//if button 10 pressed
 	// if(digitalRead(BUTTON_SHOW) == LOW){
-		// printMessage("Asking server");
-		// askServerData();
+
 	// }
 	
-	// simHandler.handleReading();
+	
 	simHandler.doActivity();
 	
 	if(cardReader.read()){
@@ -178,6 +177,27 @@ void loop(){
 			}
 		}
 
+	}
+	
+	
+	handleTemperature();
+	
+}
+
+
+void handleTemperature(){
+	updateParams();
+	
+	double tU = parameters.getTempUp().getValue().getValue();
+	double tD = parameters.getTempDown().getValue().getValue();
+	double tC = parameters.getTemp().getValue().getValue();
+	
+	if(tC > tU){
+		digitalWrite(HEATER_PIN, LOW);
+	}
+	
+	if(tC < tD){
+		digitalWrite(HEATER_PIN, HIGH);
 	}
 	
 }

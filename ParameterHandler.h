@@ -27,6 +27,9 @@ class ParameterHandler
 		Parameter<CardParameter>& getCard(){return card;}
 		Parameter<StringParameter>& getApn(){return apn;}
 		
+		Parameter<PrimitivFloatParameter<double>>& getTempUp(){return tempUp;}
+		Parameter<PrimitivFloatParameter<double>>& getTempDown(){return tempDown;}
+		
 	private:
 		Parameter<PrimitivFloatParameter<double>> temp =
 							Parameter<PrimitivFloatParameter<double>>(0);
@@ -46,4 +49,9 @@ class ParameterHandler
 		Parameter<CardParameter> card = Parameter<CardParameter>(6);
 		
 		Parameter<StringParameter> apn = Parameter<StringParameter>(7);
+		
+		Parameter<PrimitivFloatParameter<double>> tempUp = 
+							Parameter<PrimitivFloatParameter<double>>(8);
+		Parameter<PrimitivFloatParameter<double>> tempDown = 
+							Parameter<PrimitivFloatParameter<double>>(9);
 };
