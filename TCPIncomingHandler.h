@@ -2,34 +2,39 @@
 
 #include "Buffer/FixedBufferBase.h"
 #include "ParameterHandler.h"
-#include "SimCommandPort.h"
-#include "SimResultParser.h"
+#include "SimTools.h"
 #include "Constants.h"
+#include "Enums.h"
 
 
 class TCPIncomingHandler
 {
 	public:
-	
-		void handleMessage(
-				FixedBufferBase& buffer, 
-				ParameterHandler& params,
-				SimCommandPort& simPort,
-				SimResultParser& parser 
-				);
+		TCPIncomingHandler(
+							FixedBufferBase& buffer,
+							ParameterHandler& params,
+							SimTools& tools
+							);
+							
+		void handleMessage();
 		
 	private:
-		int findCommand(FixedBufferBase& buffer, int& returnIndex);
-		void removeCommand(FixedBufferBase& buffer, int cmd, int index);
-		void handleCommand(
-						FixedBufferBase& buffer, 
-						int cmd, 
-						int index, 
-						ParameterHandler& params,
-						SimCommandPort& simPort,
-						SimResultParser& parser);
+		bool hasCommand();
+		int getBeginingOfCommand();
+		TCP_MESSAGE_TYPE getCommandType(int begining);
+		void handleCommand(TCP_MESSAGE_TYPE cmd, int begining);
+		void removeCommand(int begining);
 		
-		void handleClockUpdate(FixedBufferBase& buffer, int index, ParameterHandler& params);
-		void handlePing(SimCommandPort& simPort, SimResultParser& parser, FixedBufferBase& buffer);
+		// int findCommand(int& returnIndex);
+		// void removeCommand(int cmd, int index);
+		// void handleCommand(int cmd, int index);
+		
+		// void handleClockUpdate(int index);
+		void handleSetParam(int begining);
+		void handlePing();
 	
+	
+		FixedBufferBase& refBuffer;
+		ParameterHandler& refParams;
+		SimTools& refTools;
 };

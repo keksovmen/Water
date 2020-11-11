@@ -16,7 +16,7 @@ class CardParameter : public BaseParameter
 		
 		int getLength() override;
 		void handleWritingValue(BaseWriter& writer) override;
-		
+		void parse(const char* str) override;
 		
 	private:
 		//be aware of possible larger lengths

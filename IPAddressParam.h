@@ -9,4 +9,5 @@ class IPAddressParam : public IPAddress, public BaseParameter
 	public:
 		int getLength() override;
 		void handleWritingValue(BaseWriter& writer) override;
+		void parse(const char* str) override;
 };

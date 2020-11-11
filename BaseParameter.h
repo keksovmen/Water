@@ -7,6 +7,7 @@ class BaseParameter
 	public:
 		virtual int getLength() = 0;
 		virtual void handleWritingValue(BaseWriter& writer) = 0;
+		virtual void parse(const char* str) = 0;
 };
 
 
@@ -15,16 +16,17 @@ class BaseParameter
 	@param T int, long
 */
 
-template<typename T>
+// template<typename T>
 class PrimitivIntParameter : public BaseParameter
 {
 	public:
 		int getLength() override;
 		void handleWritingValue(BaseWriter& writer) override;
-		T& getValue(){return value;}
+		void parse(const char* str) override;
+		long& getValue(){return value;}
 	
 	private:
-		T value;
+		long value;
 };
 
 
@@ -32,18 +34,19 @@ class PrimitivIntParameter : public BaseParameter
 	@param T float, double
 */
 
-template<typename T>
+// template<typename T>
 class PrimitivFloatParameter : public BaseParameter
 {
 	public:
 		int getLength() override;
 		void handleWritingValue(BaseWriter& writer) override;
-		T& getValue(){return value;}
+		void parse(const char* str) override;
+		double& getValue(){return value;}
 	
 	private:
-		T value;
+		double value;
 };
 
 
-template class PrimitivFloatParameter<double>;
-template class PrimitivIntParameter<int>;
+// template class PrimitivFloatParameter<double>;
+// template class PrimitivIntParameter<int>;

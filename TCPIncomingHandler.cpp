@@ -1,132 +1,100 @@
 #include "TCPIncomingHandler.h"
 #include <Arduino.h>
+#include "Constants.h"
 
 
-
-void TCPIncomingHandler::handleMessage(
-		FixedBufferBase& buffer, 
-		ParameterHandler& params,
-		SimCommandPort& simPort,
-		SimResultParser& parser 
-		)
+TCPIncomingHandler::TCPIncomingHandler(
+							FixedBufferBase& refBuffer,
+							ParameterHandler& refParams,
+							SimTools& tools
+							) :
+	refBuffer(refBuffer), refParams(refParams),
+	refTools(tools)
 {
-	int index = 0;
-	int cmd = findCommand(buffer, index);
 	
-	while(cmd != -1){
-		// Serial.print("CMD = ");
-		// Serial.println("BUFFER BEFORE:");
-		// Serial.println(buffer.begin());
-		// Serial.println(cmd);
-		
-		handleCommand(buffer, cmd, index, 
-						params, simPort, parser);
-		removeCommand(buffer, cmd, index);
-		
-		// Serial.println("BUFFER AFTER:");
-		// Serial.println(buffer.begin());
-		
-		cmd = findCommand(buffer, index);
+}
+
+
+void TCPIncomingHandler::handleMessage()
+{
+	while(hasCommand()){
+		int begining = getBeginingOfCommand();
+		TCP_MESSAGE_TYPE type = getCommandType(begining);
+		handleCommand(type, begining);
+		removeCommand(begining);
 	}
 }
 
 
-
-int TCPIncomingHandler::findCommand(
-			FixedBufferBase& buffer, 
-			int& returnIndex
-			)
-{
-	int end = -1;
-	returnIndex = buffer.indexOf("2=");
-		if(returnIndex != -1){
-			end = buffer.indexOfFrom(returnIndex, "\n");
-		if(end != -1){
-			return 1;
-		}
-	}
+bool TCPIncomingHandler::hasCommand(){
+	int begining = getBeginingOfCommand();
+	int end = refBuffer.indexOf(ENTRY_ENDING);
 	
-	returnIndex = buffer.indexOf("PING");
-		if(returnIndex != -1){
-			end = buffer.indexOfFrom(returnIndex, "\n");
-		if(end != -1){
-			return 2;
-		}
-	}
-	
-	return -1;
+	return begining != -1 && 
+				end != -1;
 }
 
 
-
-void TCPIncomingHandler::removeCommand(
-			FixedBufferBase& buffer, 
-			int cmd, 
-			int index
-			)
-{
-	int end = buffer.indexOfFrom(index, "\n");
-	if(end != -1){
-		int amount = end - index;
-		amount++;
-		
-		buffer.remove(index, amount);
-	}
+int TCPIncomingHandler::getBeginingOfCommand(){
+	return refBuffer.indexOf(ENTRY_BEGINING);
 }
 
 
+TCP_MESSAGE_TYPE TCPIncomingHandler::getCommandType(int begining){
+	if(refBuffer.indexOfFrom(begining, "PING") != -1){
+		return TCP_MESSAGE_TYPE_PING;
+	}
+	
+	return TCP_MESSAGE_TYPE_PARAM;
+}
 
-void TCPIncomingHandler::handleCommand(
-			FixedBufferBase& buffer, 
-			int cmd, 
-			int index,
-			ParameterHandler& params,
-			SimCommandPort& simPort,
-			SimResultParser& parser
-			)
-{
+void TCPIncomingHandler::handleCommand(TCP_MESSAGE_TYPE cmd, int begining){
 	switch(cmd){
-		case 1:
-			handleClockUpdate(buffer, index + 2, params);
+		case TCP_MESSAGE_TYPE_PARAM:
+			handleSetParam(begining);
 			break;
-		case 2:
-			handlePing(simPort, parser, buffer);
+			
+		case TCP_MESSAGE_TYPE_PING:
+			handlePing();
 			break;
-		
-		default: break;
 	}
 }
 
 
-
-void TCPIncomingHandler::handleClockUpdate(
-			FixedBufferBase& buffer, 
-			int index,
-			ParameterHandler& params
-			)
-{
-	params.getClock().getValue().parse(&buffer[index]);
+void TCPIncomingHandler::removeCommand(int begining){
+	int end = refBuffer.indexOfFrom(begining, ENTRY_ENDING);
+	int amount = (end - begining) + 1;
+	refBuffer.remove(begining, amount);
 }
 
 
-
-void TCPIncomingHandler::handlePing(
-			SimCommandPort& simPort, 
-			SimResultParser& parser,
-			FixedBufferBase& buffer
-			)
-{
-	simPort.writeCIPSEND();
-	if(!simPort.read()){
-		return;
+void TCPIncomingHandler::handleSetParam(int begining){
+	int id = atoi(&refBuffer[begining + 1]);
+	int dataIndex = refBuffer.indexOfFrom(begining, "=");
+	dataIndex++;
+	if(refParams.hasId(id)){
+		refParams.parse(id, &refBuffer[dataIndex]);
 	}
-	
-	if(!buffer.remove("\r\n>")){
-		return;
-	}
-	
-	simPort.write("PONG\n");
-	simPort.write((char) 0x1A);
-	
-	simPort.readTimeout(5000);
 }
+
+
+void TCPIncomingHandler::handlePing(){
+	refTools.state.tcp.hasToSendPong = true;
+}
+
+// void TCPIncomingHandler::handlePing()
+// {
+	// refTools.simPort.writeCIPSEND();
+	// if(!refTools.simPort.read()){
+		// return;
+	// }
+	
+	// if(!refBuffer.remove("\r\n>")){
+		// return;
+	// }
+	
+	// refTools.simPort.write("PONG\n");
+	// refTools.simPort.write((char) 0x1A);
+	
+	// refTools.simPort.readTimeout(5000);
+// }

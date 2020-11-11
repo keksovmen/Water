@@ -268,6 +268,10 @@ void SimHandler::doActivity(){
 		return;
 	}
 	
+	if(tools.state.tcp.hasToSendPong){
+		tcpHandler.sendPong();
+	}
+	
 	
 	B:
 	if(!wrapper.lazyRead()){
@@ -331,9 +335,9 @@ bool SimHandler::tryToSetDefaultParam(int id){
 
 void SimHandler::handleTCPMessage(){
 	auto tmp = tcpHandler.readMessage(refBuffer);
-	TCPIncomingHandler handler;
+	TCPIncomingHandler handler(refBuffer, refParams, tools);
 	while(tmp.readResponce()){
-		handler.handleMessage(refBuffer, refParams, tools.simPort, tools.parser);
+		handler.handleMessage();
 	}
 	
 	tools.state.tcp.hasMessage = false;

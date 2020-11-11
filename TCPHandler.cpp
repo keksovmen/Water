@@ -141,6 +141,20 @@ TCPReader TCPHandler::readMessage(FixedBufferBase& buffer){
 }
 
 
+void TCPHandler::sendPong(){
+	refTools.simPort.writeCIPSEND();
+	if(!refTools.simPort.read()){
+		return;
+	}
+	
+	refTools.simPort.write("PONG\n");
+	refTools.simPort.write((char) 0x1A);
+	//TODO: don't know what to do, maybe change state to 
+	//something intermidiate like waiting for result
+	refTools.state.tcp.hasToSendPong = false;
+}
+
+
 
 bool TCPHandler::handleInitial(){
 	refTools.simPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_MODE);

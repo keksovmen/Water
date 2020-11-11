@@ -89,7 +89,7 @@ void checkAddYears(){
 
 void checkParse(){
 	Clock c;
-	assert (c.parse("04/10/20\n14/09/53"));
+	c.parse("04/10/20\n14/09/53");
 	
 	assert(c.getDays() == 4);
 	assert(c.getMonths() == 10);
@@ -97,6 +97,4 @@ void checkParse(){
 	assert(c.getHours() == 14);
 	assert(c.getMinutes() == 9);
 	assert(c.getSeconds() == 53);
-	
-	assert (c.parse("") == false);
 }

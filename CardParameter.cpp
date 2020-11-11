@@ -46,3 +46,8 @@ void CardParameter::handleWritingValue(BaseWriter& writer){
 		writer.write(',');
 	}
 }
+
+
+void CardParameter::parse(const char* str){
+	//TODO: do I need this?
+}

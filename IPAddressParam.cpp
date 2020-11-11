@@ -19,3 +19,8 @@ void IPAddressParam::handleWritingValue(BaseWriter& writer){
 	writer.write('.');
 	writer.write((int) this[3]);
 }
+
+
+void IPAddressParam::parse(const char* str){
+	fromString(str);
+}

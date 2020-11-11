@@ -24,6 +24,7 @@ class TCPHandler : public LongCommandHandler
 
 		bool connect();
 		TCPReader readMessage(FixedBufferBase& buffer);
+		void sendPong();
 		
 	private:
 		bool handleInitial();

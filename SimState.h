@@ -27,6 +27,7 @@ struct SimState
 		TCP_STATE state = TCP_STATE_UNDEFINIED;
 		bool hasMessage = false;
 		bool isSending = false;
+		bool hasToSendPong = false;
 	} tcp;
 	
 	
@@ -77,6 +78,8 @@ struct SimState
 	
 	void diedCGATT(){
 		tcp.state = TCP_STATE_PDP_DEACT;
+		tcp.isSending = false;
+		tcp.hasToSendPong = false;
 		health.CGATT_Connection = false;
 	}
 	

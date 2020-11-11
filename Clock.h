@@ -12,7 +12,11 @@
 {
 	public:
 		
-		bool parse(const char* str);
+		#ifdef ARDUINO
+			void parse(const char* str) override;
+		#else
+			void parse(const char* str);
+		#endif
 		
 		bool addMillis(int mil);
 		bool addSeconds(int sec);

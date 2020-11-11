@@ -15,6 +15,8 @@ class StringParameter : public BaseParameter
 	public:
 		int getLength() override;
 		void handleWritingValue(BaseWriter& writer) override;
+		void parse(const char* str) override;
+		
 		void setValue(const char* str);
 		const char* getValue();
 	private:

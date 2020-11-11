@@ -11,6 +11,11 @@ void StringParameter::handleWritingValue(BaseWriter& writer){
 }
 
 
+void StringParameter::parse(const char* str){
+	value = String(str);
+}
+
+
 void StringParameter::setValue(const char* str){
 	value = String(str);
 }

@@ -33,3 +33,8 @@ void ParameterWriter::handleWritingValue(BaseWriter& writer){
 		}
 	}
 }
+
+
+void ParameterWriter::parse(const char* str){
+	//don't to anything
+}

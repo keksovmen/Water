@@ -14,10 +14,10 @@
 	dd/MM/yy|hh/mm/ss
 */
 
-bool Clock::parse(const char* str){
+void Clock::parse(const char* str){
 	int length = strlen(str);
 	if(length < 17)
-		return false;
+		return;
 	
 	days = atoi(str);
 	months = atoi(str + 3);
@@ -26,8 +26,6 @@ bool Clock::parse(const char* str){
 	minutes = atoi(str + 12);
 	seconds = atoi(str + 15);
 	millis = 0;
-	
-	return true;
 }
 
 bool Clock::addMillis(int mil){

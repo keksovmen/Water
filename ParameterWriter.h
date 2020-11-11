@@ -15,7 +15,7 @@ class ParameterWriter : BaseParameter
 		int getLength() override;
 		
 		void handleWritingValue(BaseWriter& writer) override;
-		
+		void parse(const char* str) override;
 		
 		
 	private:

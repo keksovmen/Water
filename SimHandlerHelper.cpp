@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "SimHandlerHelper.h"
 #include "ParameterWriter.h"
+#include "Constants.h"
 
 
 template<int N>
@@ -186,12 +187,12 @@ void SimHandlerHelper<N>::parseTime(){
 	
 	while(dataHandler->readResponce()){
 		auto& b = dataHandler->getBuffer();
-		int index = b.indexOf("#");
+		int index = b.indexOf(ENTRY_BEGINING);
 		if(index == -1){
 			continue;
 		}
 		
-		int end = b.indexOfFrom(index, "$");
+		int end = b.indexOfFrom(index, ENTRY_ENDING);
 		if(end == -1){
 			continue;
 		}
@@ -208,12 +209,12 @@ void SimHandlerHelper<N>::parseVolume(){
 	
 	while(dataHandler->readResponce()){
 		auto& b = dataHandler->getBuffer();
-		int index = b.indexOf("#");
+		int index = b.indexOf(ENTRY_BEGINING);
 		if(index == -1){
 			continue;
 		}
 		
-		int end = b.indexOfFrom(index, "$");
+		int end = b.indexOfFrom(index, ENTRY_ENDING);
 		if(end == -1){
 			continue;
 		}

@@ -30,6 +30,11 @@ class Parameter : public BaseParameter
 			value.handleWritingValue(writer);
 		}
 		
+		
+		void parse(const char* str) override {
+			value.parse(str);
+		};
+		
 		int getId(){return id;}
 		T& getValue(){return value;}
 		

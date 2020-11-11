@@ -8,3 +8,6 @@
 
 
 #define SIZE_OF_PARAMETER_WRITER 10
+
+#define ENTRY_BEGINING "#"
+#define ENTRY_ENDING "\0"
