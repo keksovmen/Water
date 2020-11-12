@@ -19,6 +19,4 @@ bool lazyRead() as super class method ???
 23	-	SimHandler made many functions instead of 1 big to
 			handle acting
 25	-	When get from CREG shit add some timeout
-26	-	Change everything that parses, from #$ to #\0
-27	-	made \0 as constant for better finding
 28	-	Loops forever when module goes offline when asking http

@@ -81,20 +81,3 @@ void TCPIncomingHandler::handleSetParam(int begining){
 void TCPIncomingHandler::handlePing(){
 	refTools.state.tcp.hasToSendPong = true;
 }
-
-// void TCPIncomingHandler::handlePing()
-// {
-	// refTools.simPort.writeCIPSEND();
-	// if(!refTools.simPort.read()){
-		// return;
-	// }
-	
-	// if(!refBuffer.remove("\r\n>")){
-		// return;
-	// }
-	
-	// refTools.simPort.write("PONG\n");
-	// refTools.simPort.write((char) 0x1A);
-	
-	// refTools.simPort.readTimeout(5000);
-// }

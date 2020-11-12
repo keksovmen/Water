@@ -98,10 +98,10 @@ void setup(){
 	timeBefore = millis();
 	
 	//set IP
-	parameters.getAddress().getValue().fromString("37.146.149.79");
-	parameters.getApn().getValue().setValue("internet");
-	parameters.getTempUp().getValue().getValue() = 40;
-	parameters.getTempDown().getValue().getValue() = 30;
+	parameters.getAddress().getValue().parse("37.146.144.72");
+	parameters.getApn().getValue().parse("internet");
+	parameters.getTempUp().getValue().parse("40");
+	parameters.getTempDown().getValue().parse("30");
 	
 	// sim.write("AT+CGATT=0\r");
 	// delay(3000);

@@ -1,4 +1,5 @@
 #include "ParameterHandler.h"
+#include <Arduino.h>
 
 
 // int ParameterHandler::getLength(){

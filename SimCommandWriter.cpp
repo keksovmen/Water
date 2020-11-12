@@ -218,7 +218,7 @@ void SimCommandWriter::writeDenyCall(){
 void SimCommandWriter::writeCIPRXGET(CIPRXGET_COMMAND cmd, int arg){
 	refWriter.write("AT+CIPRXGET");
 	
-	if(cmd == CIPRXGET_COMMAND::CIPRXGET_COMMAND_MODE){
+	if(cmd == CIPRXGET_COMMAND_MODE){
 		refWriter.write('?');
 		refWriter.writeEndOfCommand();
 		
@@ -233,7 +233,8 @@ void SimCommandWriter::writeCIPRXGET(CIPRXGET_COMMAND cmd, int arg){
 		case CIPRXGET_COMMAND_GET_HEX :
 			refWriter.write(',');
 			refWriter.write(arg);
-			break;
+			refWriter.writeEndOfCommand(false);
+			return;
 			
 		default : break;
 	}

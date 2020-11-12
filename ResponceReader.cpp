@@ -40,6 +40,7 @@ bool ResponceReader::readResponce(){
 	}
 	
 	if(readIndex >= responceLength){
+		Serial.println("Index more or equal length");
 		return false;
 	}
 	
@@ -54,8 +55,8 @@ bool ResponceReader::readResponce(){
 
 	unsigned int readAmount = refBuffer.remains() - MIN_LENGTH;
 	//TODO: Made use UART define buffer size
-	if(readAmount > 64){
-		readAmount = 64;
+	if(readAmount > 30){
+		readAmount = 30;
 		
 	//10 symbol fix
 	}else if(readAmount == 10){
@@ -70,6 +71,7 @@ bool ResponceReader::readResponce(){
 	
 	while(1){
 		if(!refTools.simPort.read()){
+			Serial.println("Faild to read");
 			return false;
 		}
 			
@@ -77,6 +79,7 @@ bool ResponceReader::readResponce(){
 			break;
 		}else{
 			if(refTools.parser.checkError()){
+				Serial.println("Find Error");
 				return false;
 			}
 		}

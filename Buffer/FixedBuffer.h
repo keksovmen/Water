@@ -21,6 +21,20 @@ template<int N>
 class FixedBuffer : public FixedBufferBase
 {
 	public:
+		FixedBufferBase& operator=(const char* str) override {
+			int length = strlen(str);
+			if(length > size){
+				length = size;
+			}
+			
+			for(int i = 0; i < length; i ++){
+				data[i] = str[i];
+			}
+			data[length] = '\0';
+			
+			return *this;
+		}
+	
 		char& operator[] (int index) override{return data[index];}
 		
 		

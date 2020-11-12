@@ -30,7 +30,7 @@ class ParameterHandler
 		Parameter<PrimitivIntParameter>& getGivenVolume(){return givenVolume;}
 		
 		Parameter<CardParameter>& getCard(){return card;}
-		Parameter<StringParameter>& getApn(){return apn;}
+		Parameter<StringParameter<50>>& getApn(){return apn;}
 		
 		Parameter<PrimitivFloatParameter>& getTempUp(){return tempUp;}
 		Parameter<PrimitivFloatParameter>& getTempDown(){return tempDown;}
@@ -53,7 +53,7 @@ class ParameterHandler
 	
 		Parameter<CardParameter> card = Parameter<CardParameter>(6);
 		
-		Parameter<StringParameter> apn = Parameter<StringParameter>(7);
+		Parameter<StringParameter<50>> apn = Parameter<StringParameter<50>>(7);
 		
 		Parameter<PrimitivFloatParameter> tempUp = 
 							Parameter<PrimitivFloatParameter>(8);

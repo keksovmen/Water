@@ -31,6 +31,8 @@ bool testRemove(const char* origin, const char* del, const char* expected);
 
 bool testRemains();
 
+bool testNull();
+
 
 template<int N>
 void copyIntoBuffer(FixedBuffer<N>& buffer, const char* data);
@@ -121,6 +123,8 @@ int main()
 	assert(testRemove("Temp - C: Pres - \r\nRING\r\n\r\n+HTTPREAD: 64\r\nmb: 10", "\r\nRING\r\n", "Temp - C: Pres - \r\n+HTTPREAD: 64\r\nmb: 10"));
 	
 	assert(testRemains());
+	
+	assert(testNull());
 }
 
 bool checkLength(int divider){
@@ -296,6 +300,26 @@ bool testRemains(){
 	return true;
 }
 
+
+bool testNull(){
+	FixedBuffer<128> buffer;
+	
+	copyIntoBuffer(buffer, "#8=25$#9=20$");
+	
+	int begin = buffer.indexOf("#");
+	int end = buffer.indexOf("$");
+	assert(begin != -1);
+	assert(end != -1);
+	int amount = (end - begin + 1);
+	std::cout << "END = " << end << "\tAMOUNT = " << amount << std::endl;
+	assert(amount == 6);
+	buffer.remove(begin, amount);
+	// assert();
+	assert(buffer.indexOf("#9=20\0") != -1);
+	
+	return true;
+	
+}
 
 
 template<int N>

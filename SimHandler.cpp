@@ -262,7 +262,7 @@ void SimHandler::doActivity(){
 			return;
 		}
 	}
-	
+
 	if(tools.state.tcp.hasMessage){
 		handleTCPMessage();
 		return;
@@ -270,6 +270,7 @@ void SimHandler::doActivity(){
 	
 	if(tools.state.tcp.hasToSendPong){
 		tcpHandler.sendPong();
+		return;
 	}
 	
 	
@@ -334,13 +335,16 @@ bool SimHandler::tryToSetDefaultParam(int id){
 
 
 void SimHandler::handleTCPMessage(){
+	tools.state.tcp.hasMessage = false;
+	
 	auto tmp = tcpHandler.readMessage(refBuffer);
 	TCPIncomingHandler handler(refBuffer, refParams, tools);
+	
 	while(tmp.readResponce()){
 		handler.handleMessage();
 	}
 	
-	tools.state.tcp.hasMessage = false;
+	refBuffer.clear();
 }
 
 

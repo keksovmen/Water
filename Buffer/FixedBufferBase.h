@@ -4,6 +4,8 @@
 class FixedBufferBase
 {
 	public:
+		
+		virtual FixedBufferBase& operator=(const char* str) = 0;
 		virtual ~FixedBufferBase(){};
 		
 		virtual char& operator[](int index) = 0;

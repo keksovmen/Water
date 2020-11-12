@@ -117,11 +117,13 @@ bool SimIOWrapper::readTimeout(unsigned long maxDelay){
 
 bool SimIOWrapper::lazyRead(){
 	if(refPort.available() == 0){
+		// Serial.println("NOTHING HERE");
 		return false;
 	}
 	
 	//prevent from looping if refBuffer full
 	if(refBuffer.remains() == 0){
+		Serial.println("Buffer Full");
 		return false;
 	}
 	

@@ -214,7 +214,7 @@ bool SimResultParser::isPinRdy(){
 
 bool SimResultParser::isPossibleMessage(){
 	return (this->refBuffer.indexOfEnd(END_LINE) != -1) ||
-			this->refBuffer.getLength() > 3;
+			this->refBuffer.getLength() > 0;
 }
 
 
