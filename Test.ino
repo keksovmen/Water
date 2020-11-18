@@ -8,6 +8,9 @@
 #include "CardReader.h"
 
 
+// #define SERIAL_RX_BUFFER_SIZE FIXED_BUFFER_SIZE
+
+
 #define BUTTON_TIME 8
 #define BUTTON_SEND 9
 #define BUTTON_SHOW 10

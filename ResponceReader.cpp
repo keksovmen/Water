@@ -45,25 +45,36 @@ bool ResponceReader::readResponce(){
 	}
 	
 	const int MIN_LENGTH = getMinMessageLength();
+	const int BUFFER_REMAINING = refBuffer.remains();
 	//if less than symbols left return buffer full
-	if(refBuffer.remains() < MIN_LENGTH){
+	if(BUFFER_REMAINING < MIN_LENGTH){
 		//TODO: made read to buffer return actual amount readed
 		//so you can fetch how much did you read
 		Serial.println("READ_RESPONCE_BUFFER_LOW");
-		return true;
+		return false;
 	}
 
-	unsigned int readAmount = refBuffer.remains() - MIN_LENGTH;
+	// unsigned int readAmount = refBuffer.remains() - MIN_LENGTH;
+	int readAmount = SERIAL_RX_BUFFER_SIZE - MIN_LENGTH;
+	if(BUFFER_REMAINING < readAmount){
+		readAmount = BUFFER_REMAINING - MIN_LENGTH;
+	}
+	
 	//TODO: Made use UART define buffer size
-	if(readAmount > 30){
-		readAmount = 30;
+	// if(readAmount > 64){
+		// readAmount = 64;
 		
 	//10 symbol fix
-	}else if(readAmount == 10){
-		readAmount = 9;
+	// }else if(readAmount == 10){
+		// readAmount = 9;
 		
-	}else{
-		readAmount -= findLongLength(readAmount);
+	// }else{
+	readAmount -= findLongLength(readAmount);
+	// }
+	
+	if(readAmount < 0){
+		Serial.println("Read amount is < 0");
+		return false;
 	}
 	
 	askForData(readIndex, readAmount);
