@@ -75,6 +75,7 @@ bool SimHandlerHelper<N>::askVolume(){
 		return false;
 	}
 	
+	refParameters.getCard().handleWritingValue(*dataHandler);
 	lastRequest = HTTP_SCRIPT_GET_VOLUME;
 	
 	
