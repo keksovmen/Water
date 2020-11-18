@@ -261,6 +261,16 @@ void SimHandler::doActivity(){
 		if(tcpHandler.connect()){
 			return;
 		}
+	}else{
+		if(tools.state.tcp.hasToSendAcknowledgment){
+			tcpHandler.sendAcknowledgment();
+			return;
+		}
+		
+		if(tools.state.tcp.hastToSendId){
+			tcpHandler.sendId();
+			return;
+		}
 	}
 
 	if(tools.state.tcp.hasMessage){

@@ -28,6 +28,8 @@ struct SimState
 		bool hasMessage = false;
 		bool isSending = false;
 		bool hasToSendPong = false;
+		bool hastToSendId = true;
+		bool hasToSendAcknowledgment = false;
 	} tcp;
 	
 	
@@ -80,6 +82,9 @@ struct SimState
 		tcp.state = TCP_STATE_PDP_DEACT;
 		tcp.isSending = false;
 		tcp.hasToSendPong = false;
+		tcp.hastToSendId = true;
+		tcp.hasToSendAcknowledgment = false;
+		
 		health.CGATT_Connection = false;
 	}
 	

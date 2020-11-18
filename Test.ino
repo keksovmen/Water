@@ -102,6 +102,7 @@ void setup(){
 	parameters.getApn().getValue().parse("internet");
 	parameters.getTempUp().getValue().parse("40");
 	parameters.getTempDown().getValue().parse("30");
+	parameters.getPlateId().getValue().parse("-1");
 	
 	// sim.write("AT+CGATT=0\r");
 	// delay(3000);

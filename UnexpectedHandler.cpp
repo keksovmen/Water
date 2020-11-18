@@ -108,6 +108,7 @@ void UnexpectedHandler::handleSwitch(){
 		
 		if(refBuffer.remove(TCP_CONNECTION_CLOSED)){
 			refState.tcp.state = TCP_STATE_CLOSED;
+			refState.tcp.hastToSendId = true;
 		}
 		
 		if(refBuffer.remove(PDP_DEACT)){

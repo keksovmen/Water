@@ -40,7 +40,7 @@ bool ResponceReader::readResponce(){
 	}
 	
 	if(readIndex >= responceLength){
-		Serial.println("Index more or equal length");
+		// Serial.println("Index more or equal length");
 		return false;
 	}
 	

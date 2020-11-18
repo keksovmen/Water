@@ -35,6 +35,8 @@ class ParameterHandler
 		Parameter<PrimitivFloatParameter>& getTempUp(){return tempUp;}
 		Parameter<PrimitivFloatParameter>& getTempDown(){return tempDown;}
 		
+		Parameter<PrimitivIntParameter>& getPlateId(){return plateID;}
+		
 	private:
 		Parameter<PrimitivFloatParameter> temp =
 							Parameter<PrimitivFloatParameter>(0);
@@ -59,4 +61,7 @@ class ParameterHandler
 							Parameter<PrimitivFloatParameter>(8);
 		Parameter<PrimitivFloatParameter> tempDown = 
 							Parameter<PrimitivFloatParameter>(9);
+							
+		Parameter<PrimitivIntParameter> plateID = 
+							Parameter<PrimitivIntParameter>(10);
 };

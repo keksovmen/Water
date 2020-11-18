@@ -101,6 +101,7 @@ bool TCPHandler::connect(){
 			
 		case TCP_STATE_CONNECTED:
 			//congrats you are connected
+			//Send my id
 			break;
 			
 		case TCP_STATE_CLOSING:
@@ -142,16 +143,41 @@ TCPReader TCPHandler::readMessage(FixedBufferBase& buffer){
 
 
 void TCPHandler::sendPong(){
-	refTools.simPort.writeCIPSEND();
-	if(!refTools.simPort.read()){
+	if(!initSending()){
 		return;
 	}
 	
-	refTools.simPort.write("PONG\n");
+	refTools.simPort.write("0\n");
 	refTools.simPort.write((char) 0x1A);
 	//TODO: don't know what to do, maybe change state to 
 	//something intermidiate like waiting for result
 	refTools.state.tcp.hasToSendPong = false;
+	
+}
+
+
+void TCPHandler::sendId(){
+	if(!initSending()){
+		return;
+	}
+	
+	refTools.simPort.write(refParameters.getPlateId().getValue().getValue());
+	refTools.simPort.write("\n");
+	refTools.simPort.write((char) 0x1A);
+	
+	refTools.state.tcp.hastToSendId = false;
+}
+
+
+void TCPHandler::sendAcknowledgment(){
+	if(!initSending()){
+		return;
+	}
+	
+	refTools.simPort.write("1\n");
+	refTools.simPort.write((char) 0x1A);
+	
+	refTools.state.tcp.hasToSendAcknowledgment = false;
 }
 
 
@@ -228,4 +254,15 @@ TCP_STATE TCPHandler::handleUndefinied(){
 	}
 	
 	return TCP_STATE_UNDEFINIED;
+}
+
+
+bool TCPHandler::initSending(){
+	refTools.simPort.writeCIPSEND();
+	if(!refTools.simPort.read()){
+		return false;
+	}
+	
+	refTools.state.tcp.isSending = true;
+	return true;
 }

@@ -20,6 +20,7 @@ class CardParameter : public BaseParameter
 		
 	private:
 		//be aware of possible larger lengths
+		//TODO: change size if needed
 		uint8_t uid[7];
 		uint16_t uidLength;
 	

@@ -52,6 +52,7 @@ void TCPIncomingHandler::handleCommand(TCP_MESSAGE_TYPE cmd, int begining){
 	switch(cmd){
 		case TCP_MESSAGE_TYPE_PARAM:
 			handleSetParam(begining);
+			refTools.state.tcp.hasToSendAcknowledgment = true;
 			break;
 			
 		case TCP_MESSAGE_TYPE_PING:

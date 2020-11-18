@@ -25,6 +25,8 @@ class TCPHandler : public LongCommandHandler
 		bool connect();
 		TCPReader readMessage(FixedBufferBase& buffer);
 		void sendPong();
+		void sendId();
+		void sendAcknowledgment();
 		
 	private:
 		bool handleInitial();
@@ -33,6 +35,8 @@ class TCPHandler : public LongCommandHandler
 		bool handleIpStatus();
 		bool handlePDPDeact();
 		TCP_STATE handleUndefinied();
+		
+		bool initSending();
 		
 		
 		SimTools& refTools;

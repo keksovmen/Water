@@ -43,6 +43,9 @@ void ParameterHandler::parse(int id, const char* str){
 		case 9:
 			tempDown.parse(str);
 			break;
+		case 10:
+			plateID.parse(str);
+			break;
 			
 		default: break;	
 	}
