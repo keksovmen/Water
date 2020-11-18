@@ -13,6 +13,28 @@ function writeEntry($file, $tu, $td){
 }
 
 
+function writeToSim($tu, $td) : bool{
+	require_once 'TCPHandler.php';
+	
+	$tcp = new TCPHandler();
+	if(!$tcp->init()){
+		return false;
+	}
+	if(!$tcp->connect("127.0.0.1", 21693)){
+		return false;
+	}
+	
+	$txt = "-1\n#8=" . $tu . "$#9=" . $td . "$\n";
+	if($tcp->send($txt)){
+// 		return false;
+	}
+	
+	$tcp->close();
+	
+	return true;
+}
+
+
 $file = NULL;
 
 if(isset($_POST["tu"])){
@@ -23,7 +45,12 @@ if(isset($_POST["tu"])){
 	}
 
 	writeEntry($file, $_POST["tu"], $_POST["td"]);
-
+	if(writeToSim($_POST["tu"], $_POST["td"])){
+		echo "Success";
+	}else{
+		echo "Failure";
+	}
+	
 	fclose($file);
 
 }

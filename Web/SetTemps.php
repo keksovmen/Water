@@ -12,6 +12,11 @@
     <input type="submit" value="Send" onClick="sendTemperatures()"/>
 </div>
 <div>
+	<input type="text" name="date" id="date"
+			pattern="\d{2}:\d{2}:\d{2}:\d{2}:\d{2}:\d{2}"/>
+	<input type="submit" value="Send date" onClick="sendDate()"/>
+</div>
+<div>
 	<?php require_once 'PrintTimeStamps.php';?>
 </div>
 <div>

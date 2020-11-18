@@ -14,6 +14,13 @@ function formatCellVolume($data) : string{
 }
 
 
+// function convertIntoNumber($uid) : string{
+// 	$expr = "\(\d{1,3})+,?\ui";
+	
+	
+// }
+
+
 
 if(count($VOLUME_ENTRIES) == 0){
 	echo "NO ENTRIES YET<br/>";
@@ -27,6 +34,7 @@ echo "<table>";
 echo "<tr>";
 echo "<th>" . "Date" . "</th>";
 echo "<th>" . "Time" . "</th>";
+echo "<th>" . "UID" . "</th>";
 echo "<th>" . "Volume" . "</th>";
 echo "</tr>";
 
@@ -35,6 +43,7 @@ foreach ($VOLUME_ENTRIES as $tmp){
 	echo "<tr>";
 	echo formatCellVolume($tmp->date);
 	echo formatCellVolume($tmp->time);
+	echo formatCellVolume($tmp->uid);
 	echo formatCellVolume($tmp->volume);
 	echo "</tr>";
 }

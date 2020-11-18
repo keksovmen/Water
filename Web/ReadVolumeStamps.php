@@ -6,6 +6,8 @@ class VolumeStamp
 	public function parse($str){
 		$expTime= "/Time: ((\d+:\d+:\d+):(\d+:\d+:\d+))/iu";
 		$expVolume = "/Volume: (-?\d*\.?\d*)/iu";
+		$expUid = "/UID: (\d+)/iu";
+		$matches = array();
 		
 		if(preg_match($expTime, $str, $matches)){
 			$this->dateAndTime = $matches[1];
@@ -17,12 +19,17 @@ class VolumeStamp
 			$this->volume = $matches[1];
 		}
 		
+		if(preg_match($expUid, $str, $matches)){
+			$this->uid = $matches[1];
+		}
+		
 	}
 	
 	public $volume;
 	public $date;
 	public $time;
 	public $dateAndTime;
+	public $uid;
 }
 
 
