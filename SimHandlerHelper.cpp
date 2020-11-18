@@ -110,19 +110,27 @@ bool SimHandlerHelper<N>::isAbleToUseHttp(){
 
 
 template<int N>
-bool SimHandlerHelper<N>::isAnwserRdy(){
+int SimHandlerHelper<N>::isAnwserRdy(){
+	if(!handler.tools.state.isMinimumEstablished()){
+		return -1;
+	}
+	
 	bool result = dataHandler->isSended();
 	if(!result){
 		handler.doActivity();
 	}
 	
-	return result;
+	return result ? 1 : 0;
 }
 
 
 template<int N>
 bool SimHandlerHelper<N>::isAnwserSuccess(){
 	bool result = dataHandler->isSendedSuccesfully();
+	if(!handler.tools.state.isMinimumEstablished()){
+		result = false;
+	}
+	
 	if(result){
 		//handle what was send here
 		switch(lastRequest){

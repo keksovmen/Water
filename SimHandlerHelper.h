@@ -36,7 +36,14 @@ class SimHandlerHelper
 		bool askTime();
 		bool askVolume();
 		bool isAbleToUseHttp();
-		bool isAnwserRdy();
+		
+		/**
+			Prevents from infinite looping
+			
+			@return 1 if anwser is ready, 0 if not, -1 if module died
+		*/
+		
+		int isAnwserRdy();
 		bool isAnwserSuccess();
 		void abort();
 		

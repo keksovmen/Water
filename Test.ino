@@ -260,7 +260,7 @@ bool askVolume(){
 	unsigned long t = millis();
 	bool b = false;
 	
-	while(!simHelper.isAnwserRdy()){
+	while(simHelper.isAnwserRdy() == 0){
 		if(!cardReader.read()){
 			simHelper.abort();
 			return false;
@@ -356,7 +356,7 @@ bool waitForResult(const char* str){
 	bool b = false;
 	
 	//TODO: when module dies it loops forever
-	while(!simHelper.isAnwserRdy()){
+	while(simHelper.isAnwserRdy() == 0){
 		if((millis() - t) > 500){
 			t = millis();
 			lcd.setCursor(strlen(str), 0);
