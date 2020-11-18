@@ -126,6 +126,12 @@ class SimHandler
 		bool tryToSetDefaultParam(int id);
 		void handleTCPMessage();
 		bool handleLongMessages();
+		bool isDefaultsAreSet();
+		bool isNetworkEstablished();
+		bool isCGATTAttached();
+		bool isGPRSConnected();
+		bool isTCPConnecting();
+		bool isTCPWorking();
 		
 
 		FixedBufferBase& refBuffer;

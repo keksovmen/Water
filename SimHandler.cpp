@@ -195,8 +195,6 @@ void SimHandler::handleReading(){
 }
 
 
-//TODO: Cut into bool functions big blocks of handling
-
 void SimHandler::doActivity(){
 	if(!tools.state.timer.isOpen()){
 		goto B;
@@ -206,80 +204,27 @@ void SimHandler::doActivity(){
 		return;	//currently waiting for anwser
 	}
 	
-	if(!tools.state.health.defaultsAreSet){
-		if(!isModuleUp()){
-			return;
-		}
-		
-		if(setDefaultParams()){
-			tools.state.health.defaultsAreSet = true;
-		}else{
-			return;
-		}
-	}
-	
-	if(!tools.state.isMinimumEstablished()){
-		if(!tools.state.health.cpin && !isModuleAlive()){
-			//skip turns and wait until sim will be ok
-			return;
-		}
-		
-		if(isConnectedToNetwork() != 
-				NETWORK_CONNECTION::REGISTERED){
-			//skip turns and wait until network will be ok
-			return;
-		}
-	}
-	
-	if(!tools.state.health.CGATT_Connection){
-		if(!cgattHandler.connectToCGATT()){
-			return;
-		}
-	}
-	
-	if(!tools.state.isGPRS_Connected()){
-		A:
-		switch(tools.state.health.GPRS_Connection){
-			case GPRS_UNDEFINIED:
-				if(gprsHandler.isConnected() != GPRS_UNDEFINIED){
-					goto A;
-				}
-				return;	//wait until module is send something
-				
-			case GPRS_CLOSED:
-				//take APN from params
-				gprsHandler.connect(
-					refParams.getApn().getValue().getValue()
-					);
-				return;
-				
-			default: return;	//wait for result
-		}
-	}
-	
-	if(!tools.state.isTCP_Connected()){
-		if(tcpHandler.connect()){
-			return;
-		}
-	}else{
-		if(tools.state.tcp.hasToSendAcknowledgment){
-			tcpHandler.sendAcknowledgment();
-			return;
-		}
-		
-		if(tools.state.tcp.hastToSendId){
-			tcpHandler.sendId();
-			return;
-		}
-	}
-
-	if(tools.state.tcp.hasMessage){
-		handleTCPMessage();
+	if(!isDefaultsAreSet()){
 		return;
 	}
 	
-	if(tools.state.tcp.hasToSendPong){
-		tcpHandler.sendPong();
+	if(!isNetworkEstablished()){
+		return;
+	}
+	
+	if(!isCGATTAttached()){
+		return;
+	}
+	
+	if(!isGPRSConnected()){
+		return;
+	}
+	
+	if(!isTCPConnecting()){
+		return;
+	}
+	
+	if(!isTCPWorking()){
 		return;
 	}
 	
@@ -381,4 +326,112 @@ bool SimHandler::handleLongMessages(){
 	}
 	
 	return false;
+}
+
+
+bool SimHandler::isDefaultsAreSet(){
+	if(!tools.state.health.defaultsAreSet){
+		if(!isModuleUp()){
+			tools.state.timer.sheduleDelay(1000);
+			return false;
+		}
+		
+		if(setDefaultParams()){
+			tools.state.health.defaultsAreSet = true;
+		}else{
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+
+bool SimHandler::isNetworkEstablished(){
+	if(!tools.state.isMinimumEstablished()){
+		if(!tools.state.health.cpin && !isModuleAlive()){
+			//skip turns and wait until sim will be ok
+			return false;
+		}
+		
+		if(isConnectedToNetwork() != 
+				NETWORK_CONNECTION::REGISTERED){
+			//skip turns and wait until network will be ok
+			tools.state.timer.sheduleDelay(1000);
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+
+bool SimHandler::isCGATTAttached(){
+	if(!tools.state.health.CGATT_Connection){
+		if(!cgattHandler.connectToCGATT()){
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+
+bool SimHandler::isGPRSConnected(){
+	if(!tools.state.isGPRS_Connected()){
+		A:
+		switch(tools.state.health.GPRS_Connection){
+			case GPRS_UNDEFINIED:
+				if(gprsHandler.isConnected() != GPRS_UNDEFINIED){
+					goto A;
+				}
+				return false;	//wait until module is send something
+				
+			case GPRS_CLOSED:
+				gprsHandler.connect(
+					refParams.getApn().getValue().getValue()
+					);
+				return false;
+				
+			default: return false;	//wait for result
+		}
+	}
+	
+	return true;
+}
+
+
+bool SimHandler::isTCPConnecting(){
+	if(!tools.state.isTCP_Connected()){
+		if(tcpHandler.connect()){
+			return false;
+		}
+	}else{
+		if(tools.state.tcp.hasToSendAcknowledgment){
+			tcpHandler.sendAcknowledgment();
+			return false;
+		}
+		
+		if(tools.state.tcp.hastToSendId){
+			tcpHandler.sendId();
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+
+bool SimHandler::isTCPWorking(){
+	if(tools.state.tcp.hasMessage){
+		handleTCPMessage();
+		return false;
+	}
+	
+	if(tools.state.tcp.hasToSendPong){
+		tcpHandler.sendPong();
+		return false;
+	}
+	
+	return true;
 }
