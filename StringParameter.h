@@ -24,7 +24,7 @@ class StringParameter : public BaseParameter
 		//здеся копирует до конца а надо до $
 		void parse(const char* str) override {
 			int length = 0;
-			for(const char* p = str;; p++){
+			for(const char* p = str; *p != '\0'; p++){
 				if((*p) == (*ENTRY_ENDING)){
 					break;
 				}
@@ -39,7 +39,7 @@ class StringParameter : public BaseParameter
 			for(int i = 0; i < length; i++){
 				value[i] = str[i];
 			}
-			
+			value[length] = '\0';
 			// value = str;
 		}
 		
