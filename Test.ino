@@ -47,6 +47,8 @@ unsigned long timeBefore;
 SimHandlerHelper<FIXED_BUFFER_SIZE> simHelper(sim, parameters);
 SimHandler& simHandler = simHelper.getHandler();
 
+TimeHandler sensorTimer;
+
 
 
 
@@ -120,39 +122,37 @@ void loop(){
 		printTime(clk);
 	}
 	
-	
-	// if button 8 pressed
-	if(digitalRead(BUTTON_TIME) == LOW){
-		// printMessage("Asking time");
-		if(!simHelper.isAbleToUseHttp()){
-			printMessage("HTTP UNAVAILABLE");
-			delay(1000);
-		}else{
-			askTime();
-		}
-	}
-	
-	
-	//if button 9 pressed
-	if(digitalRead(BUTTON_SEND) == LOW){
-		if(!simHelper.isAbleToUseHttp()){
-			printMessage("HTTP UNAVAILABLE");
-			delay(1000);
-		}else{
-			sendSensorData();
-		}
-		
-	}
-	
-	
-	//if button 10 pressed
-	// if(digitalRead(BUTTON_SHOW) == LOW){
 
-	// }
-	
-	
 	simHandler.doActivity();
 	
+	handleTemperature();
+
+	handleTimerLogic();
+	
+	handleButtonLogic();
+	
+	handleCardLogic();		
+}
+
+
+void handleTemperature(){
+	updateParams();
+	
+	double tU = parameters.getTempUp().getValue().getValue();
+	double tD = parameters.getTempDown().getValue().getValue();
+	double tC = parameters.getTemp().getValue().getValue();
+	
+	if(tC > tU){
+		digitalWrite(HEATER_PIN, LOW);
+	}
+	
+	if(tC < tD){
+		digitalWrite(HEATER_PIN, HIGH);
+	}
+	
+}
+
+void handleCardLogic(){
 	if(cardReader.read()){
 		if(!simHelper.isAbleToUseHttp()){
 			printMessage("HTTP UNAVAILABLE");
@@ -179,28 +179,59 @@ void loop(){
 		}
 
 	}
-	
-	
-	handleTemperature();
-	
 }
 
 
-void handleTemperature(){
-	updateParams();
-	
-	double tU = parameters.getTempUp().getValue().getValue();
-	double tD = parameters.getTempDown().getValue().getValue();
-	double tC = parameters.getTemp().getValue().getValue();
-	
-	if(tC > tU){
-		digitalWrite(HEATER_PIN, LOW);
+void handleButtonLogic(){
+		// if button 8 pressed
+	if(digitalRead(BUTTON_TIME) == LOW){
+		// printMessage("Asking time");
+		if(!simHelper.isAbleToUseHttp()){
+			printMessage("HTTP UNAVAILABLE");
+			delay(1000);
+		}else{
+			askTime();
+		}
 	}
 	
-	if(tC < tD){
-		digitalWrite(HEATER_PIN, HIGH);
+	
+	//if button 9 pressed
+	if(digitalRead(BUTTON_SEND) == LOW){
+		if(!simHelper.isAbleToUseHttp()){
+			printMessage("HTTP UNAVAILABLE");
+			delay(1000);
+		}else{
+			if(sendSensorData()){
+				showEntry(
+					parameters.getTemp().getValue().getValue(),
+					parameters.getPressure().getValue().getValue()
+					);
+			}
+		}
+		
 	}
 	
+	
+	//if button 10 pressed
+	// if(digitalRead(BUTTON_SHOW) == LOW){
+
+	// }
+}
+
+
+void handleTimerLogic(){
+	if(sensorTimer.isOpen()){
+		if(simHelper.isAbleToUseHttp()){
+			if(sendSensorData()){
+				showEntry(
+					parameters.getTemp().getValue().getValue(),
+					parameters.getPressure().getValue().getValue()
+					);
+					
+				sensorTimer.sheduleDelay(300000);
+			}
+		}
+	}
 }
 
 
@@ -227,20 +258,15 @@ void printTime(const Clock& clk){
 
 //Tries to send temperature and pressure
 //to server, also displays what was send
-void sendSensorData(){
+bool sendSensorData(){
 	updateParams();
 	if(!simHelper.sendParams()){
 		printMessage("Network Error");
 		delay(1000);
-		return;
+		return false;
 	}
 	
-	waitForResult();
-	
-	showEntry(
-		parameters.getTemp().getValue().getValue(),
-		parameters.getPressure().getValue().getValue()
-		);
+	return waitForResult();
 }
 
 

@@ -19,3 +19,4 @@ bool lazyRead() as super class method ???
 23	-	SimHandler made many functions instead of 1 big to
 			handle acting
 25	-	When get from CREG shit add some timeout
+26	-	Fix shit when reading more than 30 bytes form http ot tcp
