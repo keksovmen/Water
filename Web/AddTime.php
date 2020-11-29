@@ -21,12 +21,14 @@ function writeToSim($tu, $td) : bool{
 		return false;
 	}
 	if(!$tcp->connect("127.0.0.1", 21693)){
+		$tcp->close();
 		return false;
 	}
 	
 	$txt = "-1\n#8=" . $tu . "$#9=" . $td . "$\n";
-	if($tcp->send($txt)){
-// 		return false;
+	if(!$tcp->send($txt)){
+		$tcp->close();
+		return false;
 	}
 	
 	$tcp->close();
