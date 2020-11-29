@@ -18,7 +18,10 @@ TCPReader::TCPReader(	SimTools& tools,
 
 
 int TCPReader::getMinMessageLength(){
-	return 25 + findLongLength(this->responceLength - this->readIndex);
+	return strlen(TCP_READ_ANWSER) + 
+			strlen(TEXT_SUCCESS) +
+			findLongLength(this->responceLength - this->readIndex) +
+			4;
 }
 
 

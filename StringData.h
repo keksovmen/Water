@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Constants.h"
 
 // const static char* DIGIT_SUCCESS = "0\r\n";
 // const static char* DIGIT_COMPLEX_SUCCESS = "\r\n0\r\n";
@@ -61,7 +62,7 @@
 #define OVER_VOLTAGE_WARNING  "\r\nOVER-VOLTAGE WARNNING\r\n"
 
 
-#define HTTPREAD_ANWSER  "\r\n+HTTPREAD: "
+
 
 
 #define TCP_CONNECTE_OK  "\r\nCONNECT OK\r\n"
@@ -69,12 +70,27 @@
 #define TCP_CONNECT_FAIL  "\r\nCONNECT FAIL\r\n"
 #define TCP_SHUT_OK  "\r\nSHUT OK\r\n"
 #define TCP_CONNECTION_CLOSED  "\r\nCLOSED\r\n"
-#define TCP_INCOMING_MESSAGE  "\r\n+CIPRXGET: 1\r\n"
-#define TCP_DATA_LENGTH_ANWSER  "\r\n+CIPRXGET: 4,"
-#define TCP_READ_ANWSER  "\r\n+CIPRXGET: 2,"
+
+#ifdef SIM800
+	#define TCP_INCOMING_MESSAGE  "\r\n+CIPRXGET: 1\r\n"
+	#define TCP_DATA_LENGTH_ANWSER  "\r\n+CIPRXGET: 4,"
+	#define TCP_READ_ANWSER  "\r\n+CIPRXGET: 2,"
+#else
+	#define TCP_INCOMING_MESSAGE  "\r\n+CIPRXGET:1\r\n"
+	#define TCP_DATA_LENGTH_ANWSER  "\r\n+CIPRXGET:4,"
+	#define TCP_READ_ANWSER  "\r\n+CIPRXGET:2,"
+#endif
+
 #define TCP_SEND_OK  "\r\nSEND OK\r\n"
 #define TCP_SEND_FAIL  "\r\nSEND FAIL\r\n"
 
+#ifdef SIM800
+	#define HTTP_HTTPACTION "\r\n+HTTPACTION: "
+	#define HTTP_HTTPREAD_ANWSER  "\r\n+HTTPREAD: "
+#else
+	#define HTTP_HTTPACTION "\r\n+HTTPACTION:"
+	#define HTTP_HTTPREAD_ANWSER  "\r\n+HTTPREAD:"
+#endif
 
 #define PDP_DEACT  "\r\n+PDP: DEACT\r\n"
 #define SAPBR_DEACT  "\r\n+SAPBR 1: DEACT\r\n"

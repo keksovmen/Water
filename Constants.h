@@ -11,3 +11,8 @@
 
 #define ENTRY_BEGINING "#"
 #define ENTRY_ENDING "$"
+
+
+
+//undefine for SIM900 module
+// #define SIM800

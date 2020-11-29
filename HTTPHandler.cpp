@@ -1,5 +1,6 @@
 #include "HTTPHandler.h"
 #include "Util.h"
+#include "Constants.h"
 
 
 
@@ -15,7 +16,10 @@ HTTPHandler::HTTPHandler(SimTools& tools) :
 bool HTTPHandler::initPostRequest(IPAddress& address, const char* url, int dataLength){
 	if(initSession() 				&&
 		setPostURL(address, url) 	&&
-		setContentForPHP() 			&&
+		#ifdef SIM800
+		#warning SIM800 defined
+			setContentForPHP() 			&&
+		#endif
 		startDataTransmition(dataLength))
 	{
 		refTools.state.http.isBussy = true;

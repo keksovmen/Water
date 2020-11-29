@@ -171,7 +171,7 @@ int ResultParserStateBase::findLastIndexForRead(const char* str){
 const char* ResultParserStateBase::routeReadType(READ_TYPE type){
 	switch(type){
 		case READ_TYPE_HTTP:
-			return HTTPREAD_ANWSER;
+			return HTTP_HTTPREAD_ANWSER;
 		
 		case READ_TYPE_TCP:
 			return TCP_READ_ANWSER;

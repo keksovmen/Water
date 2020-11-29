@@ -16,6 +16,8 @@
 #define BUTTON_SHOW 10
 #define HEATER_PIN 53
 
+
+
 //Barrometr, termometr
 Device dev;
 
@@ -130,7 +132,7 @@ void loop(){
 	
 	handleTemperature();
 
-	handleTimerLogic();
+	// handleTimerLogic();
 	
 	handleButtonLogic();
 	

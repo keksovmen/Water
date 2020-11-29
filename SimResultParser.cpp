@@ -102,11 +102,12 @@ bool SimResultParser::containDownload(){
 
 
 bool SimResultParser::isHttpActionPresents(){
-	int index = this->refBuffer.indexOf("+HTTPACTION: ");
+	int index = this->refBuffer.indexOf(HTTP_HTTPACTION);
 	if(index == -1)
 		return false;
 	
-	int terminatorIndex = this->refBuffer.indexOfFrom(index + 11, END_LINE);
+	int terminatorIndex = this->refBuffer.indexOfFrom(
+			index + strlen(HTTP_HTTPACTION), END_LINE);
 	if(terminatorIndex == -1)
 		return false;
 	
@@ -168,8 +169,10 @@ int SimResultParser::fetchGPRSStatus(){
 
 
 int SimResultParser::fetchHTTPStatus(){
-	int index = this->refBuffer.indexOf("+HTTPACTION: ");
-	index += 15;	//index will be on first character of status
+	int index = this->refBuffer.indexOf(HTTP_HTTPACTION);
+	index += strlen(HTTP_HTTPACTION);	//index on method
+	index += 2;	//index will be on first character of status
+	
 	
 	return characterToInt(this->refBuffer[index]);
 }
@@ -188,8 +191,9 @@ int SimResultParser::fetchHTTPStatus(){
 
 
 unsigned long SimResultParser::fetchHttpResponceLength(){
-	int index = this->refBuffer.indexOf("+HTTPACTION: ");	
-	index += 19;	//on first char of <data length>
+	int index = this->refBuffer.indexOf(HTTP_HTTPACTION);
+	index += strlen(HTTP_HTTPACTION);	//index on method
+	index += 6;	//on first char of <data length>
 	
 	int endIndex = this->refBuffer.indexOfFrom(index, "\r\n");
 	

@@ -89,9 +89,15 @@ void DataHandler::finish(){
 }
 
 
+/**
+	@return \r\nHTTPREAD:<length>\r\n\r\nOK\r\n
+		where, <length> is 1 digit
+*/
+
 
 int DataHandler::getMinMessageLength(){
-	return 22;
+	return strlen(HTTP_HTTPREAD_ANWSER) +
+			strlen(TEXT_SUCCESS) + 3;
 }
 
 
