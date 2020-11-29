@@ -23,6 +23,13 @@ $uid = $_POST["6"];
 
 
 if (!isset($clock) || !isset($volume) || !isset($uid)){
+	require_once 'PostParser.php';
+	$clock = $_POST["2"];
+	$volume = $_POST["5"];
+	$uid = $_POST["6"];
+}
+
+if (!isset($clock) || !isset($volume) || !isset($uid)){
 	return;
 }
 
