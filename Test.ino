@@ -6,6 +6,7 @@
 #include "ParameterHandler.h"
 #include "Constants.h"
 #include "CardReader.h"
+#include "TemperatureSensor.h"
 
 
 // #define SERIAL_RX_BUFFER_SIZE FIXED_BUFFER_SIZE
@@ -16,10 +17,15 @@
 #define BUTTON_SHOW 10
 #define HEATER_PIN 53
 
+#define TEMP_UP_PIN 22
+#define TEMP_DOWN_PIN 23
+
 
 
 //Barrometr, termometr
-Device dev;
+// Device dev;
+TemperatureSensor tempUp(TEMP_UP_PIN);
+TemperatureSensor tempDown(TEMP_DOWN_PIN);
 
 //Sim module
 #ifdef _AVR_ATMEGA328PB_H_INCLUDED
@@ -85,10 +91,10 @@ void setup(){
 	
 	
 	//Check if device is connected
-	if(!dev.init()){
-		Serial.println("Device not connected");
+	// if(!dev.init()){
+		// Serial.println("Device not connected");
 		// while(1){};
-	}
+	// }
 	
 	if(!cardReader.init()){
 		Serial.println("NFC not connected");
@@ -127,8 +133,8 @@ void loop(){
 		printTime(clk);
 	}
 	
-
-	simHandler.doActivity();
+	
+	handleActivities();
 	
 	handleTemperature();
 
@@ -137,6 +143,13 @@ void loop(){
 	handleButtonLogic();
 	
 	handleCardLogic();		
+}
+
+
+void handleActivities(){
+	simHandler.doActivity();
+	tempUp.doActivity();
+	tempDown.doActivity();
 }
 
 
@@ -373,11 +386,12 @@ void printMessage(const char* str){
 }
 
 void updateParams(){
-	dev.readResults();
-	double temp = dev.getTemperature();
-	double press = dev.getPressure();
-	parameters.getTemp().getValue().getValue() = temp;
-	parameters.getPressure().getValue().getValue() = press;
+	// dev.readResults();
+	// double temp = dev.getTemperature();
+	// double press = dev.getPressure();
+	parameters.getTemp().getValue().getValue() = tempUp.getTemperature();
+	// parameters.getTemp().getValue().getValue() = temp;
+	// parameters.getPressure().getValue().getValue() = press;
 }
 
 bool waitForResult(const char* str){
