@@ -15,6 +15,7 @@
 #include "TCPHandler.h"
 #include "DataHandler.h"
 #include "ParameterHandler.h"
+#include "Activity.h"
 
 
 
@@ -30,7 +31,7 @@ class SimHandlerHelper;
 // template class SimHandlerHelper<FIXED_BUFFER_SIZE>;
 // template<> class SimHandlerHelper<128>;
 
-class SimHandler
+class SimHandler : public Activity
 {
 	public:
 		template<int N>
@@ -119,7 +120,7 @@ class SimHandler
 		
 		void handleReading();
 		
-		void doActivity();
+		void doActivity() override;
 		
 	private:
 		void writeDefaultParam(int id);
