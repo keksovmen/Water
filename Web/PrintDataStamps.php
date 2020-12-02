@@ -18,8 +18,8 @@ echo "<table>";
 
 //4 columns
 echo "<tr>";
-echo "<th>" . "Temperature" . "</th>";
-echo "<th>" . "Pressure" . "</th>";
+echo "<th>" . "Temperature Up" . "</th>";
+echo "<th>" . "Temperature Down" . "</th>";
 echo "<th>" . "Date" . "</th>";
 echo "<th>" . "Time" . "</th>";
 echo "</tr>";
@@ -50,16 +50,16 @@ foreach ($DATA_ENTRIES as $tmp){
 			
 			if($currentDate >= $startDate){
 				if(is_null($time->end)){
-					if((float)$tmp->temp > (float)$time->tu || 
-						(float)$tmp->temp < (float)$time->td)
+					if((float)$tmp->tempUp > (float)$time->tu || 
+						(float)$tmp->tempUp < (float)$time->td)
 					{
 						$isRed = true;
 					}
 				}else{
 					$endDate = date($time->end);
 					if($currentDate <= $endDate){
-						if((float)$tmp->temp > (float)$time->tu ||
-							(float)$tmp->temp < (float)$time->td)
+						if((float)$tmp->tempUp > (float)$time->tu ||
+							(float)$tmp->tempUp < (float)$time->td)
 						{
 							$isRed = true;
 						}
@@ -71,8 +71,8 @@ foreach ($DATA_ENTRIES as $tmp){
 	
 	
 	echo "<tr>";
-	echo formatDataCell($tmp->temp, $isRed);
-	echo formatDataCell($tmp->press);
+	echo formatDataCell($tmp->tempUp, $isRed);
+	echo formatDataCell($tmp->tempDown);
 	echo formatDataCell($tmp->date);
 	echo formatDataCell($tmp->time);
 	echo "</tr>";

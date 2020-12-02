@@ -15,7 +15,7 @@
 #define BUTTON_TIME 8
 #define BUTTON_SEND 9
 #define BUTTON_SHOW 10
-#define HEATER_PIN 53
+#define HEATER_PIN 7
 
 #define TEMP_UP_PIN 22
 #define TEMP_DOWN_PIN 23
@@ -158,7 +158,7 @@ void handleTemperature(){
 	
 	double tU = parameters.getTempUp().getValue().getValue();
 	double tD = parameters.getTempDown().getValue().getValue();
-	double tC = parameters.getTemp().getValue().getValue();
+	double tC = parameters.getSensorTempUp().getValue().getValue();
 	
 	if(tC > tU){
 		digitalWrite(HEATER_PIN, LOW);
@@ -221,8 +221,8 @@ void handleButtonLogic(){
 		}else{
 			if(sendSensorData()){
 				showEntry(
-					parameters.getTemp().getValue().getValue(),
-					parameters.getPressure().getValue().getValue()
+					parameters.getSensorTempUp().getValue().getValue(),
+					parameters.getSensorTempDown().getValue().getValue()
 					);
 			}
 		}
@@ -242,8 +242,8 @@ void handleTimerLogic(){
 		if(simHelper.isAbleToUseHttp()){
 			if(sendSensorData()){
 				showEntry(
-					parameters.getTemp().getValue().getValue(),
-					parameters.getPressure().getValue().getValue()
+					parameters.getSensorTempUp().getValue().getValue(),
+					parameters.getSensorTempDown().getValue().getValue()
 					);
 					
 				sensorTimer.sheduleDelay(300000);
@@ -365,13 +365,13 @@ void askTime(){
 void showEntry(int temp, int pressure){
 	lcd.clear();
 	lcd.setCursor(0,0);
-	lcd.print("TEMP = ");
-	lcd.setCursor(8,0);
+	lcd.print("TEMP_UP = ");
+	lcd.setCursor(10,0);
 	lcd.print(temp);
 	
 	lcd.setCursor(0,1);
-	lcd.print("PRES = ");
-	lcd.setCursor(8,1);
+	lcd.print("TEMP_DW = ");
+	lcd.setCursor(10,1);
 	lcd.print(pressure);
 	
 	delay(1500);
@@ -386,12 +386,8 @@ void printMessage(const char* str){
 }
 
 void updateParams(){
-	// dev.readResults();
-	// double temp = dev.getTemperature();
-	// double press = dev.getPressure();
-	parameters.getTemp().getValue().getValue() = tempUp.getTemperature();
-	// parameters.getTemp().getValue().getValue() = temp;
-	// parameters.getPressure().getValue().getValue() = press;
+	parameters.getSensorTempUp().getValue().getValue() = tempUp.getTemperature();
+	parameters.getSensorTempDown().getValue().getValue() = tempDown.getTemperature();
 }
 
 bool waitForResult(const char* str){

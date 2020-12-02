@@ -20,8 +20,8 @@ class ParameterHandler
 		//TODO: made inheret from a class of parameter
 		void parse(int id, const char* str);
 		
-		Parameter<PrimitivFloatParameter>& getTemp(){return temp;}
-		Parameter<PrimitivFloatParameter>& getPressure(){return press;}
+		Parameter<PrimitivFloatParameter>& getSensorTempUp(){return sensorTempUp;}
+		Parameter<PrimitivFloatParameter>& getSensorTempDown(){return sensorTempDown;}
 		
 		Parameter<Clock>& getClock(){return clock;}
 		Parameter<IPAddressParam>& getAddress(){return address;}
@@ -38,10 +38,10 @@ class ParameterHandler
 		Parameter<PrimitivIntParameter>& getPlateId(){return plateID;}
 		
 	private:
-		Parameter<PrimitivFloatParameter> temp =
+		Parameter<PrimitivFloatParameter> sensorTempUp =
 							Parameter<PrimitivFloatParameter>(0);
 		
-		Parameter<PrimitivFloatParameter> press = 
+		Parameter<PrimitivFloatParameter> sensorTempDown = 
 							Parameter<PrimitivFloatParameter>(1);
 			
 		Parameter<Clock> clock = Parameter<Clock>(2);

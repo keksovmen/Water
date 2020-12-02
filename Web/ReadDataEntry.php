@@ -3,16 +3,16 @@
 class DataEntry
 {
 	public function parse($str){
-		$expTemperature = "/Temperature - C: (-?\d*\.?\d*)/iu";
-		$expPressure = "/Pressure - mb: (-?\d*\.?\d*)/iu";
+		$expTemperatureUp = "/Temperature Up - C: (-?\d*\.?\d*)/iu";
+		$expTemperatureDown = "/Temperature Down - C: (-?\d*\.?\d*)/iu";
 		$expTime= "/Time: ((\d+:\d+:\d+):(\d+:\d+:\d+))/iu";
 		
-		if(preg_match($expTemperature, $str, $matches)){
-			$this->temp = $matches[1];
+		if(preg_match($expTemperatureUp, $str, $matches)){
+			$this->tempUp = $matches[1];
 		}
 		
-		if(preg_match($expPressure, $str, $matches)){
-			$this->press = $matches[1];
+		if(preg_match($expTemperatureDown, $str, $matches)){
+			$this->tempDown = $matches[1];
 		}
 		
 		if(preg_match($expTime, $str, $matches)){
@@ -22,8 +22,8 @@ class DataEntry
 		}
 	}
 	
-	public $temp;
-	public $press;
+	public $tempUp;
+	public $tempDown;
 	public $date;
 	public $time;
 	public $dateAndTime;

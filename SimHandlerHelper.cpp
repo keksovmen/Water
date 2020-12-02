@@ -17,8 +17,8 @@ template<int N>
 bool SimHandlerHelper<N>::sendParams(){
 	ParameterWriter paramWriter;
 	paramWriter.add(&refParameters.getClock());
-	paramWriter.add(&refParameters.getTemp());
-	paramWriter.add(&refParameters.getPressure());
+	paramWriter.add(&refParameters.getSensorTempUp());
+	paramWriter.add(&refParameters.getSensorTempDown());
 	
 	dataHandler = handler.sendPostRequest(
 			refParameters.getAddress().getValue(),
