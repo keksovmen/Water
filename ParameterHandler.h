@@ -6,6 +6,7 @@
 #include "CardParameter.h"
 #include "IPAddressParam.h"
 #include "StringParameter.h"
+#include "MemoryParametr.h"
 
 
 class ParameterHandler

@@ -1,10 +1,17 @@
 #pragma once
 
+//undefine for SIM900 module
+// #define SIM800
+
 //in chars
 #define FIXED_BUFFER_SIZE 128
 
 //in millis
-#define WRAPPER_MIN_DELAY 25
+#ifndef SIM800
+	#define WRAPPER_MIN_DELAY 50
+#else
+	#define WRAPPER_MIN_DELAY 25
+#endif
 
 
 #define SIZE_OF_PARAMETER_WRITER 10
@@ -14,5 +21,3 @@
 
 
 
-//undefine for SIM900 module
-// #define SIM800

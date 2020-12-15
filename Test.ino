@@ -60,6 +60,8 @@ SimHandler& simHandler = simHelper.getHandler();
 
 TimeHandler sensorTimer;
 
+bool isTimeSet = false;
+
 
 
 
@@ -113,9 +115,13 @@ void setup(){
 	//set IP
 	parameters.getAddress().getValue().parse("37.146.144.72");
 	parameters.getApn().getValue().parse("internet");
-	parameters.getTempUp().getValue().parse("40");
-	parameters.getTempDown().getValue().parse("30");
-	parameters.getPlateId().getValue().parse("-1");
+	// Serial.print("TEMP UP - ");
+	// Serial.println(parameters.getTempUp().getValue().getValue());
+	// Serial.print("TEMP DOWN - ");
+	// Serial.println(parameters.getTempDown().getValue().getValue());
+	parameters.getTempUp().parse("40");
+	parameters.getTempDown().parse("30");
+	parameters.getPlateId().parse("-1");
 	
 	// sim.write("AT+CGATT=0\r");
 	// delay(3000);
@@ -138,7 +144,7 @@ void loop(){
 	
 	handleTemperature();
 
-	// handleTimerLogic();
+	handleTimerLogic();
 	
 	handleButtonLogic();
 	
@@ -238,6 +244,15 @@ void handleButtonLogic(){
 
 
 void handleTimerLogic(){
+	if(!isTimeSet){
+		if(simHelper.isAbleToUseHttp()){
+			if(askTime()){
+				isTimeSet = true;
+			}
+		}
+		
+		return;
+	}
 	if(sensorTimer.isOpen()){
 		if(simHelper.isAbleToUseHttp()){
 			if(sendSensorData()){
@@ -350,14 +365,14 @@ void sendVolume(){
 }
 
 
-void askTime(){
+bool askTime(){
 	if(!simHelper.askTime()){
 		printMessage("Network Error");
 		delay(1000);
-		return;
+		return false;
 	}
 	
-	waitForResult("Asking Time");
+	return waitForResult("Asking Time");
 }
 
 

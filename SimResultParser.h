@@ -201,6 +201,7 @@ class SimResultParser : public ResultParserStateBase
 		bool containShut();
 		
 	private:
+		// ResultParserStateBase* pState;
 		ResultParserStateBase* pState;
 		
 };

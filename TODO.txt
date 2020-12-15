@@ -21,4 +21,14 @@ bool lazyRead() as super class method ???
 25	-	When get from CREG shit add some timeout
 26	-	Java server can die if AT+CIPSEND get stopped and repeated
 			Parser error so handle it
+27	-	Shit happening with web and tcp servers, when try to send
+			some data it may die for no reason
+28	-	Add, if there was no PING action for some time kill
+			the conenction
+29	-	Errors with responses when it take more time than expected
+			and program tries to finish work. e.x. http send
+			if took too much time and successfuly tries to close
+			but give an error.
+			Quck sollution will be made read wait for 200ms instead of 50
+			
 			
