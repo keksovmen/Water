@@ -19,5 +19,6 @@
 #define ENTRY_BEGINING "#"
 #define ENTRY_ENDING "$"
 
-
+//determine how long can wait for anwser from sim modeule in millis
+#define LONG_WAIT 500
 

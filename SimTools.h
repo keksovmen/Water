@@ -3,6 +3,7 @@
 #include "SimCommandPort.h"
 #include "SimResultParser.h"
 #include "SimState.h"
+#include "Constants.h"
 
 
 
@@ -29,7 +30,8 @@ class SimTools
 		
 		*/
 
-		virtual ANWSER_CODES readAndGetCode();
+		virtual ANWSER_CODES readAndGetCode(
+							unsigned long maxDelay = WRAPPER_MIN_DELAY);
 		
 		
 		/**
@@ -40,7 +42,8 @@ class SimTools
 		
 		*/
 
-		virtual bool readAndExpectSuccess();
+		virtual bool readAndExpectSuccess(
+							unsigned long maxDelay = WRAPPER_MIN_DELAY);
 		
 	
 	
@@ -58,7 +61,8 @@ class SimToolsProxy : public SimTools
 				SimTools(writer, reader, buffer){}
 				
 				
-		virtual ANWSER_CODES readAndGetCode() override;
+		virtual ANWSER_CODES readAndGetCode(
+							unsigned long maxDelay = WRAPPER_MIN_DELAY) override;
 				
 	
 };

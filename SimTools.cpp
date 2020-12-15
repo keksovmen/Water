@@ -2,8 +2,8 @@
 // #include ""
 
 //TODO: when you don't get the anwser set stat flag to undefinied
-ANWSER_CODES SimTools::readAndGetCode(){
-	if(!simPort.read()){
+ANWSER_CODES SimTools::readAndGetCode(unsigned long maxDelay){
+	if(!simPort.readTimeout(maxDelay)){
 		return ANWSER_CODES::UNDEFINED;
 	}
 	
@@ -27,15 +27,15 @@ ANWSER_CODES SimTools::readAndGetCode(){
 }
 
 
-bool SimTools::readAndExpectSuccess(){
-	return readAndGetCode() == OK;
+bool SimTools::readAndExpectSuccess(unsigned long maxDelay){
+	return readAndGetCode(maxDelay) == OK;
 }
 
 
 
 
-ANWSER_CODES SimToolsProxy::readAndGetCode(){
-	ANWSER_CODES code = SimTools::readAndGetCode();
+ANWSER_CODES SimToolsProxy::readAndGetCode(unsigned long maxDelay){
+	ANWSER_CODES code = SimTools::readAndGetCode(maxDelay);
 	if(code == UNDEFINED){
 		state.encounterUndefinied();
 	}

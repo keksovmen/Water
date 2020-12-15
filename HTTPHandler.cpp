@@ -94,12 +94,12 @@ bool HTTPHandler::setContentForPHP(){
 
 bool HTTPHandler::startDataTransmition(int dataLength){
 	refTools.simPort.writeHTPPData(dataLength);
-	if(!refTools.simPort.read()){
+	if(!refTools.simPort.readTimeout(LONG_WAIT)){
 		return false;
 	}
 	
 	if(!refTools.parser.containDownload()){
-		if(!refTools.simPort.read()){
+		if(!refTools.simPort.readTimeout(LONG_WAIT)){
 			return false;
 		}
 		if(!refTools.parser.containDownload()){

@@ -21,7 +21,7 @@ bool GetDataHandler::send(){
 		
 	this->refTools.simPort.writeHTPPAction(HTTP_REQUESTS::HTTP_GET);
 	
-	bool result = this->refTools.readAndExpectSuccess();
+	bool result = this->refTools.readAndExpectSuccess(LONG_WAIT);
 	if(result){
 		DataHandler::send();
 	}

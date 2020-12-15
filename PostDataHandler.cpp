@@ -19,7 +19,7 @@ bool PostDataHandler::send(){
 		
 	this->refTools.simPort.writeHTPPAction(HTTP_REQUESTS::HTTP_POST);
 	
-	bool result = this->refTools.readAndExpectSuccess();
+	bool result = this->refTools.readAndExpectSuccess(LONG_WAIT);
 	if(result){
 		DataHandler::send();
 	}

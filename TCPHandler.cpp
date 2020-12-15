@@ -259,7 +259,7 @@ TCP_STATE TCPHandler::handleUndefinied(){
 
 bool TCPHandler::initSending(){
 	refTools.simPort.writeCIPSEND();
-	if(!refTools.simPort.read()){
+	if(!refTools.simPort.readTimeout(LONG_WAIT)){
 		return false;
 	}
 	
