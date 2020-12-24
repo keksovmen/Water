@@ -19,6 +19,14 @@ class ResultParserStateBase
 		virtual bool isSimpleMessageReady();
 		virtual bool isComplexMessageReady();
 		
+		/**
+			Removes onlu positive result
+			
+			@return true if removed
+		*/
+		
+		virtual bool removeResultCode();
+		
 		
 		/**
 			Works for AT+HTTPREAD and AT+CIPRXGET
@@ -71,6 +79,8 @@ class ResultParserStateText : public ResultParserStateBase
 		
 		bool isSimpleMessageReady() override;
 		bool isComplexMessageReady() override;
+		virtual bool removeResultCode() override;
+
 		
 		int fetchResultCode() override;
 		
@@ -90,6 +100,7 @@ class ResultParserStateDigit : public ResultParserStateBase
 	
 		bool isSimpleMessageReady() override;
 		bool isComplexMessageReady() override;
+		virtual bool removeResultCode() override;
 		
 		int fetchResultCode() override;
 		

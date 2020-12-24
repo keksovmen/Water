@@ -38,6 +38,8 @@ class ParameterHandler
 		
 		Parameter<PrimitivIntParameter>& getPlateId(){return plateID;}
 		
+		Parameter<StringParameter<20>>& getImei(){return imei;}
+		
 	private:
 		Parameter<PrimitivFloatParameter> sensorTempUp =
 							Parameter<PrimitivFloatParameter>(0);
@@ -65,4 +67,6 @@ class ParameterHandler
 							
 		Parameter<PrimitivIntParameter> plateID = 
 							Parameter<PrimitivIntParameter>(10);
+							
+		Parameter<StringParameter<20>> imei = Parameter<StringParameter<20>>(11);
 };

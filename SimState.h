@@ -12,6 +12,7 @@ struct SimState
 		bool networkRegistration = false;
 		bool CGATT_Connection = false;
 		BEARER_STATUS GPRS_Connection = GPRS_UNDEFINIED;
+		bool isImeiSet = false;
 	} health;
 	
 	
@@ -47,7 +48,9 @@ struct SimState
 	/*-----------------FUNCTIONS--------------------*/
 	
 	bool isMinimumEstablished(){
-		return health.cpin && health.networkRegistration;
+		return health.cpin && 
+			health.networkRegistration &&
+			health.isImeiSet;
 	}
 	
 	
@@ -94,6 +97,7 @@ struct SimState
 		health.networkRegistration = false;
 		health.GPRS_Connection = GPRS_UNDEFINIED;
 		health.CGATT_Connection = false;
+		health.isImeiSet = false;
 		
 		tcp.state = TCP_STATE_UNDEFINIED;
 		

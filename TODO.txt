@@ -30,5 +30,6 @@ bool lazyRead() as super class method ???
 			if took too much time and successfuly tries to close
 			but give an error.
 			Quck sollution will be made read wait for 200ms instead of 50
+30	-	Properly test java server
 			
 			

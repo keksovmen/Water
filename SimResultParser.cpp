@@ -73,6 +73,10 @@ bool SimResultParser::isComplexMessageReady(){
 }
 
 
+bool SimResultParser::removeResultCode(){
+	return pState->removeResultCode();
+}
+
 
 bool SimResultParser::isReadMessageFull(READ_TYPE type){
 	return pState->isReadMessageFull(type);
@@ -299,4 +303,15 @@ int SimResultParser::parseRxGetLength(){
 bool SimResultParser::containShut(){
 	int index = this->refBuffer.indexOf(TCP_SHUT_OK);
 	return index != -1;
+}
+
+
+bool SimResultParser::clearForIMEI(){
+	if(removeResultCode()){
+		refBuffer.trim();
+
+		return true;
+	}
+	
+	return false;
 }

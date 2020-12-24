@@ -56,6 +56,7 @@ class SimCommandWriter : public CommandWriter
 		void writeCIPSTART(IPAddress& address, long port);
 		void writeGetIpTCP();
 		void writeCIPSHUT();
+		void writeImei();
 		
 	protected:
 		CommandWriter& refWriter;

@@ -63,6 +63,10 @@ class SimResultParser : public ResultParserStateBase
 		bool isComplexMessageReady() override;
 		
 		
+		bool removeResultCode() override;
+
+		
+		
 		/**
 			@return true if AT+HTTPREAD or AT+CIPRXGET
 				is present in buffer
@@ -199,6 +203,8 @@ class SimResultParser : public ResultParserStateBase
 		int parseRxGetLength();
 		
 		bool containShut();
+		
+		bool clearForIMEI();
 		
 	private:
 		// ResultParserStateBase* pState;

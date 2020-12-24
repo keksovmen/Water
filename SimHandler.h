@@ -122,6 +122,8 @@ class SimHandler : public Activity
 		
 		void doActivity() override;
 		
+		
+		
 	private:
 		void writeDefaultParam(int id);
 		bool tryToSetDefaultParam(int id);
@@ -133,7 +135,7 @@ class SimHandler : public Activity
 		bool isGPRSConnected();
 		bool isTCPConnecting();
 		bool isTCPWorking();
-		
+		bool initImei();
 
 		FixedBufferBase& refBuffer;
 		SimIOWrapper wrapper;

@@ -343,6 +343,14 @@ bool SimHandler::isDefaultsAreSet(){
 		}
 	}
 	
+	if(!tools.state.health.isImeiSet){
+		if(initImei()){
+			tools.state.health.isImeiSet = true;
+		}else{
+			return false;
+		}
+	}
+	
 	return true;
 }
 
@@ -432,6 +440,23 @@ bool SimHandler::isTCPWorking(){
 		tcpHandler.sendPong();
 		return false;
 	}
+	
+	return true;
+}
+
+
+bool SimHandler::initImei(){
+	tools.simPort.writeImei();
+	
+	if(!tools.readAndExpectSuccess()){
+		return false;
+	}
+	
+	if(!tools.parser.clearForIMEI()){
+		return false;
+	}
+	
+	refParams.getImei().parse(refBuffer.begin());
 	
 	return true;
 }

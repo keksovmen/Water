@@ -163,6 +163,8 @@ void TCPHandler::sendId(){
 	
 	refTools.simPort.write(refParameters.getPlateId().getValue().getValue());
 	refTools.simPort.write("\n");
+	refTools.simPort.write(refParameters.getImei().getValue().getValue());
+	refTools.simPort.write("\n");
 	refTools.simPort.write((char) 0x1A);
 	
 	refTools.state.tcp.hastToSendId = false;

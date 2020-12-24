@@ -55,6 +55,15 @@ bool ResultParserStateBase::isComplexMessageReady(){
 
 
 /**
+	Override for different states
+*/
+
+bool ResultParserStateBase::removeResultCode(){
+	return false;
+}
+
+
+/**
 	NOT CALL FROM SUPER CLASS DUE TO LACK OF KNOLEGE
 	OF WHAT TYPE OF MESSAGE DEAL WITH
 	
@@ -226,6 +235,12 @@ bool ResultParserStateText::isComplexMessageReady(){
 
 
 
+bool ResultParserStateText::removeResultCode(){
+	refBuffer.remove(TEXT_SUCCESS);
+	return true;
+}
+
+
 int ResultParserStateText::fetchResultCode(){
 	if(this->checkError())
 		return ANWSER_CODES::ERROR;
@@ -292,6 +307,11 @@ bool ResultParserStateDigit::isComplexMessageReady(){
 	return false;
 }
 
+
+bool ResultParserStateDigit::removeResultCode(){
+	refBuffer.remove(DIGIT_COMPLEX_SUCCESS);
+	return true;
+}
 
 
 int ResultParserStateDigit::fetchResultCode(){

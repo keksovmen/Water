@@ -320,3 +320,7 @@ void SimCommandWriter::writeCIPSHUT(){
 void SimCommandWriter::writeCIPSEND(){
 	refWriter.writeCommand("AT+CIPSEND");
 }
+
+void SimCommandWriter::writeImei(){
+	refWriter.writeCommand("AT+GSN");
+}

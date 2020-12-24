@@ -21,7 +21,12 @@ class StringParameter : public BaseParameter
 			writer.write(value.begin());
 		}
 		
-		//здеся копирует до конца а надо до $
+		
+		/**
+			Copies until \0 or ENTRY_ENDING found
+			or dedicated memory ends
+		*/
+		
 		void parse(const char* str) override {
 			int length = 0;
 			for(const char* p = str; *p != '\0'; p++){
