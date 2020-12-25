@@ -77,7 +77,7 @@
 	#define TCP_READ_ANWSER  "\r\n+CIPRXGET: 2,"
 #else
 	#define TCP_INCOMING_MESSAGE  "\r\n+CIPRXGET:1\r\n"
-	#define TCP_DATA_LENGTH_ANWSER  "\r\n+CIPRXGET:4,"
+	#define TCP_DATA_LENGTH_ANWSER  "\r\n+CIPRXGET: 4,"
 	#define TCP_READ_ANWSER  "\r\n+CIPRXGET:2,"
 #endif
 

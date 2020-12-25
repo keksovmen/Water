@@ -134,6 +134,8 @@ TCPReader TCPHandler::readMessage(FixedBufferBase& buffer){
 	
 	if(refTools.readAndExpectSuccess()){
 		length = refTools.parser.parseRxGetLength();
+		Serial.print("TCP LENGTH IS: ");
+		Serial.println(length);
 	}else{
 		Serial.println("ERROR NO ANWSER FROM LENGTH");
 	}
