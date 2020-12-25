@@ -135,6 +135,7 @@ class SimHandler : public Activity
 		bool isGPRSConnected();
 		bool isTCPConnecting();
 		bool isTCPWorking();
+		bool isImeiKnown();
 		bool initImei();
 
 		FixedBufferBase& refBuffer;

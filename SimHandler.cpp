@@ -208,6 +208,10 @@ void SimHandler::doActivity(){
 		return;
 	}
 	
+	if(!isImeiKnown()){
+		return;
+	}
+	
 	if(!isNetworkEstablished()){
 		return;
 	}
@@ -343,14 +347,6 @@ bool SimHandler::isDefaultsAreSet(){
 		}
 	}
 	
-	if(!tools.state.health.isImeiSet){
-		if(initImei()){
-			tools.state.health.isImeiSet = true;
-		}else{
-			return false;
-		}
-	}
-	
 	return true;
 }
 
@@ -444,6 +440,14 @@ bool SimHandler::isTCPWorking(){
 	return true;
 }
 
+
+bool SimHandler::isImeiKnown(){
+	if(!tools.state.health.isImeiSet){
+		tools.state.health.isImeiSet = initImei();
+	}
+	
+	return tools.state.health.isImeiSet;
+}
 
 bool SimHandler::initImei(){
 	tools.simPort.writeImei();
