@@ -11,11 +11,14 @@ static volatile int counter;
 
 CardReader::CardReader(
 				int interruptPin, 
+				int waterValvePin,
 				HardwareSerial& port, 
 				LiquidCrystal_I2C& display,
 				CardParameter& card
 				) : 
-	interruptPin (interruptPin), pn532hsu(port),
+	interruptPin (interruptPin), 
+	waterValvePin(waterValvePin),
+	pn532hsu(port),
 	nfc(pn532hsu), display(display),
 	refCard(card)
 {
@@ -25,7 +28,9 @@ CardReader::CardReader(
 
 bool CardReader::init(){
 	pinMode(interruptPin, INPUT);
+	pinMode(waterValvePin, OUTPUT);
 	digitalWrite(interruptPin, HIGH);
+	digitalWrite(waterValvePin, LOW);
 	
 	nfc.begin();
 	
@@ -49,6 +54,7 @@ bool CardReader::readCard(int volume){
 		
 		//attach interrupt
 		attachInterrupt(digitalPinToInterrupt(interruptPin), count, FALLING);
+		digitalWrite(waterValvePin, HIGH);
 		
 		while(read()){
 			if(oldVal != counter){
@@ -60,6 +66,7 @@ bool CardReader::readCard(int volume){
 			}
 		}
 		//detach interrupt
+		digitalWrite(waterValvePin, LOW);
 		detachInterrupt(digitalPinToInterrupt(interruptPin));
 		
 		// counter = 0;

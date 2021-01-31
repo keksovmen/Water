@@ -16,6 +16,8 @@
 #define BUTTON_SEND 9
 #define BUTTON_SHOW 10
 #define HEATER_PIN 7
+#define WATER_COUNTER_PIN 3
+#define WATER_VALVE_PIN 5
 
 #define TEMP_UP_PIN 22
 #define TEMP_DOWN_PIN 23
@@ -47,7 +49,7 @@ Clock& clk = parameters.getClock().getValue();
 
 
 //NFC
-CardReader cardReader(3, Serial2, lcd, parameters.getCard().getValue());
+CardReader cardReader(WATER_COUNTER_PIN, WATER_VALVE_PIN, Serial2, lcd, parameters.getCard().getValue());
 
 
 //For proper calculation of time

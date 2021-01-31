@@ -19,6 +19,7 @@ bool SimHandlerHelper<N>::sendParams(){
 	paramWriter.add(&refParameters.getClock());
 	paramWriter.add(&refParameters.getSensorTempUp());
 	paramWriter.add(&refParameters.getSensorTempDown());
+	paramWriter.add(&refParameters.getPlateId());
 	
 	dataHandler = handler.sendPostRequest(
 			refParameters.getAddress().getValue(),

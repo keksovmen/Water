@@ -31,5 +31,14 @@ bool lazyRead() as super class method ???
 			but give an error.
 			Quck sollution will be made read wait for 200ms instead of 50
 30	-	Properly test java server
+
+31	-	When connecting to TCP send your current settings and
+			if they not good update them
+32	-	When deleting something in arduino table add
+			on delete restrict on update cascade
+33	-	When arduino dies but sim works, tcp connection
+			keeping alive need to reconect. Now just sending
+			as tries to connect. Maybe when powers up check
+			if connection is established if so disconnect it
 			
 			

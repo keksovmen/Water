@@ -11,7 +11,8 @@ class CardReader
 {
 	public:
 		CardReader(
-				int interruptPin, 
+				int interruptPin,
+				int waterValvePin,
 				HardwareSerial& port, 
 				LiquidCrystal_I2C& display,
 				CardParameter& card
@@ -29,6 +30,7 @@ class CardReader
 		void printCounter();
 	
 		const int interruptPin;
+		const int waterValvePin;
 		PN532_HSU pn532hsu;
 		PN532 nfc;
 		
