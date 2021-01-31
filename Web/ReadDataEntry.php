@@ -2,6 +2,14 @@
 
 class DataEntry
 {
+	
+	public function __construct($tempUp, $tempDown, $dateAndTime, $id){
+		$this->tempUp = $tempUp;
+		$this->tempDown = $tempDown;
+		$this->dateAndTime= $dateAndTime;
+		$this->id= $id;
+	}
+	
 	public function parse($str){
 		$expTemperatureUp = "/Temperature Up - C: (-?\d*\.?\d*)/iu";
 		$expTemperatureDown = "/Temperature Down - C: (-?\d*\.?\d*)/iu";
@@ -27,33 +35,44 @@ class DataEntry
 	public $date;
 	public $time;
 	public $dateAndTime;
+	public $id;
 }
 
 
 
 $DATA_ENTRIES = array();
 
-$file = fopen("data.txt", "r");
-if(!$file){
-	echo "ERROR with data file opening<br/>";
-	return;
-}
+include_once 'DatabaseHandler.php';
 
-
-while(!feof($file)){
-	$line = fgets($file);
-	
-	//remove left and right spaces
-	$line = trim($line);
-	
-	if(strlen($line) == 0){
-		break;
+$result = readParams(null);
+if($result){
+	while ($row = $result->fetch()){
+		$tmp = new DataEntry($row["temp_up"], $row["temp_down"], $row["time"], $row["arduino_id"]);
+		$DATA_ENTRIES[] = $tmp;
 	}
-	
-	$tmp = new DataEntry();
-	$tmp->parse($line);
-	
-	$DATA_ENTRIES[] = $tmp;
 }
 
-fclose($file);
+// $file = fopen("data.txt", "r");
+// if(!$file){
+// 	echo "ERROR with data file opening<br/>";
+// 	return;
+// }
+
+
+// while(!feof($file)){
+// 	$line = fgets($file);
+	
+// 	//remove left and right spaces
+// 	$line = trim($line);
+	
+// 	if(strlen($line) == 0){
+// 		break;
+// 	}
+	
+// 	$tmp = new DataEntry();
+// 	$tmp->parse($line);
+	
+// 	$DATA_ENTRIES[] = $tmp;
+// }
+
+// fclose($file);

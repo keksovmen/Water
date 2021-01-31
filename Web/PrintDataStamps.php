@@ -18,10 +18,11 @@ echo "<table>";
 
 //4 columns
 echo "<tr>";
+echo "<th>" . "Arduino ID" . "</th>";
 echo "<th>" . "Temperature Up" . "</th>";
 echo "<th>" . "Temperature Down" . "</th>";
-echo "<th>" . "Date" . "</th>";
-echo "<th>" . "Time" . "</th>";
+echo "<th>" . "Date and Time" . "</th>";
+// echo "<th>" . "Time" . "</th>";
 echo "</tr>";
 
 
@@ -71,10 +72,11 @@ foreach ($DATA_ENTRIES as $tmp){
 	
 	
 	echo "<tr>";
+	echo formatDataCell($tmp->id);
 	echo formatDataCell($tmp->tempUp, $isRed);
 	echo formatDataCell($tmp->tempDown);
-	echo formatDataCell($tmp->date);
-	echo formatDataCell($tmp->time);
+	echo formatDataCell($tmp->dateAndTime);
+// 	echo formatDataCell($tmp->time);
 	echo "</tr>";
 }
 
