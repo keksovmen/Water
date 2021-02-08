@@ -81,7 +81,7 @@ bool ResponceReader::readResponce(){
 	readIndex += readAmount;
 	
 	while(1){
-		if(!refTools.simPort.read()){
+		if(!refTools.read()){
 			Serial.println("Faild to read");
 			return false;
 		}
@@ -89,7 +89,7 @@ bool ResponceReader::readResponce(){
 		if(isMessageFull()){
 			break;
 		}else{
-			if(refTools.parser.checkError()){
+			if(refTools.checkError()){
 				Serial.println("Find Error");
 				return false;
 			}

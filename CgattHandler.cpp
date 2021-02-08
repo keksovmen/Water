@@ -11,11 +11,11 @@ CgattHandler::CgattHandler(SimTools& tools):
 
 bool CgattHandler::handle(){
 	//TODO: made single method for only text check, fuck digit
-	if(!refTools.parser.isSimpleMessageReady()){
+	if(!refTools.isSimpleMessageReady()){
 		return false;
 	}
 	
-	if(refTools.parser.fetchResultCode() == OK){
+	if(refTools.fetchResultCode() == OK){
 		refTools.state.health.CGATT_Connection = true;
 	}
 	
@@ -29,7 +29,7 @@ bool CgattHandler::connectToCGATT(){
 		return true;
 	}
 	
-	refTools.simPort.writeCGATT(CGATT_COMMANDS_ON);
+	refTools.writeCGATT(CGATT_COMMANDS_ON);
 	refTools.state.setLongCmd(this);
 	
 	return false;
@@ -38,12 +38,12 @@ bool CgattHandler::connectToCGATT(){
 
 
 bool CgattHandler::askCGATTStatus(){
-	refTools.simPort.writeCGATT(CGATT_COMMANDS_STATUS);
+	refTools.writeCGATT(CGATT_COMMANDS_STATUS);
 	if(!refTools.readAndExpectSuccess()){
 		return false;
 	}
 	
-	bool result = refTools.parser.isAttachedToGPRSServices();
+	bool result = refTools.isAttachedToGPRSServices();
 	refTools.state.health.CGATT_Connection = result;
 	
 	return result;

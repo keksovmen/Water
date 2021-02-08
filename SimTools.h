@@ -7,11 +7,9 @@
 
 
 
-class SimTools
+class SimTools : public SimCommandPort, public SimResultParser
 {
 	public:
-		SimCommandPort simPort;
-		SimResultParser parser;
 		SimState state;
 	
 	
@@ -19,8 +17,10 @@ class SimTools
 				CommandWriter& writer, 
 				BaseReader& reader,
 				FixedBufferBase& buffer
-				) :
-				simPort(writer, reader), parser(buffer){}
+				) : 
+					SimCommandPort(writer, reader),
+					SimResultParser(buffer)
+				{}
 	
 		/**
 			Tries to read from buffer

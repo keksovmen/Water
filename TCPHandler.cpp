@@ -19,8 +19,8 @@ TCPHandler::TCPHandler(
 
 bool TCPHandler::handle(){
 	if(isLastCommandCIICR){
-		if(refTools.parser.isSimpleMessageReady()){
-			if(refTools.parser.fetchResultCode() == OK){
+		if(refTools.isSimpleMessageReady()){
+			if(refTools.fetchResultCode() == OK){
 				refTools.state.tcp.state = TCP_STATE_IP_GPRS_ACT;
 			}else{
 				refTools.state.tcp.state = TCP_STATE_UNDEFINIED;
@@ -31,13 +31,13 @@ bool TCPHandler::handle(){
 		
 		return false;
 	}else{
-		if(refTools.parser.containShut()){
+		if(refTools.containShut()){
 			refTools.state.tcp.state = TCP_STATE_INITIAL;
 			return true;
 		}else{
 			//check if there is ERROR if no return false
 			ANWSER_CODES code = static_cast<ANWSER_CODES>(
-							refTools.parser.fetchResultCode()
+							refTools.fetchResultCode()
 							);
 			switch(code){
 				case ERROR:
@@ -129,11 +129,11 @@ bool TCPHandler::connect(){
 
 
 TCPReader TCPHandler::readMessage(FixedBufferBase& buffer){
-	refTools.simPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_INFO);
+	refTools.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_INFO);
 	int length = 0;
 	
 	if(refTools.readAndExpectSuccess()){
-		length = refTools.parser.parseRxGetLength();
+		length = refTools.parseRxGetLength();
 	}else{
 		Serial.println("ERROR NO ANWSER FROM LENGTH");
 	}
@@ -147,8 +147,8 @@ void TCPHandler::sendPong(){
 		return;
 	}
 	
-	refTools.simPort.write("0\n");
-	refTools.simPort.write((char) 0x1A);
+	refTools.write("0\n");
+	refTools.write((char) 0x1A);
 	//TODO: don't know what to do, maybe change state to 
 	//something intermidiate like waiting for result
 	refTools.state.tcp.hasToSendPong = false;
@@ -161,11 +161,11 @@ void TCPHandler::sendId(){
 		return;
 	}
 	
-	refTools.simPort.write(refParameters.getPlateId().getValue().getValue());
-	refTools.simPort.write("\n");
-	refTools.simPort.write(refParameters.getImei().getValue().getValue());
-	refTools.simPort.write("\n");
-	refTools.simPort.write((char) 0x1A);
+	refTools.write(refParameters.getPlateId().getValue().getValue());
+	refTools.write("\n");
+	refTools.write(refParameters.getImei().getValue().getValue());
+	refTools.write("\n");
+	refTools.write((char) 0x1A);
 	
 	refTools.state.tcp.hastToSendId = false;
 }
@@ -176,8 +176,8 @@ void TCPHandler::sendAcknowledgment(){
 		return;
 	}
 	
-	refTools.simPort.write("1\n");
-	refTools.simPort.write((char) 0x1A);
+	refTools.write("1\n");
+	refTools.write((char) 0x1A);
 	
 	refTools.state.tcp.hasToSendAcknowledgment = false;
 }
@@ -185,23 +185,23 @@ void TCPHandler::sendAcknowledgment(){
 
 
 bool TCPHandler::handleInitial(){
-	refTools.simPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_MODE);
+	refTools.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_MODE);
 	bool currentStatus = false;
 	
 	if(refTools.readAndExpectSuccess()){
-		currentStatus = refTools.parser.fetchRxGetStatus();
+		currentStatus = refTools.fetchRxGetStatus();
 	}else{
 		return false;
 	}
 	
 	if(!currentStatus){
-		refTools.simPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_ON);
+		refTools.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_ON);
 		if(!refTools.readAndExpectSuccess()){
 			return false;
 		}
 	}
 	
-	refTools.simPort.writeCSTT(
+	refTools.writeCSTT(
 		refParameters.getApn().getValue().getValue()
 		);
 	
@@ -211,7 +211,7 @@ bool TCPHandler::handleInitial(){
 
 
 bool TCPHandler::handleIpStart(){
-	refTools.simPort.writeCIICR();
+	refTools.writeCIICR();
 	refTools.state.longCmd.cmdHandler = this;
 	isLastCommandCIICR = true;
 	
@@ -221,14 +221,14 @@ bool TCPHandler::handleIpStart(){
 
 
 bool TCPHandler::handleGPRSAct(){
-	refTools.simPort.writeGetIpTCP();
+	refTools.writeGetIpTCP();
 	return refTools.readAndExpectSuccess();
 }
 
 
 
 bool TCPHandler::handleIpStatus(){
-	refTools.simPort.writeCIPSTART(
+	refTools.writeCIPSTART(
 			refParameters.getAddress().getValue(),
 			8188
 			);
@@ -239,7 +239,7 @@ bool TCPHandler::handleIpStatus(){
 
 
 bool TCPHandler::handlePDPDeact(){
-	refTools.simPort.writeCIPSHUT();
+	refTools.writeCIPSHUT();
 	// refTools.state.longCmd.cmdHandler = this;
 	refTools.state.setLongCmd(this);
 	isLastCommandCIICR = false;
@@ -250,9 +250,9 @@ bool TCPHandler::handlePDPDeact(){
 
 
 TCP_STATE TCPHandler::handleUndefinied(){
-	refTools.simPort.writeCIPSTATUS();
+	refTools.writeCIPSTATUS();
 	if(refTools.readAndExpectSuccess()){
-		return refTools.parser.fetchTCPState();
+		return refTools.fetchTCPState();
 	}
 	
 	return TCP_STATE_UNDEFINIED;
@@ -260,8 +260,8 @@ TCP_STATE TCPHandler::handleUndefinied(){
 
 
 bool TCPHandler::initSending(){
-	refTools.simPort.writeCIPSEND();
-	if(!refTools.simPort.readTimeout(LONG_WAIT)){
+	refTools.writeCIPSEND();
+	if(!refTools.readTimeout(LONG_WAIT)){
 		return false;
 	}
 	

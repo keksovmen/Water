@@ -11,13 +11,13 @@ PostDataHandler::PostDataHandler(	SimTools& tools,
 
 
 bool PostDataHandler::send(){
-	this->refTools.simPort.writeEndOfCommand();
+	this->refTools.writeEndOfCommand();
 	
 	if(!this->refTools.readAndExpectSuccess()){
 		return false;
 	}
 		
-	this->refTools.simPort.writeHTPPAction(HTTP_REQUESTS::HTTP_POST);
+	this->refTools.writeHTPPAction(HTTP_REQUESTS::HTTP_POST);
 	
 	bool result = this->refTools.readAndExpectSuccess(LONG_WAIT);
 	if(result){

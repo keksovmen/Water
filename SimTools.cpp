@@ -3,7 +3,7 @@
 
 //TODO: when you don't get the anwser set stat flag to undefinied
 ANWSER_CODES SimTools::readAndGetCode(unsigned long maxDelay){
-	if(!simPort.readTimeout(maxDelay)){
+	if(!readTimeout(maxDelay)){
 		return ANWSER_CODES::UNDEFINED;
 	}
 	
@@ -12,18 +12,18 @@ ANWSER_CODES SimTools::readAndGetCode(unsigned long maxDelay){
 	
 	//TODO: made 1 method for text only, fuck digits
 	// if(isComplex){
-		rdy = parser.isComplexMessageReady();
+		rdy = isComplexMessageReady();
 	// }else{
-		// rdy = parser.isSimpleMessageReady();
+		// rdy = isSimpleMessageReady();
 	// }
 	
 	if(!rdy){
-		if(!simPort.read()){
+		if(!read()){
 			return ANWSER_CODES::UNDEFINED;
 		}
 	}
 	
-	return static_cast<ANWSER_CODES>(parser.fetchResultCode());
+	return static_cast<ANWSER_CODES>(fetchResultCode());
 }
 
 

@@ -13,12 +13,12 @@ GPRSHandler::GPRSHandler(SimTools& tools) :
 
 
 bool GPRSHandler::handle(){
-	if(!refTools.parser.isSimpleMessageReady()){
+	if(!refTools.isSimpleMessageReady()){
 		return false;
 	}
 	
 	ANWSER_CODES code = static_cast<ANWSER_CODES>(
-						refTools.parser.fetchResultCode());
+						refTools.fetchResultCode());
 	switch(code){
 		case OK:
 		if(lastCommandOpen){
@@ -60,21 +60,21 @@ BEARER_STATUS GPRSHandler::isConnected(){
 
 
 bool GPRSHandler::connect(const char* apn){
-	refTools.simPort.writeSAPBR(SET_PARAM_BEARER,
+	refTools.writeSAPBR(SET_PARAM_BEARER,
 						"Contype", "GPRS");
 	
 	if(!refTools.readAndExpectSuccess()){
 		return false;
 	}
 	
-	refTools.simPort.writeSAPBR(SET_PARAM_BEARER,
+	refTools.writeSAPBR(SET_PARAM_BEARER,
 						"APN", apn);
 	
 	if(!refTools.readAndExpectSuccess()){
 		return false;
 	}
 	
-	refTools.simPort.writeSAPBR(OPEN_BEARER);
+	refTools.writeSAPBR(OPEN_BEARER);
 	refTools.state.setLongCmd(this);
 	lastCommandOpen = true;
 	
@@ -90,7 +90,7 @@ bool GPRSHandler::connect(const char* apn){
 
 
 void GPRSHandler::close(){
-	refTools.simPort.writeSAPBR(CLOSE_BEARER);
+	refTools.writeSAPBR(CLOSE_BEARER);
 	refTools.state.setLongCmd(this);
 	lastCommandOpen = false;
 }
@@ -102,11 +102,11 @@ void GPRSHandler::close(){
 
 
 int GPRSHandler::retriveStatus(){
-	refTools.simPort.writeSAPBR(SAPBR_COMMANDS::QUERY_BEARER);
+	refTools.writeSAPBR(SAPBR_COMMANDS::QUERY_BEARER);
 	
 	if(!refTools.readAndExpectSuccess()){
 		return -1;
 	}
 	
-	return refTools.parser.fetchGPRSStatus();
+	return refTools.fetchGPRSStatus();
 }

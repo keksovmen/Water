@@ -53,7 +53,7 @@ bool HTTPHandler::initSession(){
 		return false;
 	}
 	
-	refTools.simPort.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
+	refTools.writeHTPP(HTTP_COMMANDS::HTTP_INIT);
 	ANWSER_CODES code = refTools.readAndGetCode();
 	switch (code){
 		case OK:
@@ -62,7 +62,7 @@ bool HTTPHandler::initSession(){
 		case ERROR:
 		case UNDEFINED:
 			if(terminateSession()){
-				refTools.simPort.writeHTPP(HTTP_INIT);
+				refTools.writeHTPP(HTTP_INIT);
 				return refTools.readAndExpectSuccess();
 			}else{
 				return false;
@@ -76,33 +76,33 @@ bool HTTPHandler::initSession(){
 
 
 bool HTTPHandler::setPostURL(IPAddress& address, const char* url){
-	refTools.simPort.writeHTTPURL(address, url);
+	refTools.writeHTTPURL(address, url);
 	return refTools.readAndExpectSuccess();
 }
 
 
 void HTTPHandler::setGetURL(IPAddress& address, const char* url){
-	refTools.simPort.writeHTTPURL(address, url, false);
+	refTools.writeHTTPURL(address, url, false);
 }
 
 
 bool HTTPHandler::setContentForPHP(){
-	refTools.simPort.writeHTPPSetParam("CONTENT", "application/x-www-form-urlencoded");
+	refTools.writeHTPPSetParam("CONTENT", "application/x-www-form-urlencoded");
 	return refTools.readAndExpectSuccess();
 }
 
 
 bool HTTPHandler::startDataTransmition(int dataLength){
-	refTools.simPort.writeHTPPData(dataLength);
-	if(!refTools.simPort.readTimeout(LONG_WAIT)){
+	refTools.writeHTPPData(dataLength);
+	if(!refTools.readTimeout(LONG_WAIT)){
 		return false;
 	}
 	
-	if(!refTools.parser.containDownload()){
-		if(!refTools.simPort.readTimeout(LONG_WAIT)){
+	if(!refTools.containDownload()){
+		if(!refTools.readTimeout(LONG_WAIT)){
 			return false;
 		}
-		if(!refTools.parser.containDownload()){
+		if(!refTools.containDownload()){
 			return false;
 		}
 	}
@@ -113,6 +113,6 @@ bool HTTPHandler::startDataTransmition(int dataLength){
 
 
 bool HTTPHandler::terminateSession(){
-	refTools.simPort.writeHTPP(HTTP_TERM);
+	refTools.writeHTPP(HTTP_TERM);
 	return refTools.readAndExpectSuccess();
 }

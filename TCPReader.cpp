@@ -27,17 +27,17 @@ int TCPReader::getMinMessageLength(){
 
 
 void TCPReader::removeGarbage(){
-	this->refTools.parser.removeReadGarbage(READ_TYPE_TCP);
+	this->refTools.removeReadGarbage(READ_TYPE_TCP);
 }
 
 
 
 bool TCPReader::isMessageFull(){
-	return this->refTools.parser.isReadMessageFull(READ_TYPE_TCP);
+	return this->refTools.isReadMessageFull(READ_TYPE_TCP);
 }
 
 
 
 void TCPReader::askForData(int index, int amount){
-	this->refTools.simPort.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_GET_NORMAL, amount);
+	this->refTools.writeCIPRXGET(CIPRXGET_COMMAND::CIPRXGET_COMMAND_GET_NORMAL, amount);
 }

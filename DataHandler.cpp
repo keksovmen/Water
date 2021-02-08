@@ -26,10 +26,10 @@ bool DataHandler::send(){
 
 
 bool DataHandler::handle(){
-	if(this->refTools.parser.isHttpActionPresents()){
-		this->responceLength = this->refTools.parser.fetchHttpResponceLength();
+	if(this->refTools.isHttpActionPresents()){
+		this->responceLength = this->refTools.fetchHttpResponceLength();
 		this->refTools.state.http.responseLength = this->responceLength;
-		this->refTools.state.http.responseCode = this->refTools.parser.fetchHTTPStatus();
+		this->refTools.state.http.responseCode = this->refTools.fetchHTTPStatus();
 		this->refTools.state.http.isAnwserReady = true;
 		return true;
 	}
@@ -40,28 +40,28 @@ bool DataHandler::handle(){
 
 
 void DataHandler::write(const char* str){
-	this->refTools.simPort.write(str);
+	this->refTools.write(str);
 }
 
 
 void DataHandler::write(char c){
-	this->refTools.simPort.write(c);
+	this->refTools.write(c);
 }
 
 
 void DataHandler::write(int i){
-	this->refTools.simPort.write(i);
+	this->refTools.write(i);
 }
 
 
 
 void DataHandler::write(long l){
-	this->refTools.simPort.write(l);
+	this->refTools.write(l);
 }
 
 
 void DataHandler::write(double d, int amountAfterDot){
-	this->refTools.simPort.write(d, amountAfterDot);
+	this->refTools.write(d, amountAfterDot);
 }
 
 
@@ -80,7 +80,7 @@ bool DataHandler::isSendedSuccesfully(){
 
 
 void DataHandler::finish(){
-	this->refTools.simPort.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
+	this->refTools.writeHTPP(HTTP_COMMANDS::HTTP_TERM);
 	this->refTools.readAndExpectSuccess();
 	
 	this->refBuffer.clear();
@@ -103,18 +103,18 @@ int DataHandler::getMinMessageLength(){
 
 
 void DataHandler::removeGarbage(){
-	this->refTools.parser.removeReadGarbage(READ_TYPE_HTTP);
+	this->refTools.removeReadGarbage(READ_TYPE_HTTP);
 }
 
 
 
 bool DataHandler::isMessageFull(){
-	return this->refTools.parser.isReadMessageFull(READ_TYPE_HTTP);
+	return this->refTools.isReadMessageFull(READ_TYPE_HTTP);
 }
 
 
 
 void DataHandler::askForData(int index, int amount){
-	this->refTools.simPort.writeReadHTTP(index, amount);
+	this->refTools.writeReadHTTP(index, amount);
 }
 

@@ -12,14 +12,14 @@ GetDataHandler::GetDataHandler(	SimTools& tools,
 
 
 bool GetDataHandler::send(){
-	this->refTools.simPort.write('"');
-	this->refTools.simPort.writeEndOfCommand();
+	this->refTools.write('"');
+	this->refTools.writeEndOfCommand();
 			
 	if(!this->refTools.readAndExpectSuccess()){
 		return false;
 	}
 		
-	this->refTools.simPort.writeHTPPAction(HTTP_REQUESTS::HTTP_GET);
+	this->refTools.writeHTPPAction(HTTP_REQUESTS::HTTP_GET);
 	
 	bool result = this->refTools.readAndExpectSuccess(LONG_WAIT);
 	if(result){

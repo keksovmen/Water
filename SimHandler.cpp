@@ -35,7 +35,7 @@ SimHandler::SimHandler(
 
 
 bool SimHandler::isModuleUp(){
-	tools.simPort.writeAT();
+	tools.writeAT();
 	
 	bool result = tools.readAndExpectSuccess();
 	refBuffer.clear();
@@ -46,14 +46,14 @@ bool SimHandler::isModuleUp(){
 
 
 bool SimHandler::isModuleAlive(){
-	tools.simPort.writeCPIN();
+	tools.writeCPIN();
 	
 	bool result = tools.readAndExpectSuccess();
 	if(result){
-		result = tools.parser.isPinRdy();
+		result = tools.isPinRdy();
 	}else{
 		//if sim currently bussy doing initialisation
-		if(tools.parser.getLastError() == CME_ERROR_SIM_BUSSY){
+		if(tools.getLastError() == CME_ERROR_SIM_BUSSY){
 			tools.state.timer.sheduleDelay(5000);
 		}
 	}
@@ -86,13 +86,13 @@ bool SimHandler::isModuleAlive(){
 
 
 NETWORK_CONNECTION SimHandler::isConnectedToNetwork(){
-	tools.simPort.writeCREG();
+	tools.writeCREG();
 	
 	NETWORK_CONNECTION status = NETWORK_CONNECTION::UNKNOWN;
 	if(tools.readAndExpectSuccess()){
 		//if minimum time has passed and there is still no anwser
 		status = static_cast<NETWORK_CONNECTION>(
-					tools.parser.fetchNetworkRegistration()
+					tools.fetchNetworkRegistration()
 					);
 	}
 	
@@ -111,7 +111,7 @@ bool SimHandler::setDefaultParams(){
 	if(!tryToSetDefaultParam(1)){
 		return false;
 	}
-	tools.parser.setState(PARSER_STATE_TEXT);
+	tools.setState(PARSER_STATE_TEXT);
 	
 	if(!tryToSetDefaultParam(2)){
 		return false;
@@ -242,7 +242,7 @@ void SimHandler::doActivity(){
 	
 	// if will contain a message try to read and parse
 	// through UnexpectedHandler
-	if(tools.parser.isPossibleMessage()){
+	if(tools.isPossibleMessage()){
 		reader.read();
 	}
 	
@@ -256,19 +256,19 @@ void SimHandler::doActivity(){
 void SimHandler::writeDefaultParam(int id){
 	switch(id){
 		case 0:
-			tools.simPort.writeEcho(false);
+			tools.writeEcho(false);
 			break;
 		case 1:
-			tools.simPort.writeNumberFormat(false);
+			tools.writeNumberFormat(false);
 			break;
 		case 2:
-			tools.simPort.writeCallReady(false);
+			tools.writeCallReady(false);
 			break;
 		case 3:
-			tools.simPort.writeReportAsError(true);
+			tools.writeReportAsError(true);
 			break;
 		case 4:
-			tools.simPort.writeIPR(115200);
+			tools.writeIPR(115200);
 			break;
 		
 		default : Serial.println("MISSID ID");
@@ -450,13 +450,13 @@ bool SimHandler::isImeiKnown(){
 }
 
 bool SimHandler::initImei(){
-	tools.simPort.writeImei();
+	tools.writeImei();
 	
 	if(!tools.readAndExpectSuccess()){
 		return false;
 	}
 	
-	if(!tools.parser.clearForIMEI()){
+	if(!tools.clearForIMEI()){
 		return false;
 	}
 	
