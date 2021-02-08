@@ -50,6 +50,16 @@ bool UnexpectedHandler::readTimeout(unsigned long maxDelay){
 }
 
 
+bool UnexpectedHandler::lazyRead(){
+	if(!refReader.lazyRead()){
+		return false;
+	}
+	
+	handleSwitch();
+	
+	return true;
+}
+
 
 void UnexpectedHandler::handleSwitch(){
 	

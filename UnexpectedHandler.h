@@ -2,7 +2,6 @@
 
 #include "Buffer/FixedBufferBase.h"
 #include "BaseReader.h"
-#include "SimIOWrapper.h"
 #include "SimResultParser.h"
 #include "SimCommandWriter.h"
 #include "TCPHandler.h"
@@ -32,6 +31,7 @@ class UnexpectedHandler : public BaseReader
 		//delegate to refReader
 		bool read() override;
 		bool readTimeout(unsigned long maxDelay) override;
+		bool lazyRead() override;
 		
 		void handleSwitch();
 		

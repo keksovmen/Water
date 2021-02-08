@@ -111,7 +111,7 @@ class SimIOWrapper : public CommandWriter, public BaseReader
 		*/
 		
 		
-		bool lazyRead();
+		bool lazyRead() override;
 		
 	private:
 		

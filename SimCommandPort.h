@@ -13,7 +13,8 @@ class SimCommandPort : public SimCommandWriter, public BaseReader
 		//delegate to refReader
 		bool read() override;
 		bool readTimeout(unsigned long maxDelay) override;
-		
+		bool lazyRead() override;
+
 		
 	protected:
 		BaseReader& refReader;

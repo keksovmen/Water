@@ -180,6 +180,7 @@ void handleTemperature(){
 
 void handleCardLogic(){
 	if(cardReader.read()){
+		//TODO: add commercial and social key logic, after checking HTTP
 		if(!simHelper.isAbleToUseHttp()){
 			printMessage("HTTP UNAVAILABLE");
 			delay(1000);

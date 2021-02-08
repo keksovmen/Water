@@ -18,3 +18,8 @@ bool SimCommandPort::read(){
 bool SimCommandPort::readTimeout(unsigned long maxDelay){
 	return refReader.readTimeout(maxDelay);
 }
+
+
+bool SimCommandPort::lazyRead(){
+	return refReader.lazyRead();
+}

@@ -7,7 +7,6 @@
 9	-	Add as default parameter AT+CFUN=1
 12	-	Buffer overflow is real pain, fix it somehow
 
-bool lazyRead() as super class method ???
 
 
 17	-	Made all string to be in flash memory
