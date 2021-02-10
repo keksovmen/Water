@@ -46,3 +46,5 @@
 36	-	Network and flash handler as chain of responsibility
 			when encountered some data
 37	-	Good initialization system where everything is displayed
+38	-	AT+GSMBUSY=0, declines all incoming calls, add as base parameter
+			
