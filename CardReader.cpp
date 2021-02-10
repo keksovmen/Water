@@ -13,7 +13,7 @@ CardReader::CardReader(
 				int interruptPin, 
 				int waterValvePin,
 				HardwareSerial& port, 
-				LiquidCrystal_I2C& display,
+				LCDHelper& display,
 				CardParameter& card
 				) : 
 	interruptPin (interruptPin), 

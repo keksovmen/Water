@@ -3,8 +3,8 @@
 #include <PN532_HSU.h>
 #include <PN532.h>
 #include <HardwareSerial.h>
-#include <LiquidCrystal_I2C.h>
 #include "CardParameter.h"
+#include "LCDHelper.h"
 
 
 class CardReader
@@ -14,7 +14,7 @@ class CardReader
 				int interruptPin,
 				int waterValvePin,
 				HardwareSerial& port, 
-				LiquidCrystal_I2C& display,
+				LCDHelper& display,
 				CardParameter& card
 				);
 		
@@ -34,7 +34,7 @@ class CardReader
 		PN532_HSU pn532hsu;
 		PN532 nfc;
 		
-		LiquidCrystal_I2C& display;
+		LCDHelper& display;
 		CardParameter& refCard;
 	
 };

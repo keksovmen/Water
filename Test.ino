@@ -7,6 +7,7 @@
 #include "Constants.h"
 #include "CardReader.h"
 #include "TemperatureSensor.h"
+#include "LCDHelper.h"
 
 
 // #define SERIAL_RX_BUFFER_SIZE FIXED_BUFFER_SIZE
@@ -39,10 +40,13 @@ TemperatureSensor tempDown(TEMP_DOWN_PIN);
 #endif
 
 
-//Display
-LiquidCrystal_I2C lcd(0x27, 16, 2);
-
+//params
 ParameterHandler parameters;
+
+//Display
+// LiquidCrystal_I2C lcd(0x27, 16, 2);
+LCDHelper lcd(0x27, 16, 2, parameters);
+
 
 //Time
 Clock& clk = parameters.getClock().getValue();
@@ -89,8 +93,8 @@ void setup(){
 	digitalWrite(HEATER_PIN, LOW);
 	
 	
-	lcd.init();
-	lcd.backlight();
+	// lcd.init();
+	// lcd.backlight();
 	
 	
 	
@@ -272,24 +276,24 @@ void handleTimerLogic(){
 
 
 //Pretty time format printing
-void printTime(const Clock& clk){
-	lcd.clear();
-	lcd.setCursor(0, 0);
-	lcd.print("Date: ");
-	lcd.print(clk.getDays());
-	lcd.print(":");
-	lcd.print(clk.getMonths());
-	lcd.print(":");
-	lcd.print(clk.getYears());
+// void printTime(const Clock& clk){
+	// lcd.clear();
+	// lcd.setCursor(0, 0);
+	// lcd.print("Date: ");
+	// lcd.print(clk.getDays());
+	// lcd.print(":");
+	// lcd.print(clk.getMonths());
+	// lcd.print(":");
+	// lcd.print(clk.getYears());
 	
-	lcd.setCursor(0, 1);
-	lcd.print("Time: ");
-	lcd.print(clk.getHours());
-	lcd.print(":");
-	lcd.print(clk.getMinutes());
-	lcd.print(":");
-	lcd.print(clk.getSeconds());
-}
+	// lcd.setCursor(0, 1);
+	// lcd.print("Time: ");
+	// lcd.print(clk.getHours());
+	// lcd.print(":");
+	// lcd.print(clk.getMinutes());
+	// lcd.print(":");
+	// lcd.print(clk.getSeconds());
+// }
 
 
 //Tries to send temperature and pressure
@@ -317,7 +321,7 @@ bool askVolume(){
 	const char* str = "Asking Volume";
 	
 	printMessage(str);
-	lcd.setCursor(strlen(str), 0);
+	// lcd.setCursor(strlen(str), 0);
 	
 	unsigned long t = millis();
 	bool b = false;
@@ -328,19 +332,19 @@ bool askVolume(){
 			return false;
 		}
 		
-		if((millis() - t) > 500){
-			t = millis();
-			lcd.setCursor(strlen(str), 0);
-			lcd.print("  ");
-			lcd.setCursor(strlen(str), 0);
+		// if((millis() - t) > 500){
+			// t = millis();
+			// lcd.setCursor(strlen(str), 0);
+			// lcd.print("  ");
+			// lcd.setCursor(strlen(str), 0);
 			
-			if(b)
-				lcd.print("..");
-			else
-				lcd.print(".");
+			// if(b)
+				// lcd.print("..");
+			// else
+				// lcd.print(".");
 			
-			b = !b;
-		}
+			// b = !b;
+		// }
 	}
 	
 	if(!simHelper.isAnwserSuccess()){
@@ -380,17 +384,22 @@ bool askTime(){
 
 
 //Display temperature and pressure values for some time
-void showEntry(int temp, int pressure){
-	lcd.clear();
-	lcd.setCursor(0,0);
-	lcd.print("TEMP_UP = ");
-	lcd.setCursor(10,0);
-	lcd.print(temp);
+void showEntry(int tempUp, int tempDown){
+	// lcd.clear();
+	// lcd.setCursor(0,0);
+	char lineUp[16];
+	char lineDown[16];
+	snprintf(lineUp, sizeof lineUp, "TEMP_UP = %f.2", tempUp);
+	snprintf(lineDown, sizeof lineDown, "TEMP_UP = %f.2", tempDown);
+	lcd.print(lineUp, lineDown);
+	// lcd.print("TEMP_UP = ");
+	// lcd.setCursor(10,0);
+	// lcd.print(temp);
 	
-	lcd.setCursor(0,1);
-	lcd.print("TEMP_DW = ");
-	lcd.setCursor(10,1);
-	lcd.print(pressure);
+	// lcd.setCursor(0,1);
+	// lcd.print("TEMP_DW = ");
+	// lcd.setCursor(10,1);
+	// lcd.print(pressure);
 	
 	delay(1500);
 }
@@ -398,8 +407,9 @@ void showEntry(int temp, int pressure){
 
 //CAUTION max length of str is 16 symbols
 void printMessage(const char* str){
-	lcd.clear();
-	lcd.setCursor(0, 0);
+	// lcd.clear();
+	// lcd.setCursor(0, 0);
+	// lcd.print(str);
 	lcd.print(str);
 }
 
@@ -416,19 +426,19 @@ bool waitForResult(const char* str){
 	
 	//TODO: when module dies it loops forever
 	while(simHelper.isAnwserRdy() == 0){
-		if((millis() - t) > 500){
-			t = millis();
-			lcd.setCursor(strlen(str), 0);
-			lcd.print("  ");
-			lcd.setCursor(strlen(str), 0);
+		// if((millis() - t) > 500){
+			// t = millis();
+			// lcd.setCursor(strlen(str), 0);
+			// lcd.print("  ");
+			// lcd.setCursor(strlen(str), 0);
 			
-			if(b)
-				lcd.print("..");
-			else
-				lcd.print(".");
+			// if(b)
+				// lcd.print("..");
+			// else
+				// lcd.print(".");
 			
-			b = !b;
-		}
+			// b = !b;
+		// }
 	}
 	
 	if(!simHelper.isAnwserSuccess()){
