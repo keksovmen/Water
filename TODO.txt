@@ -2,7 +2,7 @@
 			why the fuck you waiting until dude drops a call,
 			oh yes because after sending any command you won't
 			get shit!
-8	-	Check what will hapen when you print(double, 2) and double = 0.0
+8	-	Check what will happen when you print(double, 2) and double = 0.0
 			Could be problems with data length when sending to server
 9	-	Add as default parameter AT+CFUN=1
 12	-	Buffer overflow is real pain, fix it somehow
@@ -13,7 +13,7 @@
 
 20	-	Check unsigned long SMALL - same but BIG. Will
 			return delta time?
-22	-	Will sim module anwser when doing long command such as
+22	-	Will sim module answer when doing long command such as
 			sending http or connecting to services?
 23	-	SimHandler made many functions instead of 1 big to
 			handle acting
@@ -23,21 +23,26 @@
 27	-	Shit happening with web and tcp servers, when try to send
 			some data it may die for no reason
 28	-	Add, if there was no PING action for some time kill
-			the conenction
+			the connection
 29	-	Errors with responses when it take more time than expected
 			and program tries to finish work. e.x. http send
-			if took too much time and successfuly tries to close
+			if took too much time and successfully tries to close
 			but give an error.
-			Quck sollution will be made read wait for 200ms instead of 50
+			quick solution will be made read wait for 200ms instead of 50
 30	-	Properly test java server
 
 31	-	When connecting to TCP send your current settings and
 			if they not good update them
-32	-	When deleting something in arduino table add
+32	-	When deleting something in Arduino table add
 			on delete restrict on update cascade
-33	-	When arduino dies but sim works, tcp connection
-			keeping alive need to reconect. Now just sending
+33	-	When Arduino dies but sim works, tcp connection
+			keeping alive need to reconnect. Now just sending
 			as tries to connect. Maybe when powers up check
 			if connection is established if so disconnect it
-			
-			
+34	-	Display as class that implements Activity and acts
+			as if were multi threaded.
+		Also find Russian symbols and made custom for signal
+35	-	Error reporting system
+36	-	Network and flash handler as chain of responsibility
+			when encountered some data
+37	-	Good initialization system where everything is displayed
