@@ -102,10 +102,13 @@ bool CardReader::read(){
 }
 
 void CardReader::printCounter(){
-	display.clear();
-	display.setCursor(0, 0);
-	display.print("Counter = ");
-	display.setCursor(0, 1);
+	// display.clear();
+	// display.setCursor(0, 0);
+	// display.print("Counter = ");
+	// display.setCursor(0, 1);
+	// display.print(counter);
+	char buf [display.width];
+	snprintf(buf, sizeof buf, "Counter = %d", counter);
 	display.print(counter);
 }
 

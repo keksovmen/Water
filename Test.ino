@@ -142,7 +142,9 @@ void loop(){
 	
 	//check if summ of millis exceeded 1 sec
 	if(clk.addMillis(timePassed)){
-		printTime(clk);
+		// printTime(clk);
+		//TODO: really bad
+		lcd.doActivity();
 	}
 	
 	
@@ -323,8 +325,8 @@ bool askVolume(){
 	printMessage(str);
 	// lcd.setCursor(strlen(str), 0);
 	
-	unsigned long t = millis();
-	bool b = false;
+	// unsigned long t = millis();
+	// bool b = false;
 	
 	while(simHelper.isAnwserRdy() == 0){
 		if(!cardReader.read()){
@@ -384,11 +386,11 @@ bool askTime(){
 
 
 //Display temperature and pressure values for some time
-void showEntry(int tempUp, int tempDown){
+void showEntry(double tempUp, double tempDown){
 	// lcd.clear();
 	// lcd.setCursor(0,0);
-	char lineUp[16];
-	char lineDown[16];
+	char lineUp[lcd.width];
+	char lineDown[lcd.width];
 	snprintf(lineUp, sizeof lineUp, "TEMP_UP = %f.2", tempUp);
 	snprintf(lineDown, sizeof lineDown, "TEMP_UP = %f.2", tempDown);
 	lcd.print(lineUp, lineDown);
@@ -421,8 +423,8 @@ void updateParams(){
 bool waitForResult(const char* str){
 	printMessage(str);
 	
-	unsigned long t = millis();
-	bool b = false;
+	// unsigned long t = millis();
+	// bool b = false;
 	
 	//TODO: when module dies it loops forever
 	while(simHelper.isAnwserRdy() == 0){
