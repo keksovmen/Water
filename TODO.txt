@@ -47,4 +47,9 @@
 			when encountered some data
 37	-	Good initialization system where everything is displayed
 38	-	AT+GSMBUSY=0, declines all incoming calls, add as base parameter
+39	-	Continue of 33 - make server when encountered same id or imei
+			and already connected to check if it is alive or dead,
+			because in most cases it will be dead, and you will have
+			remove old version in order to connect new one
+			
 			

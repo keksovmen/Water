@@ -230,6 +230,7 @@ bool TCPHandler::handleGPRSAct(){
 bool TCPHandler::handleIpStatus(){
 	refTools.writeCIPSTART(
 			refParameters.getAddress().getValue(),
+			//TODO: made as parameter
 			8188
 			);
 	
