@@ -22,3 +22,5 @@
 //determine how long can wait for anwser from sim modeule in millis
 #define LONG_WAIT 500
 
+#define START_EEPROM_ADDRESS 0
+

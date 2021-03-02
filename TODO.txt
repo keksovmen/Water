@@ -51,5 +51,8 @@
 			and already connected to check if it is alive or dead,
 			because in most cases it will be dead, and you will have
 			remove old version in order to connect new one
-			
+40	-	Made printable interface that will ask an object
+			to be printed such as time, temperature,
+			and will provide with argument writer
+
 			
