@@ -197,7 +197,7 @@ void SimHandler::handleReading(){
 
 void SimHandler::doActivity(){
 	if(!tools.state.timer.isOpen()){
-		goto B;
+		goto A;
 	}
 	
 	if(handleLongMessages()){
@@ -233,12 +233,12 @@ void SimHandler::doActivity(){
 	}
 	
 	
-	B:
-	if(!wrapper.lazyRead()){
+	A:
+	if(!reader.lazyRead()){
 		return;
 	}
 	
-	reader.handleSwitch();
+	//reader.handleSwitch();
 	
 	// if will contain a message try to read and parse
 	// through UnexpectedHandler
@@ -320,7 +320,7 @@ bool SimHandler::handleLongMessages(){
 				return true;
 			}
 		}else{
-			if(wrapper.lazyRead()){
+			if(reader.lazyRead()){
 				tools.state.longCmd.isAnwserReady = true;
 				return handleLongMessages();
 			}

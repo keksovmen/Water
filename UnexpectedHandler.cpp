@@ -91,7 +91,7 @@ void UnexpectedHandler::handleSwitch(){
 		refState.readyDetected();
 	}
 	
-	
+	//TODO: made as chain of responsibility
 	if(pTcpHandler){
 		if(refBuffer.remove(TCP_CONNECTE_OK)){
 			refState.tcp.state = TCP_STATE_CONNECTED;
