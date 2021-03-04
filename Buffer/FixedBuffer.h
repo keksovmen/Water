@@ -305,6 +305,23 @@ class FixedBuffer : public FixedBufferBase
 		}
 		
 		
+		int copy(const char* str) override {
+			int length = determineAppropriateLength(str);
+			copyLoop(str, 0, length);
+			
+			return length;
+		}
+		
+		int copy(const char* str, int desiredAmount) override {
+			int length = determineAppropriateLength(str);
+			if(length > desiredAmount)
+				length = desiredAmount;
+			copyLoop(str, 0, length);
+			
+			return length;
+		}
+		// int copy(const char* str, int from, int to) = 0;
+		
 		//Getters
 		
 		char* getData() override{return data;};
@@ -312,6 +329,24 @@ class FixedBuffer : public FixedBufferBase
 		int getLength() override{return length;};
 	
 	private:
+		int determineAppropriateLength(const char* str){
+			int length = strlen(str);
+			if(length > size)
+				length = size;
+			
+			return length;
+		}
+		
+		void copyLoop(const char* str, int from, int to){
+			clear();
+			
+			for(int i = from; i < to; i++){
+				data[i] = str[i];
+			}
+			data[to] = '\0';
+			
+			length = to;
+		}
 		//represents max size minus zero terminator
 		const int size = N - 1;
 		

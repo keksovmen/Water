@@ -33,6 +33,8 @@ bool testRemains();
 
 bool testNull();
 
+bool testCopy();
+
 
 template<int N>
 void copyIntoBuffer(FixedBuffer<N>& buffer, const char* data);
@@ -125,6 +127,8 @@ int main()
 	assert(testRemains());
 	
 	assert(testNull());
+	
+	assert(testCopy());
 }
 
 bool checkLength(int divider){
@@ -319,6 +323,21 @@ bool testNull(){
 	
 	return true;
 	
+}
+
+bool testCopy(){
+	FixedBuffer<10> buffer;
+	buffer.copy("12345");
+	assert(buffer.getLength() == 5);
+	assert(buffer.indexOf("3") == 2);
+	
+	buffer.copy("123");
+	assert(buffer.getLength() == 3);
+	assert(buffer.indexOf("3") == 2);
+	
+	buffer.copy("01234567891234567890");
+	assert(buffer.getLength() == 9);
+	assert(buffer.indexOf("9") == -1);
 }
 
 

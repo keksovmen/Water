@@ -32,6 +32,10 @@ class FixedBufferBase
 		virtual bool remove(const char* str) = 0;
 		virtual FixedBufferBase& substring(int from, int to = -1) = 0;
 		
+		virtual int copy(const char* str) = 0;
+		virtual int copy(const char* str, int desiredAmount) = 0;
+		// virtual int copy(const char* str, int from, int to) = 0;
+		
 		virtual char* getData() = 0;
 		virtual int getSize() = 0;
 		virtual int getLength() = 0;
