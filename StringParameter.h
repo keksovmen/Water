@@ -34,13 +34,11 @@ class StringParameter : public BaseParameter
 			
 			if(length > value.getSize()){
 				Serial.println("String Param Length > N");
-				length = value.getSize();
 			}
 			
-			for(int i = 0; i < length; i++){
-				value[i] = str[i];
-			}
-			value[length] = '\0';
+			value.copy(str, length);
+			
+			
 		}
 		
 		const char* getValue(){return value.begin();}
