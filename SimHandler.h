@@ -7,7 +7,7 @@
 #include "Constants.h"
 #include "Buffer/FixedBufferBase.h"
 #include "SimIOWrapper.h"
-#include "UnexpectedHandler.h"
+#include "ReaderWithoutGarbage.h"
 #include "SimTools.h"
 #include "GPRSHandler.h"
 #include "CgattHandler.h"
@@ -140,7 +140,7 @@ class SimHandler : public Activity
 
 		FixedBufferBase& refBuffer;
 		SimIOWrapper wrapper;
-		UnexpectedHandler reader;
+		ReaderWithoutGarbage reader;
 		SimToolsProxy tools;
 		GPRSHandler gprsHandler;
 		CgattHandler cgattHandler;

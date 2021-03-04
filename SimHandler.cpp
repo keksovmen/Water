@@ -241,7 +241,7 @@ void SimHandler::doActivity(){
 	//reader.handleSwitch();
 	
 	// if will contain a message try to read and parse
-	// through UnexpectedHandler
+	// through ReaderWithoutGarbage
 	if(tools.isPossibleMessage()){
 		reader.read();
 	}
