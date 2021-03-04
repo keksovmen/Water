@@ -25,3 +25,6 @@
 
 #define START_EEPROM_ADDRESS 0
 
+#define APN_MAX_LENGTH 50
+#define IMEI_MAX_LENGTH 50
+

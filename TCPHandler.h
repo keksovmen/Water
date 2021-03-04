@@ -2,7 +2,6 @@
 
 #include "Enums.h"
 #include "SimTools.h"
-#include "ParameterHandler.h"
 #include "Constants.h"
 #include "TCPReader.h"
 #include "Buffer/FixedBufferBase.h"
@@ -14,10 +13,7 @@
 class TCPHandler : public LongCommandHandler, public UnexpectedHandler
 {
 	public:
-		TCPHandler(
-				SimTools& tools,
-				ParameterHandler& parameters
-				);
+		TCPHandler(SimTools& tools);
 		
 		
 		bool handle() override;
@@ -41,7 +37,6 @@ class TCPHandler : public LongCommandHandler, public UnexpectedHandler
 		
 		
 		SimTools& refTools;
-		ParameterHandler& refParameters;
 		
 		bool isLastCommandCIICR;
 };

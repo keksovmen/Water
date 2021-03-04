@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Buffer/FixedBufferBase.h"
-#include "ParameterHandler.h"
 #include "SimTools.h"
 #include "Constants.h"
 #include "Enums.h"
@@ -12,7 +11,6 @@ class TCPIncomingHandler
 	public:
 		TCPIncomingHandler(
 							FixedBufferBase& buffer,
-							ParameterHandler& params,
 							SimTools& tools
 							);
 							
@@ -35,6 +33,5 @@ class TCPIncomingHandler
 	
 	
 		FixedBufferBase& refBuffer;
-		ParameterHandler& refParams;
 		SimTools& refTools;
 };

@@ -42,7 +42,7 @@ TemperatureSensor tempDown(TEMP_DOWN_PIN);
 //Display
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-ParameterHandler parameters;
+ParameterHandler& parameters = ParameterHandler::getInstance();
 
 //Time
 Clock& clk = parameters.getClock().getValue();
@@ -56,8 +56,8 @@ CardReader cardReader(WATER_COUNTER_PIN, WATER_VALVE_PIN, Serial2, lcd, paramete
 unsigned long timeBefore;
 
 
-// SimHandler<FIXED_BUFFER_SIZE> simHandler(sim, parameters);
-SimHandlerHelper<FIXED_BUFFER_SIZE> simHelper(sim, parameters);
+// SimHandler<FIXED_BUFFER_SIZE> simHandler(sim);
+SimHandlerHelper<FIXED_BUFFER_SIZE> simHelper(sim);
 SimHandler& simHandler = simHelper.getHandler();
 
 TimeHandler sensorTimer;

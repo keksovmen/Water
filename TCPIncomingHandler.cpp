@@ -1,18 +1,14 @@
 #include "TCPIncomingHandler.h"
 #include <Arduino.h>
 #include "Constants.h"
+#include "ParameterHandler.h"
 
 
 TCPIncomingHandler::TCPIncomingHandler(
 							FixedBufferBase& refBuffer,
-							ParameterHandler& refParams,
 							SimTools& tools
 							) :
-	refBuffer(refBuffer), refParams(refParams),
-	refTools(tools)
-{
-	
-}
+	refBuffer(refBuffer), refTools(tools){}
 
 
 void TCPIncomingHandler::handleMessage()
@@ -73,6 +69,7 @@ void TCPIncomingHandler::handleSetParam(int begining){
 	int id = atoi(&refBuffer[begining + 1]);
 	int dataIndex = refBuffer.indexOfFrom(begining, "=");
 	dataIndex++;
+	ParameterHandler& refParams = ParameterHandler::getInstance();
 	if(refParams.hasId(id)){
 		refParams.parse(id, &refBuffer[dataIndex]);
 	}

@@ -7,12 +7,16 @@
 #include "IPAddressParam.h"
 #include "StringParameter.h"
 #include "MemoryParametr.h"
+#include "Constants.h"
 
 
 class ParameterHandler
 {
 	public:
-		
+		static ParameterHandler& getInstance(){
+				static ParameterHandler instance;
+				return instance;
+			}
 		//TODO: made inheret from a class of parameter
 		// int getLength();
 		// void handleWritingValue(BaseWriter& writer);
@@ -31,16 +35,17 @@ class ParameterHandler
 		Parameter<PrimitivIntParameter>& getGivenVolume(){return givenVolume;}
 		
 		Parameter<CardParameter>& getCard(){return card;}
-		Parameter<StringParameter<50>>& getApn(){return apn;}
+		Parameter<StringParameter<APN_MAX_LENGTH>>& getApn(){return apn;}
 		
 		Parameter<PrimitivFloatParameter>& getTempUp(){return tempUp;}
 		Parameter<PrimitivFloatParameter>& getTempDown(){return tempDown;}
 		
 		Parameter<PrimitivIntParameter>& getPlateId(){return plateID;}
 		
-		Parameter<StringParameter<20>>& getImei(){return imei;}
+		Parameter<StringParameter<IMEI_MAX_LENGTH>>& getImei(){return imei;}
 		
 	private:
+	
 		Parameter<PrimitivFloatParameter> sensorTempUp =
 							Parameter<PrimitivFloatParameter>(0);
 		
@@ -58,7 +63,8 @@ class ParameterHandler
 	
 		Parameter<CardParameter> card = Parameter<CardParameter>(6);
 		
-		Parameter<StringParameter<50>> apn = Parameter<StringParameter<50>>(7);
+		Parameter<StringParameter<APN_MAX_LENGTH>> apn =
+							Parameter<StringParameter<APN_MAX_LENGTH>>(7);
 		
 		Parameter<PrimitivFloatParameter> tempUp = 
 							Parameter<PrimitivFloatParameter>(8);
@@ -68,5 +74,6 @@ class ParameterHandler
 		Parameter<PrimitivIntParameter> plateID = 
 							Parameter<PrimitivIntParameter>(10);
 							
-		Parameter<StringParameter<20>> imei = Parameter<StringParameter<20>>(11);
+		Parameter<StringParameter<IMEI_MAX_LENGTH>> imei =
+							Parameter<StringParameter<IMEI_MAX_LENGTH>>(11);
 };

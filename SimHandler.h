@@ -14,7 +14,6 @@
 #include "HTTPHandler.h"
 #include "TCPHandler.h"
 #include "DataHandler.h"
-#include "ParameterHandler.h"
 #include "Activity.h"
 
 
@@ -39,8 +38,7 @@ class SimHandler : public Activity
 	
 		SimHandler(
 				Stream& refPort,
-				FixedBufferBase& buffer,
-				ParameterHandler& parameters
+				FixedBufferBase& buffer
 				);
 		
 		/**
@@ -145,10 +143,7 @@ class SimHandler : public Activity
 		GPRSHandler gprsHandler;
 		CgattHandler cgattHandler;
 		HTTPHandler httpHandler;
-		TCPHandler tcpHandler;
-		
-		ParameterHandler& refParams;
-		
+		TCPHandler tcpHandler;		
 };
 
 

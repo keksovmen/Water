@@ -6,6 +6,7 @@
 #include "PostDataHandler.h"
 #include "GetDataHandler.h"
 #include "TCPIncomingHandler.h"
+#include "ParameterHandler.h"
 
 
 //For new Post/GetDataHandler to return a pointer
@@ -17,8 +18,7 @@ static char dynamicMemory[17];
 
 SimHandler::SimHandler(
 				Stream& refPort, 
-				FixedBufferBase& buffer,
-				ParameterHandler& parameters
+				FixedBufferBase& buffer
 				) :
 		refBuffer(buffer),
 		wrapper(refPort, refBuffer),
@@ -27,8 +27,7 @@ SimHandler::SimHandler(
 		gprsHandler(tools), 
 		cgattHandler(tools),
 		httpHandler(tools),
-		tcpHandler(tools, parameters),
-		refParams(parameters)
+		tcpHandler(tools)
 {
 	reader.setSuccessor(&tcpHandler);
 }
@@ -297,7 +296,7 @@ void SimHandler::handleTCPMessage(){
 	tools.state.tcp.hasMessage = false;
 	
 	auto tmp = tcpHandler.readMessage(refBuffer);
-	TCPIncomingHandler handler(refBuffer, refParams, tools);
+	TCPIncomingHandler handler(refBuffer, tools);
 	
 	while(tmp.readResponce()){
 		handler.handleMessage();
@@ -393,7 +392,7 @@ bool SimHandler::isGPRSConnected(){
 				
 			case GPRS_CLOSED:
 				gprsHandler.connect(
-					refParams.getApn().getValue().getValue()
+					ParameterHandler::getInstance().getApn().getValue().getValue()
 					);
 				return false;
 				
@@ -460,7 +459,7 @@ bool SimHandler::initImei(){
 		return false;
 	}
 	
-	refParams.getImei().parse(refBuffer.begin());
+	ParameterHandler::getInstance().getImei().parse(refBuffer.begin());
 	
 	return true;
 }

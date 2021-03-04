@@ -2,20 +2,19 @@
 #include "SimHandlerHelper.h"
 #include "ParameterWriter.h"
 #include "Constants.h"
+#include "ParameterHandler.h"
+
 
 
 template<int N>
-SimHandlerHelper<N>::SimHandlerHelper(Stream& connection, ParameterHandler& parameters) :
-	handler(connection, buffer, parameters),
-	refParameters(parameters)
-{
-
-}
+SimHandlerHelper<N>::SimHandlerHelper(Stream& connection) :
+	handler(connection, buffer){}
 
 
 template<int N>
 bool SimHandlerHelper<N>::sendParams(){
 	ParameterWriter paramWriter;
+	ParameterHandler& refParameters = ParameterHandler::getInstance();
 	paramWriter.add(&refParameters.getClock());
 	paramWriter.add(&refParameters.getSensorTempUp());
 	paramWriter.add(&refParameters.getSensorTempDown());
@@ -43,6 +42,7 @@ template<int N>
 bool SimHandlerHelper<N>::sendVolume()
 {
 	ParameterWriter paramWriter;
+	ParameterHandler& refParameters = ParameterHandler::getInstance();
 	paramWriter.add(&refParameters.getGivenVolume());
 	paramWriter.add(&refParameters.getClock());
 	paramWriter.add(&refParameters.getCard());
@@ -67,6 +67,7 @@ bool SimHandlerHelper<N>::sendVolume()
 
 template<int N>
 bool SimHandlerHelper<N>::askVolume(){
+	ParameterHandler& refParameters = ParameterHandler::getInstance();
 	dataHandler = handler.sendGetRequest(
 			refParameters.getAddress().getValue(),
 			"/GetVolume.php"
@@ -88,7 +89,7 @@ bool SimHandlerHelper<N>::askVolume(){
 template<int N>
 bool SimHandlerHelper<N>::askTime(){
 	dataHandler = handler.sendGetRequest(
-			refParameters.getAddress().getValue(),
+			ParameterHandler::getInstance().getAddress().getValue(),
 			"/GetTime.php"
 			);
 	
@@ -208,7 +209,7 @@ void SimHandlerHelper<N>::parseTime(){
 			continue;
 		}
 		
-		refParameters.getClock().getValue().parse(&b[index + 1]);
+		ParameterHandler::getInstance().getClock().getValue().parse(&b[index + 1]);
 		break;
 	}
 }
@@ -230,7 +231,7 @@ void SimHandlerHelper<N>::parseVolume(){
 			continue;
 		}
 		
-		refParameters.
+		ParameterHandler::getInstance().
 			getUserVolume().
 					getValue().
 						getValue() = atoi(&b[index + 1]);

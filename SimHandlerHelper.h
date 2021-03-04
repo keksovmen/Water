@@ -3,7 +3,6 @@
 #include <Stream.h>
 #include "Buffer/FixedBuffer.h"
 #include "SimHandler.h"
-#include "ParameterHandler.h"
 #include "Parameter.h"
 #include "Constants.h"
 #include "TCPHandler.h"
@@ -29,7 +28,7 @@ class SimHandlerHelper
 	public:
 		// friend class SimHandler;
 		
-		SimHandlerHelper(Stream& connection, ParameterHandler& parameters);
+		SimHandlerHelper(Stream& connection);
 		
 		bool sendParams();
 		bool sendVolume();
@@ -95,7 +94,6 @@ class SimHandlerHelper
 	
 		FixedBuffer<N> buffer;
 		SimHandler handler;
-		ParameterHandler& refParameters;
 		
 		DataHandler* dataHandler = nullptr;
 		HTTP_SCRIPT lastRequest = HTTP_SCRIPT_NAN;

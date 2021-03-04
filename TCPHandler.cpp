@@ -3,17 +3,11 @@
 #include <Arduino.h>
 #include "Util.h"
 #include "StringData.h"
+#include "ParameterHandler.h"
 
 
 
-TCPHandler::TCPHandler(
-				SimTools& tools,
-				ParameterHandler& parameters
-				) :
-	refTools(tools), refParameters(parameters)
-{
-	
-}
+TCPHandler::TCPHandler(SimTools& tools) : refTools(tools){}
 
 
 
@@ -204,6 +198,7 @@ void TCPHandler::sendId(){
 		return;
 	}
 	
+	ParameterHandler& refParameters = ParameterHandler::getInstance();
 	refTools.write(refParameters.getPlateId().getValue().getValue());
 	refTools.write("\n");
 	refTools.write(refParameters.getImei().getValue().getValue());
@@ -245,7 +240,7 @@ bool TCPHandler::handleInitial(){
 	}
 	
 	refTools.writeCSTT(
-		refParameters.getApn().getValue().getValue()
+		ParameterHandler::getInstance().getApn().getValue().getValue()
 		);
 	
 	return refTools.readAndExpectSuccess();
@@ -272,7 +267,7 @@ bool TCPHandler::handleGPRSAct(){
 
 bool TCPHandler::handleIpStatus(){
 	refTools.writeCIPSTART(
-			refParameters.getAddress().getValue(),
+			ParameterHandler::getInstance().getAddress().getValue(),
 			//TODO: made as parameter
 			8188
 			);

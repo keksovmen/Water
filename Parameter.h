@@ -6,6 +6,10 @@
 
 
 
+/**
+	T must extend BaseParameter
+*/
+
 template<typename T>
 class Parameter : public BaseParameter
 {
