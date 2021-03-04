@@ -7,12 +7,6 @@
 
 
 
-/**
-	ATTENTION!
-	Uses String that implemented through dynamic memory
-	so be aware of your spare memory
-*/
-
 template<int N>
 class StringParameter : public BaseParameter
 {
@@ -31,11 +25,11 @@ class StringParameter : public BaseParameter
 		
 		void parse(const char* str) override {
 			int length = 0;
-			for(const char* p = str; *p != '\0'; p++){
-				if((*p) == (*ENTRY_ENDING)){
-					break;
-				}
-				length++;
+			const char* finding = strstr(str, ENTRY_ENDING);
+			if(finding){
+				length = finding - str;
+			}else{
+				length = strlen(str);
 			}
 			
 			if(length > value.getSize()){
@@ -47,12 +41,9 @@ class StringParameter : public BaseParameter
 				value[i] = str[i];
 			}
 			value[length] = '\0';
-			// value = str;
 		}
 		
-		// void setValue(const char* str);
 		const char* getValue(){return value.begin();}
 	private:
 		FixedBuffer<N> value;
-		// String value;
 };

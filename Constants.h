@@ -16,6 +16,7 @@
 
 #define SIZE_OF_PARAMETER_WRITER 10
 
+//Use in string methods char* not where just char e.g. strstr vs strchr
 #define ENTRY_BEGINING "#"
 #define ENTRY_ENDING "$"
 
