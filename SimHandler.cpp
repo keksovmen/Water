@@ -30,7 +30,7 @@ SimHandler::SimHandler(
 		tcpHandler(tools, parameters),
 		refParams(parameters)
 {
-	reader.attachTCPHandler(&tcpHandler);
+	reader.setSuccessor(&tcpHandler);
 }
 
 
@@ -238,7 +238,7 @@ void SimHandler::doActivity(){
 		return;
 	}
 	
-	//reader.handleSwitch();
+	//reader.handleUnexpected(refBuffer);
 	
 	// if will contain a message try to read and parse
 	// through ReaderWithoutGarbage
@@ -313,7 +313,7 @@ bool SimHandler::handleLongMessages(){
 		if(tools.state.longCmd.isAnwserReady){
 			if(tools.state.longCmd.cmdHandler->handle()){
 				tools.state.setLongCmd();	//longCmd to initial tools.state
-				reader.handleSwitch();
+				reader.handleUnexpected(refBuffer);
 				return false;
 			}else{
 				tools.state.longCmd.isAnwserReady = false;

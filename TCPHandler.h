@@ -7,10 +7,11 @@
 #include "TCPReader.h"
 #include "Buffer/FixedBufferBase.h"
 #include "LongCommandHandler.h"
+#include "UnexpectedHandler.h"
 
 
 
-class TCPHandler : public LongCommandHandler
+class TCPHandler : public LongCommandHandler, public UnexpectedHandler
 {
 	public:
 		TCPHandler(
@@ -20,7 +21,7 @@ class TCPHandler : public LongCommandHandler
 		
 		
 		bool handle() override;
-		
+		void handleUnexpected(FixedBufferBase& refBuffer) override;
 
 		bool connect();
 		TCPReader readMessage(FixedBufferBase& buffer);

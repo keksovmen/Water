@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 #include "Util.h"
-
+#include "StringData.h"
 
 
 
@@ -50,6 +50,49 @@ bool TCPHandler::handle(){
 	}
 }
 
+
+void TCPHandler::handleUnexpected(FixedBufferBase& refBuffer){
+	if(refBuffer.remove(TCP_CONNECTE_OK)){
+		refTools.state.tcp.state = TCP_STATE_CONNECTED;
+	}
+		
+	if(refBuffer.remove(TCP_ALREADY_CONNECTE)){
+		refTools.state.tcp.state = TCP_STATE_CONNECTED;
+	}
+	
+	//TODO: bug here because you are not having 100%
+	//chance to see next message full
+	if(refBuffer.remove(TCP_CONNECT_FAIL)){
+		//there will be also \r\nSTATE: TCP CLOSED\r\n
+		int index = refBuffer.indexOf("\r\nSTATE: ");
+		int endIndex = refBuffer.indexOfFrom(index + 2, END_LINE);
+		int amount = (endIndex - index) + strlen(END_LINE);
+		refBuffer.remove(index, amount);
+		
+		refTools.state.tcp.state = TCP_STATE_CLOSED;
+	}
+		
+	if(refBuffer.remove(TCP_CONNECTION_CLOSED)){
+		refTools.state.tcp.state = TCP_STATE_CLOSED;
+		refTools.state.tcp.hastToSendId = true;
+	}
+		
+	if(refBuffer.remove(PDP_DEACT)){
+		refTools.state.diedCGATT();
+	}
+		
+	if(refBuffer.remove(TCP_INCOMING_MESSAGE)){
+		refTools.state.tcp.hasMessage = true;
+	}
+		
+		
+	if(refBuffer.remove(TCP_SEND_OK) ||
+		refBuffer.remove(TCP_SEND_FAIL)
+		)
+	{
+		refTools.state.tcp.isSending = false;
+	}
+}
 
 
 bool TCPHandler::connect(){
