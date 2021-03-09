@@ -14,9 +14,9 @@ class ParameterHandler
 {
 	public:
 		static ParameterHandler& getInstance(){
-				static ParameterHandler instance;
-				return instance;
-			}
+			static ParameterHandler instance;
+			return instance;
+		}
 		//TODO: made inheret from a class of parameter
 		// int getLength();
 		// void handleWritingValue(BaseWriter& writer);

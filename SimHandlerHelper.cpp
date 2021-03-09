@@ -13,7 +13,7 @@ SimHandlerHelper<N>::SimHandlerHelper(Stream& connection) :
 
 template<int N>
 bool SimHandlerHelper<N>::sendParams(){
-	ParameterWriter paramWriter;
+	ParameterWriter<4> paramWriter;
 	ParameterHandler& refParameters = ParameterHandler::getInstance();
 	paramWriter.add(&refParameters.getClock());
 	paramWriter.add(&refParameters.getSensorTempUp());
@@ -41,7 +41,7 @@ bool SimHandlerHelper<N>::sendParams(){
 template<int N>
 bool SimHandlerHelper<N>::sendVolume()
 {
-	ParameterWriter paramWriter;
+	ParameterWriter<3> paramWriter;
 	ParameterHandler& refParameters = ParameterHandler::getInstance();
 	paramWriter.add(&refParameters.getGivenVolume());
 	paramWriter.add(&refParameters.getClock());
