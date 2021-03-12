@@ -198,19 +198,7 @@ void SimHandlerHelper<N>::parseTime(){
 	dataHandler->getBuffer().clear();
 	
 	while(dataHandler->readResponce()){
-		auto& b = dataHandler->getBuffer();
-		int index = b.indexOf(ENTRY_BEGINING);
-		if(index == -1){
-			continue;
-		}
-		
-		int end = b.indexOfFrom(index, ENTRY_ENDING);
-		if(end == -1){
-			continue;
-		}
-		
-		ParameterHandler::getInstance().getClock().getValue().parse(&b[index + 1]);
-		break;
+		ParameterHandler::getInstance().parse(dataHandler->getBuffer());
 	}
 }
 
@@ -220,21 +208,6 @@ void SimHandlerHelper<N>::parseVolume(){
 	dataHandler->getBuffer().clear();
 	
 	while(dataHandler->readResponce()){
-		auto& b = dataHandler->getBuffer();
-		int index = b.indexOf(ENTRY_BEGINING);
-		if(index == -1){
-			continue;
-		}
-		
-		int end = b.indexOfFrom(index, ENTRY_ENDING);
-		if(end == -1){
-			continue;
-		}
-		
-		ParameterHandler::getInstance().
-			getUserVolume().
-					getValue().
-						getValue() = atoi(&b[index + 1]);
-		break;
+		ParameterHandler::getInstance().parse(dataHandler->getBuffer());
 	}
 }

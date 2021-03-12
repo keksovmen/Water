@@ -1,3 +1,3 @@
 <?php
 
-echo '#' . date("d:m:y:H:i:s") . "$";
+echo '#2=' . date("d:m:y:H:i:s") . "$";

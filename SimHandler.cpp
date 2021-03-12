@@ -5,7 +5,6 @@
 #include "HTTPHandler.h"
 #include "PostDataHandler.h"
 #include "GetDataHandler.h"
-#include "TCPIncomingHandler.h"
 #include "ParameterHandler.h"
 
 
@@ -296,10 +295,19 @@ void SimHandler::handleTCPMessage(){
 	tools.state.tcp.hasMessage = false;
 	
 	auto tmp = tcpHandler.readMessage(refBuffer);
-	TCPIncomingHandler handler(refBuffer, tools);
 	
 	while(tmp.readResponce()){
-		handler.handleMessage();
+		PARAMETER_PARSER_RESPONCES responce 
+				= ParameterHandler::getInstance().parse(refBuffer);
+		switch(responce){
+			case PARAMETER_PARSER_PING_FOUND: 
+				tools.state.tcp.hasToSendPong = true;
+				break;
+			case PARAMETER_PARSER_ENTRY_PARSED:
+				tools.state.tcp.hasToSendAcknowledgment = true;
+				break;
+			default: break;
+		}
 	}
 	
 	refBuffer.clear();

@@ -7,6 +7,7 @@
 #include "IPAddressParam.h"
 #include "StringParameter.h"
 #include "MemoryParametr.h"
+#include "Buffer/FixedBufferBase.h"
 #include "Constants.h"
 
 
@@ -23,7 +24,7 @@ class ParameterHandler
 		
 		bool hasId(int id);
 		//TODO: made inheret from a class of parameter
-		void parse(int id, const char* str);
+		PARAMETER_PARSER_RESPONCES parse(FixedBufferBase& buffer);
 		
 		Parameter<PrimitivFloatParameter>& getSensorTempUp(){return sensorTempUp;}
 		Parameter<PrimitivFloatParameter>& getSensorTempDown(){return sensorTempDown;}
@@ -45,6 +46,13 @@ class ParameterHandler
 		Parameter<StringParameter<IMEI_MAX_LENGTH>>& getImei(){return imei;}
 		
 	private:
+		int findBeginingOfParam(FixedBufferBase& buffer);
+		int findEndOfParam(FixedBufferBase& buffer);
+		bool hasPing(FixedBufferBase& buffer, int begining);
+		void removeParamEntry(FixedBufferBase& buffer, int begining, int end);
+		int parseIdOfParam(FixedBufferBase& buffer, int begining);
+		int findParamBegining(FixedBufferBase& buffer, int begining);
+		void handleSwitchParsing(FixedBufferBase& buffer, int begining);
 	
 		Parameter<PrimitivFloatParameter> sensorTempUp =
 							Parameter<PrimitivFloatParameter>(0);
